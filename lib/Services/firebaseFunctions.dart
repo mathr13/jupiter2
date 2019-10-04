@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'jupiter_utlis.dart';
 
 String notifResponse = "";
+String contentDb;
 List<Map<String, dynamic>> result = [];
 List<Map<String, dynamic>> parameter = [];
 dynamic responseApi;
@@ -83,6 +84,8 @@ void saveMasterData(List<Map> result) async {
     responseApi = await callApi(result[i][modelUri], parameter[i].toString());
     final responseOfApi = json.decode(responseApi.body);
     GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
+    if(genericResponseModel.genericDataModel.projectId == 11055) {
+    }
     for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
       db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId);
     }
@@ -91,11 +94,13 @@ void saveMasterData(List<Map> result) async {
     for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
       if(result[i]["message"] == "PROJECT" && genericResponseModel.genericDataModel.genericModel[j].generic["defaultProject"] == true) {
         sharedPreferences.setInt('projectId', genericResponseModel.genericDataModel.genericModel[j].generic["projectId"]);
+        contentDb = genericResponseModel.genericDataModel.genericModel[j].generic["db"];
         break;
       }
     }
     if(sharedPreferences.get('projectId') == null && result[i]["message"] == "PROJECT") {
       sharedPreferences.setInt('projectId', genericResponseModel.genericDataModel.genericModel[0].generic["projectId"]);
+      contentDb = genericResponseModel.genericDataModel.genericModel[0].generic["db"];
     }
   }
 }
