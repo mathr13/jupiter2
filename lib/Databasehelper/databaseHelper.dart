@@ -59,7 +59,7 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE LABEL(key TEXT, value TEXT, localization TEXT, projectId NUMBER, appType TEXT,PRIMARY KEY(projectId,key,localization))");
     await db.execute("CREATE TABLE system_tables_info(tableId NUMBER, tableName TEXT, status BOOLEAN,PRIMARY KEY(tableId))");
     await db.execute("INSERT INTO system_tables_info(tableId, tableName) VALUES(1,'USER'),(2,'NotificationQueue'),(3,'PROJECT'),(4,'MENU'),(5,'PERMISSION'),(6,'GLOBALVARIABLE'),(7,'LABEL'),(8,'DEFINITION')");
-    await db.execute("CREATE TABLE DEFINITION(formId TEXT, projectId Number, name TEXT, template TEXT)");
+    await db.execute("CREATE TABLE DEFINITION(formId TEXT PRIMARY KEY, projectId Number, name TEXT, template TEXT)");
   }
 
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value) async {
@@ -177,4 +177,13 @@ class DatabaseHelper {
 		var dbClient = await dbContent;
 		await dbClient.execute('ALTER TABLE $tableName ADD $columnName $columnDataType;');
 	}
+  Future<List> fetchTemplateID(String id) async {
+    var dbClient = await dbSystem;
+    String query = "SELECT * FROM DEFINITION WHERE template LIKE '%$id%' ";
+//    print(query);
+    var res = await dbClient.rawQuery(query);
+    return  res;
+
+  }
+
 }

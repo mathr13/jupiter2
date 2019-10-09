@@ -1,3 +1,4 @@
+import 'dart:convert';
 class AuthenticationObject {
   UserData data;
   Status status;
@@ -147,7 +148,7 @@ class DefinitionModel {
     return DefinitionModel(
       formId: parsedJson['formId'],
       name: parsedJson['name'],
-      template: parsedJson['template'].toString()
+      template:json.encode(parsedJson['template'])
     );
   }
   Map<dynamic, dynamic> toMap() {

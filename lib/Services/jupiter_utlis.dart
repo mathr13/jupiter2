@@ -23,12 +23,12 @@ void authenticate(context) async {
   User user = User(
     // userName: emailController.text,
     // password: passwordController.text,
-    // userName: "usharma@petroitg.com",
-    // password: "India@123"
-    // userName: "piku@gmail.com",
-    // password: "piku@gmail.com"
-    userName: "superman@mailinator.com",
-    password: "India@123",
+//     userName: "usharma@petroitg.com",
+//     password: "India@123"
+    userName: "piku@gmail.com",
+    password: "piku@gmail.com"
+//    userName: "superman@mailinator.com",
+//    password: "India@123",
     // userName: "sojha@petroitg.com",
     // password: "sumi"
   );

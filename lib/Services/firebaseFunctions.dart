@@ -20,9 +20,9 @@ var db = new DatabaseHelper();
 Future<void> getDatafromFirebase(context) async {
   firebaseMessaging.configure(
     onMessage: (dynamic response) async {
-      // print(response);
+//       print(response);
       final notifResponse = json.decode(response[responseData]);
-      // print(notifResponse);
+//       print(notifResponse);
       for(int i=0;i<notifResponse.length;i++) {
         db.populateTableWithMapping(notificationTable, notifResponse[i]);
       }
@@ -56,7 +56,8 @@ void getProjectData() async {
       for(int j=0;j<definitionResponseModel.definitionDataModel.definition.length;j++) {
         db.populateTableWithCustomColumn(result[i]["message"], definitionResponseModel.definitionDataModel.definition[j].toMap(), "projectId", definitionResponseModel.definitionDataModel.projectId);
       }
-    }else if(result[i]["message"]=="MODEL") {
+    }
+    else if(result[i]["message"]=="MODEL") {
       ModelReponseModel modelReponseModel = new ModelReponseModel.fromJson(responseOfApi);
       for(int j=0;j<modelReponseModel.modelDataModel.models.length;j++) {
         db.createTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[0].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[0].dataType);
@@ -64,13 +65,14 @@ void getProjectData() async {
           db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
         }
       }
-    }else {
+    }
+    else {
       GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
       for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
         db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId);
       }
     }
-  }
+ }
 }
 
 void saveMasterData(List<Map> result) async {
@@ -84,8 +86,6 @@ void saveMasterData(List<Map> result) async {
     responseApi = await callApi(result[i][modelUri], parameter[i].toString());
     final responseOfApi = json.decode(responseApi.body);
     GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
-    if(genericResponseModel.genericDataModel.projectId == 11055) {
-    }
     for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
       db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId);
     }
