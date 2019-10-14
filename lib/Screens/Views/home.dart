@@ -4,6 +4,7 @@ import 'package:jupiter/Screens/Views/forgot_password.dart';
 import 'package:jupiter/forms/main.dart';
 import 'dev_tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jupiter/Models/models.dart';
 
 class Menus extends StatefulWidget {
   @override
@@ -69,16 +70,15 @@ class _MenusState extends State<Menus> {
                                                     ["value"]
                                                 .toString()),
                                           ),
-                                          onTap: () {
+                                          onTap: () async{
                                             {
-                                              if (position == 0) {
-                                                _saveTemplateId();
+                                                await _workSpaceData(snapshot.data[position]['wsId'].toString());
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             MyApp()));
-                                              }
+
                                             }
                                             setState(() {
                                               _currentSelected = position;
@@ -108,10 +108,14 @@ class _MenusState extends State<Menus> {
               ])),
         ));
   }
-  _saveTemplateId()async{
-
+  _workSpaceData(String wsId)async{
+    var db = new DatabaseHelper();
+    var res = await db.fetchWorkSpaceData(wsId);
+//  NavigationMapping navigationMapping = new NavigationMapping.fromJson(res[0]);
+//print(navigationMapping.containerId);
+    print(res[0]['defaultTemplateId']);
               SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-          sharedPreferences.setString("TemplateID", '68482e90-9510-4d80-95e2-79c0a25e1003');
+          sharedPreferences.setString("TemplateID", res[0]['defaultTemplateId']);
 
   }
 }

@@ -102,9 +102,7 @@ class DatabaseHelper {
 
   Future<List> fetchMenuData() async {
     var dbClient=await dbSystem;
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    int defualtProjectId = sharedPreferences.getInt('projectId');
-    var res=await dbClient.rawQuery("SELECT value FROM LABEL WHERE key IN (SELECT menuId FROM MENU)");
+    var res=await dbClient.rawQuery("SELECT LABEL.value, MENU.wsId FROM LABEL INNER JOIN MENU ON LABEL.key=MENU.menuId");
     return res.toList();
   }
 
@@ -167,6 +165,14 @@ class DatabaseHelper {
   Future<List> fetchTemplateID(String id) async {
     var dbClient = await dbSystem;
     String query = "SELECT * FROM DEFINITION WHERE template LIKE '%$id%' ";
+//    print(query);
+    var res = await dbClient.rawQuery(query);
+    return  res;
+  }
+
+  Future<List> fetchWorkSpaceData(String id) async {
+    var dbClient = await dbSystem;
+    String query = "SELECT * FROM WORKSPACE WHERE wsId = '$id' ";
 //    print(query);
     var res = await dbClient.rawQuery(query);
     return  res;
