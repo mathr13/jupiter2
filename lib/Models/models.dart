@@ -257,3 +257,94 @@ class TableColumn {
     );
   }
 }
+
+//class WorkSpaceResponseModel{
+//  WorkSpaceResponseModel
+//
+//}
+
+class WorkSpaceDataModel{
+  List<WorkSpaceModel> workSpace;
+  int projectId;
+
+  WorkSpaceDataModel({this.projectId,this.workSpace});
+
+  factory WorkSpaceDataModel.fromJson(dynamic parsedJson) {
+    var workspaceList = parsedJson["WORKSPACE"] as List;
+    List<WorkSpaceModel> listOfWorkspace = workspaceList.map((i) => WorkSpaceModel.fromJson(i)).toList();
+    return WorkSpaceDataModel(
+        workSpace: listOfWorkspace,
+        projectId: parsedJson['projectId']
+    );
+  }
+}
+
+class WorkSpaceModel{
+  String defaultTemplateId;
+  String wsId;
+  String wsName;
+  List<NavigationMapping> navigationMapping;
+
+
+  WorkSpaceModel({this.defaultTemplateId,this.wsId,this.wsName,this.navigationMapping});
+
+  factory WorkSpaceModel.fromJson(Map<String,dynamic> parsedJson){
+    var navigationMappingList = parsedJson["navigationMapping"] as List;
+    List<NavigationMapping> listOfNavigationMapping = navigationMappingList.map((i) => NavigationMapping.fromJson(i)).toList();
+
+    return WorkSpaceModel(
+        defaultTemplateId: parsedJson['defaultTemplateId'],
+        wsId: parsedJson['wsId'],
+        wsName: parsedJson['wsName'],
+      navigationMapping: listOfNavigationMapping
+    );
+  }
+  Map<dynamic, dynamic> toMap() {
+    var map=new Map<String, dynamic>();
+    map["defaultTemplateId"]=defaultTemplateId;
+    map["wsId"]=wsId;
+    map["wsName"]=wsName;
+    return map;
+  }
+}
+
+class NavigationMapping {
+  String templateId;
+  String buttonId;
+  String componentType;
+  String componentSubType;
+  String redirectTemplateId;
+  String label;
+  String operation;
+  String containerId;
+
+  NavigationMapping(
+      {this.templateId, this.buttonId, this.componentSubType, this.componentType, this.containerId, this.label, this.operation, this.redirectTemplateId});
+
+  factory NavigationMapping.fromJson(Map<String, dynamic> parsedJson){
+    return NavigationMapping(
+      templateId: parsedJson['templateId'],
+      buttonId: parsedJson['buttonId'],
+      componentType: parsedJson['componentType'],
+      componentSubType: parsedJson['componentSubType'],
+      redirectTemplateId: parsedJson['redirectTemplateId'],
+      label: parsedJson['label'],
+      operation: parsedJson['operation'],
+      containerId: parsedJson['containerId'],
+
+    );
+  }
+  Map<dynamic, dynamic> toMap() {
+    var map=new Map<String, dynamic>();
+    map["templateId"]=templateId;
+    map["buttonId"]=buttonId;
+    map["componentType"]=componentType;
+    map["componentSubType"]=componentSubType;
+    map["redirectTemplateId"]=redirectTemplateId;
+    map["label"]=label;
+    map["operation"]=operation;
+    map["containerId"]=containerId;
+
+    return map;
+  }
+}

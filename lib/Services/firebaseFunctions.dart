@@ -10,7 +10,38 @@ import 'package:jupiter/Screens/Views/home.dart';
 import 'package:jupiter/Screens/Views/sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'jupiter_utlis.dart';
-
+String data = json.encode({
+  "data": {
+    "WORKSPACE": [{
+      "defaultTemplateId": "Save Item",
+      "wsId": "15356537dedfer",
+      "wsName": "Save Item",
+      "navigationMapping": [{
+        "templateId": "Save Item",
+        "buttonId": "save",
+        "componentType": "button",
+        "componentSubType": "button",
+        "redirectTemplateId": "List Item",
+        "label": "save",
+        "operation": "save",
+        "containerId": "P1"
+      },
+        {
+          "templateId": "Save Item",
+          "buttonId": "close",
+          "componentType": "button",
+          "componentSubType": "button",
+          "redirectTemplateId": "Dashboard",
+          "label": "close",
+          "operation": "close",
+          "containerId": "P1"
+        }
+      ]
+    }],
+    "projectId": 12345
+  }
+}
+);
 String notifResponse = "";
 String contentDb;
 int cunt = 1;
@@ -63,6 +94,7 @@ void getProjectData() async {
           if(k==1) {await Future.delayed(Duration(seconds: 1));}
           db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
         }
+        //TODO: cut paste
       }
     }else if(checkTableExistance != 0) {
       responseApi = await callApi(result[i][modelUri], parameter[i].toString());
@@ -80,7 +112,7 @@ void getProjectData() async {
         }
       }
     }
-  }
+ }
 }
 
 void saveMasterData(List<Map> result) async {
@@ -103,12 +135,14 @@ void saveMasterData(List<Map> result) async {
       if(result[i]["message"] == "PROJECT" && genericResponseModel.genericDataModel.genericModel[j].generic["defaultProject"] == true) {
         sharedPreferences.setInt('projectId', genericResponseModel.genericDataModel.genericModel[j].generic["projectId"]);
         contentDb = genericResponseModel.genericDataModel.genericModel[j].generic["db"];
+        await db.dbContent;
         break;
       }
     }
     if(sharedPreferences.get('projectId') == null && result[i]["message"] == "PROJECT") {
       sharedPreferences.setInt('projectId', genericResponseModel.genericDataModel.genericModel[0].generic["projectId"]);
       contentDb = genericResponseModel.genericDataModel.genericModel[0].generic["db"];
+      await db.dbContent;
     }
   }
 }
