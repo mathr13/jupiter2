@@ -18,14 +18,19 @@ class DatabaseHelper {
   static Database _dbContent;
 
   Future<Database> get dbSystem async {
-    if (_dbSystem != null) return _dbSystem;
-    _dbSystem=await initDbSystem();
-    return _dbSystem;
-  }
+    if (_dbSystem != null) {
+      return _dbSystem;
+    }
+      _dbSystem=await initDbSystem();
+      return _dbSystem;
+    }
+
   Future<Database> get dbContent async {
-    if (_dbContent != null) return _dbContent;
-    _dbContent=await initDbContent(contentDb+".db");
-    return _dbContent;
+    if (_dbContent != null) {
+      return _dbContent;
+    }
+      _dbContent=await initDbContent(contentDb+".db");
+      return _dbContent;
   }
 
   DatabaseHelper.internal();
@@ -53,13 +58,17 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE USER(userName TEXT, firstName TEXT, lastName TEXT, userId NUMBER, lang TEXT, PRIMARY KEY(userId))");
     await db.execute("CREATE TABLE NotificationQueue(queueId TEXT ,projectId NUMBER,category TEXT ,message TEXT ,type TEXT ,seqNo NUMBER,groupSeqNo NUMBER, timestamp NUMBER,status TEXT, uri TEXT, params TEXT,PRIMARY KEY(queueId,projectId))");
     await db.execute("CREATE TABLE PROJECT(projectName TEXT, projectId NUMBER, init BOOL, defaultProject BOOL, db TEXT,PRIMARY KEY(projectId))");
-    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, perm TEXT, menus TEXT,PRIMARY KEY(menuId,projectId))");
+    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, perm TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
     await db.execute("CREATE TABLE PERMISSION(permissionId TEXT, projectId NUMBER,PRIMARY KEY(projectId,permissionId))");
     await db.execute("CREATE TABLE GLOBALVARIABLE(projectId NUMBER, key TEXT, value TEXT)");
     await db.execute("CREATE TABLE LABEL(key TEXT, value TEXT, localization TEXT, projectId NUMBER, appType TEXT,PRIMARY KEY(projectId,key,localization))");
     await db.execute("CREATE TABLE system_tables_info(tableId NUMBER, tableName TEXT, status BOOLEAN,PRIMARY KEY(tableId))");
     await db.execute("INSERT INTO system_tables_info(tableId, tableName) VALUES(1,'USER'),(2,'NotificationQueue'),(3,'PROJECT'),(4,'MENU'),(5,'PERMISSION'),(6,'GLOBALVARIABLE'),(7,'LABEL'),(8,'DEFINITION')");
     await db.execute("CREATE TABLE DEFINITION(formId TEXT PRIMARY KEY, projectId Number, name TEXT, template TEXT)");
+    await db.execute("CREATE TABLE WORKSPACE(wsId TEXT PRIMARY KEY, wsName Number,defaultTemplateId TEXT)");
+    await db.execute("CREATE TABLE NAVIGATION_MAPPING(templateId TEXT,buttonId TEXT,componentType TEXT,  componentSubType TEXT, redirectTemplateId TEXT,label TEXT,operation TEXT,containerId TEXT,wsId TEXT,PRIMARY KEY (templateId,buttonId))");
+
+
   }
 
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value) async {
@@ -141,23 +150,6 @@ class DatabaseHelper {
     return res.length;
   }
 
-  //------------------------------------------------------------------------------------------------------------------------
-  //------------------------------------------------------------------------------------------------------------------------
-  //------------------------------------------------------------------------------------------------------------------------
-
-
-  Future insert(Map<String, dynamic> map) async {
-    var dbClient = await dbSystem;
-    dbClient.rawQuery("DELETE FROM LOV");
-    dbClient.insert("LOV", map);
-  }
-
-
-  Future insertInfo() async {
-    var dbClient = await dbSystem;
-    dbClient.rawInsert(
-        "INSERT INTO Info (tableName,tableInfo) VALUES ('Projects','Sync')");
-  }
   Future<List> fetchData(String table) async {
     var dbClient = await dbSystem;
     var data = await dbClient.rawQuery("SELECT * FROM '$table' ");
@@ -168,22 +160,24 @@ class DatabaseHelper {
     var value = await dbClient.rawQuery("SELECT COUNT(1) FROM '$table' ");
     return value;
   }
-
-  Future<void> createTable(String tableName, String columnName, String columnDataType) async {
-		var dbClient = await dbContent;
-		await dbClient.execute('CREATE TABLE $tableName($columnName $columnDataType)');
-	}
-  Future<void> addColumnToTable(String tableName, String columnName, String columnDataType) async {
-		var dbClient = await dbContent;
-		await dbClient.execute('ALTER TABLE $tableName ADD $columnName $columnDataType;');
-	}
+  Future<void> insertWsIdInMenus() async{
+    var dbClient = await dbSystem;
+     await dbClient.rawQuery("UPDATE MENU SET wsId='15356537dedfer' WHERE menuIndex = 9 ");
+  }
   Future<List> fetchTemplateID(String id) async {
     var dbClient = await dbSystem;
     String query = "SELECT * FROM DEFINITION WHERE template LIKE '%$id%' ";
 //    print(query);
     var res = await dbClient.rawQuery(query);
     return  res;
-
+  }
+  Future<void> createTable(String tableName, String columnName, String columnDataType) async {
+    var dbClient = await dbContent;
+    await dbClient.execute('CREATE TABLE IF NOT EXISTS $tableName($columnName $columnDataType)');
+  }
+  Future<void> addColumnToTable(String tableName, String columnName, String columnDataType) async {
+    var dbClient = await dbContent;
+    await dbClient.execute('ALTER TABLE $tableName ADD $columnName $columnDataType;');
   }
 
 }

@@ -22,6 +22,7 @@ class CustomText extends StatefulWidget {
 
 class _CustomState extends State<CustomText> {
   String value;
+  var obj;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +54,14 @@ class _CustomState extends State<CustomText> {
               BlacklistingTextInputFormatter.singleLineFormatter,
             ],
             onChanged: (String value) {
+
+//              print(widget.item['nodehierarchy'].split('.').length);
+//              print(widget.item['nodehierarchy'].split('.').join('\'][\''));
+//print('[\''+widget.item['nodehierarchy'].split('.').join('\'][\'')+'\']');
+//jsonData.addAll({
+//
+//
+//});
               responseDetails.addAll({
 
                 "${widget.item['id']}":value

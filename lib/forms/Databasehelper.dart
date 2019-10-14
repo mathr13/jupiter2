@@ -13,7 +13,7 @@ class DatabaseHelper {
 
   static Database _db;
 
-  Future<Database> get db async {
+  Future<Database> get dbRender async {
     if (_db != null) return _db;
     _db = await initDb();
     return _db;
@@ -37,12 +37,12 @@ class DatabaseHelper {
   }
 
   Future insert(String tableName,Map<String, dynamic> map) async {
-    var dbClient = await db;
+    var dbClient = await dbRender;
     dbClient.insert(tableName, map,conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List> fetchTablesData(String type) async {
-    var dbClient = await db;
+    var dbClient = await dbRender;
 //    String query = "SELECT * FROM LOV WHERE type LIKE '$type' ";
 //    print(query);
     var res = await dbClient.rawQuery("SELECT * FROM LOV WHERE type LIKE '$type' ");

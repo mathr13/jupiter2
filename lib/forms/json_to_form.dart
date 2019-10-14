@@ -16,6 +16,7 @@ dynamic lov = json.decode(json.encode(inputData));
 var id;
 
 Map<String,dynamic> responseDetails={};
+Map<String,dynamic> jsonData={};
 class CoreForm extends StatefulWidget {
    CoreForm({
     @required this.form,
@@ -40,6 +41,7 @@ class _CoreFormState extends State<CoreForm> {
 
   _saveData() async{
     var db = new DatabaseHelper();
+    await db.dbRender;
     var info = json.decode(json.encode(inputData));
     Data data = new Data.fromJson(info);
     var navigate=json.decode(nagivationData);
