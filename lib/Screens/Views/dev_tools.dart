@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
-import 'package:jupiter/Services/jupiter_utlis.dart';
+import 'package:jupiter/Screens/Views/home.dart';
+
+import '../../main.dart';
 
 List<String> _tablesData = [];
 String dropdownValue;
+List<Map> bufferList;
 Widget buildbody = null;
 var count;
 var data ;
 ScrollController _scrollController = new ScrollController();
+var db = new DatabaseHelper();
 
 class DevTools extends StatefulWidget {
   @override _DevToolsState createState() => _DevToolsState();
@@ -19,6 +23,14 @@ Future getDataOfSystemTable() async {
   }
 }
 
+// Future getDataOfSystemTable() async {
+//   bufferList = await db.fetchTablesData();
+//   await Future.delayed(Duration(seconds: 2));
+//    for(int i=0;i<bufferList.length;i++) {
+//     _tablesData.add(bufferList[i]['tableName']);
+//   }
+// }
+
 class _DevToolsState extends State<DevTools> {
   @override Widget build(BuildContext context) {
     if(_tablesData.length==0) {getDataOfSystemTable();}
@@ -28,7 +40,7 @@ class _DevToolsState extends State<DevTools> {
         return true;
       },
       child: Scaffold(
-      resizeToAvoidBottomPadding: false, 
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(),
       body: SingleChildScrollView(
         child: Column(

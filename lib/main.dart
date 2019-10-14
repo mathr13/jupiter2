@@ -3,18 +3,23 @@ import 'package:jupiter/Routes/routes.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Services/firebaseFunctions.dart';
+import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 String baseUrl = "";
 bool isFirstLogin = true;
+List<Map> fetchedTableData = [];
 
 void main() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   if(sharedPreferences.containsKey("FirstTimeLogin")==true && sharedPreferences.get("FirstTimeLogin")==false) {
     isFirstLogin = false;
   }
+  var db = DatabaseHelper();
+ await db.dbSystem;
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(new FlutterApp());
   });
+  fetchedTableData = await db.fetchTablesData();
   baseUrl = await remoteConfig();
 }
 

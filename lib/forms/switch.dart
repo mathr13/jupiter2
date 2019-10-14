@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jupiter/forms/json_to_form.dart';
 class CustomSwitch extends StatefulWidget {
   const CustomSwitch({
    @required this.onChanged,
@@ -34,6 +35,11 @@ class _CustomState extends State<CustomSwitch> {
           value: widget.item['switchValue'],
           onChanged: (bool value) {
             this.setState(() {
+              responseDetails.addAll({
+
+                "${widget.item['id']}":value
+              });
+
               widget.formItems[widget.count]['switchValue'] = value;
               _handleChanged();
             });
@@ -42,7 +48,7 @@ class _CustomState extends State<CustomSwitch> {
   }
 
   void _handleChanged() {
-   widget.onChanged(widget.formItems);
+   widget.onChanged(responseDetails);
   }
 }
 

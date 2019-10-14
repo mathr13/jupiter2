@@ -59,7 +59,7 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE LABEL(key TEXT, value TEXT, localization TEXT, projectId NUMBER, appType TEXT,PRIMARY KEY(projectId,key,localization))");
     await db.execute("CREATE TABLE system_tables_info(tableId NUMBER, tableName TEXT, status BOOLEAN,PRIMARY KEY(tableId))");
     await db.execute("INSERT INTO system_tables_info(tableId, tableName) VALUES(1,'USER'),(2,'NotificationQueue'),(3,'PROJECT'),(4,'MENU'),(5,'PERMISSION'),(6,'GLOBALVARIABLE'),(7,'LABEL'),(8,'DEFINITION')");
-    await db.execute("CREATE TABLE DEFINITION(formId TEXT, projectId Number, name TEXT, template TEXT)");
+    await db.execute("CREATE TABLE DEFINITION(formId TEXT PRIMARY KEY, projectId Number, name TEXT, template TEXT)");
   }
 
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value) async {
@@ -76,7 +76,8 @@ class DatabaseHelper {
 
   Future<List<Map>> checkIfNotificationReceived(String tableName) async {
     var dbClient = await dbSystem;
-    return await dbClient.rawQuery("SELECT * FROM $tableName");
+    var res = await dbClient.rawQuery("SELECT * FROM $tableName");
+    return res;
   }
 
   Future<int> checkForDefaultProject() async {
@@ -101,7 +102,7 @@ class DatabaseHelper {
 
   Future<List> fetchTablesData() async {
     var dbClient = await dbSystem;
-    var res = await dbClient.rawQuery("SELECT tableName FROM system_tables_info WHERE tableName IS NOT NULL");
+    List<Map<String,dynamic>> res = await dbClient.rawQuery("SELECT tableName FROM system_tables_info WHERE tableName IS NOT NULL");
     return res.toList();
   }
 
@@ -114,6 +115,12 @@ class DatabaseHelper {
   Future<List<dynamic>> getProjectIdFromNotificationData() async {
     var dbClient=await dbSystem;
     List<dynamic> res = await dbClient.rawQuery('SELECT * FROM NotificationQueue WHERE projectId = -1');
+    var rese = await dbClient.rawQuery('SELECT * FROM NotificationQueue');
+    // print(rese.length);
+    // for(int q=0;q<rese.length;q++) {
+    //   print(rese[q]);
+    //   print("---------------------------------------------------------------");
+    // }
     return res;
   }
 
@@ -135,9 +142,9 @@ class DatabaseHelper {
     return res.toList();
   }
 
-  Future<int> checkLabelData() async {
+  Future<int> checkDefinitionData() async {
     var dbClient = await dbSystem;
-    var res = await dbClient.rawQuery("SELECT * FROM LABEL");
+    var res = await dbClient.rawQuery("SELECT * FROM DEFINITION");
     return res.length;
   }
 
@@ -171,10 +178,22 @@ class DatabaseHelper {
 
   Future<void> createTable(String tableName, String columnName, String columnDataType) async {
 		var dbClient = await dbContent;
-		await dbClient.execute('CREATE TABLE $tableName($columnName $columnDataType)');
+  await dbClient.execute('CREATE TABLE IF NOT EXISTS $tableName($columnName $columnDataType)');
 	}
   Future<void> addColumnToTable(String tableName, String columnName, String columnDataType) async {
 		var dbClient = await dbContent;
 		await dbClient.execute('ALTER TABLE $tableName ADD $columnName $columnDataType;');
+	}
+  Future<List> fetchTemplateID(String id) async {
+    var dbClient = await dbSystem;
+    String query = "SELECT * FROM DEFINITION WHERE template LIKE '%$id%' ";
+//    print(query);
+    var res = await dbClient.rawQuery(query);
+    return  res;
+  }
+  Future<dynamic> checkIfTableExist(String tableName) async {
+		var dbClient = await dbSystem;
+		var res = await dbClient.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='$tableName'");
+    return res.length;
 	}
 }

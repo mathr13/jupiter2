@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jupiter/Constant/string_constant.dart';
+import 'package:jupiter/forms/json_to_form.dart';
 
 class CustomText extends StatefulWidget {
-  const CustomText({
+   CustomText({
     @required this.onChanged,
     this.item,
     this.count,
@@ -20,7 +22,6 @@ class CustomText extends StatefulWidget {
 
 class _CustomState extends State<CustomText> {
   String value;
-  dynamic response;
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +48,16 @@ class _CustomState extends State<CustomText> {
             //       inputFormatters: [WhitelistingTextInputFormatter(RegExp(widget.menus['regex'])),],
             inputFormatters: <TextInputFormatter>[
 //              WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
+//              BlacklistingTextInputFormatter(RegExp(widget.item['regex'])),
+
               BlacklistingTextInputFormatter.singleLineFormatter,
             ],
             onChanged: (String value) {
-              widget.formItems[widget.count]['response'] = value;
+              responseDetails.addAll({
+
+                "${widget.item['id']}":value
+              });
+//              widget.formItems[widget.count]['response'] = value;
               _handleChanged();
             },
             obscureText: widget.item['type'] == "Password" ? true : false,
@@ -61,7 +68,7 @@ class _CustomState extends State<CustomText> {
   }
 
   void _handleChanged() {
-    widget.onChanged(widget.formItems);
+    widget.onChanged(responseDetails);
   }
   TextInputType selectType (){
     if(widget.item['subType']=='text')
@@ -70,6 +77,7 @@ class _CustomState extends State<CustomText> {
       return TextInputType.number;
     else if(widget.item['subType']=='decimal')
       return TextInputType.phone;
+    else return TextInputType.text;
   }
   String addAsterisk(){
     if(widget.item['constraint']=='MANDATORY')

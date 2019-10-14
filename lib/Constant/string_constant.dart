@@ -14,6 +14,7 @@ String appType = "mob";
 //----------------------------------------jupiter_services----------------------------------------
 
 String userApiUrl = 'https://on.petroit.com/mozaic/services/coreuser/auth';
+// String userApiUrl = 'http://192.168.9.251:8080/Mosaic/services/coreuser/auth';
 String cookies = "Cookies";
 
 

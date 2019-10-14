@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:jupiter/Constant/string_constant.dart';
@@ -12,6 +13,7 @@ import 'jupiter_utlis.dart';
 
 String notifResponse = "";
 String contentDb;
+int cunt = 1;
 List<Map<String, dynamic>> result = [];
 List<Map<String, dynamic>> parameter = [];
 dynamic responseApi;
@@ -20,19 +22,20 @@ var db = new DatabaseHelper();
 Future<void> getDatafromFirebase(context) async {
   firebaseMessaging.configure(
     onMessage: (dynamic response) async {
-      // print(response);
-      final notifResponse = json.decode(response[responseData]);
-      // print(notifResponse);
+      var notifResponse;
+      // print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+      // print(response[responseData]["data"]);
+      // print(cunt);
+      // cunt++;
+      if(Platform.isAndroid) {
+        notifResponse = json.decode(response[responseData]["data"].toString());
+      }else if(Platform.isIOS) {
+        notifResponse = json.decode(response[responseData].toString());
+      }
       for(int i=0;i<notifResponse.length;i++) {
         db.populateTableWithMapping(notificationTable, notifResponse[i]);
       }
     },
-    onLaunch: (a) async {
-      print(a);
-    },
-    onResume: (a) async {
-      print(a);
-    }
   );
 }
 
@@ -49,25 +52,32 @@ void getProjectData() async {
       parameter[i][key] = result[i][k];
     });
     parameter[i]["timestamp"] = -1;
-    responseApi = await callApi(result[i][modelUri], parameter[i].toString());
-    final responseOfApi = json.decode(responseApi.body);
-    if(result[i]["message"]=="DEFINITION") {
-      DefinitionResponseModel definitionResponseModel = new DefinitionResponseModel.fromJson(responseOfApi);
-      for(int j=0;j<definitionResponseModel.definitionDataModel.definition.length;j++) {
-        db.populateTableWithCustomColumn(result[i]["message"], definitionResponseModel.definitionDataModel.definition[j].toMap(), "projectId", definitionResponseModel.definitionDataModel.projectId);
-      }
-    }else if(result[i]["message"]=="MODEL") {
+    int checkTableExistance = await db.checkIfTableExist(result[i]["message"]);
+    if(result[i]["message"]=="MODEL") {
+      responseApi = await callApi(result[i][modelUri], parameter[i].toString());
+      final responseOfApi = json.decode(responseApi.body);
       ModelReponseModel modelReponseModel = new ModelReponseModel.fromJson(responseOfApi);
       for(int j=0;j<modelReponseModel.modelDataModel.models.length;j++) {
         db.createTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[0].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[0].dataType);
         for(int k=1;k<modelReponseModel.modelDataModel.models[j].tableColumns.length;k++) {
+          if(k==1) {await Future.delayed(Duration(seconds: 1));}
           db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
         }
       }
-    }else {
-      GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
-      for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
-        db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId);
+    }else if(checkTableExistance != 0) {
+      responseApi = await callApi(result[i][modelUri], parameter[i].toString());
+      final responseOfApi = json.decode(responseApi.body);
+      if(result[i]["message"]=="DEFINITION") {
+        DefinitionResponseModel definitionResponseModel = new DefinitionResponseModel.fromJson(responseOfApi);
+        for(int j=0;j<definitionResponseModel.definitionDataModel.definition.length;j++) {
+          db.populateTableWithCustomColumn(result[i]["message"], definitionResponseModel.definitionDataModel.definition[j].toMap(), "projectId", definitionResponseModel.definitionDataModel.projectId);
+        }
+      }
+      else {
+        GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
+        for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
+          db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId);
+        }
       }
     }
   }
@@ -84,8 +94,6 @@ void saveMasterData(List<Map> result) async {
     responseApi = await callApi(result[i][modelUri], parameter[i].toString());
     final responseOfApi = json.decode(responseApi.body);
     GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
-    if(genericResponseModel.genericDataModel.projectId == 11055) {
-    }
     for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
       db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId);
     }
@@ -107,7 +115,7 @@ void saveMasterData(List<Map> result) async {
 
 void checkIfDataIsStored(context) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  db.checkLabelData().then((labelData) {
+  db.checkDefinitionData().then((labelData) {
     if(labelData>0) {
       sharedPreferences.setBool("FirstTimeLogin", false);
       Navigator.push(context, MaterialPageRoute(builder: (context) => Menus()));
