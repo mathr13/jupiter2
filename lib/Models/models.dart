@@ -1,8 +1,4 @@
 import 'dart:convert';
-
-import 'dart:ffi';
-
-import 'package:jupiter/forms/jsondata.dart';
 class AuthenticationObject {
   UserData data;
   Status status;
@@ -152,8 +148,7 @@ class DefinitionModel {
     return DefinitionModel(
       formId: parsedJson['formId'],
       name: parsedJson['name'],
-      template:json.encode(parsedJson
-      ['template'])
+      template:json.encode(parsedJson['template'])
     );
   }
   Map<dynamic, dynamic> toMap() {
@@ -164,6 +159,34 @@ class DefinitionModel {
     return map;
   }
 }
+
+// class DefinitionModel {
+//   String nextSeq;
+//   String templateName;
+//   String templateId;
+//   String definition;
+
+//   DefinitionModel({this.nextSeq,this.templateName,this.templateId,this.definition});
+
+//   factory DefinitionModel.fromJson(Map<String, dynamic> parsedJson) {
+//     return DefinitionModel(
+//       templateId: parsedJson['templateId'],
+//       templateName: parsedJson['templateName'],
+//       nextSeq: parsedJson['nextSeq'],
+//       definition: json.encode(parsedJson['defintion'])
+//     );
+//   }
+//   Map<dynamic, dynamic> toMap() {
+//     var map=new Map<String, dynamic>();
+//     map["templateId"]=templateId;
+//     map["templateName"]=templateName;
+//     map["nextSeq"]=nextSeq;
+//     map["definition"]=definition;
+//     return map;
+//   }
+// }
+
+
 
 class ModelReponseModel {
   ModelDataModel modelDataModel;

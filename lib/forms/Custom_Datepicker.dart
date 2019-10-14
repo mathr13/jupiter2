@@ -12,8 +12,7 @@ class CustomDatePicker extends StatefulWidget {
   final Map item;
   final ValueChanged<dynamic> onChanged;
   final dynamic formItems;
-  @override
-  _CustomDatePickerState createState() => _CustomDatePickerState();
+  @override _CustomDatePickerState createState() => _CustomDatePickerState();
 }
 
 class _CustomDatePickerState extends State<CustomDatePicker> {

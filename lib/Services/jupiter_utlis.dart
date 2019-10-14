@@ -16,19 +16,19 @@ import 'firebaseFunctions.dart';
 
 String finalUrl = "";
 List<Map> checkNotificationData;
-List<Map> fetchedTableData = [];
+// List<Map> fetchedTableData = [];
 List<Map> fetchedProjectFromNotificationData = [];
 
 void authenticate(context) async {
   User user = User(
     // userName: emailController.text,
     // password: passwordController.text,
-//     userName: "usharma@petroitg.com",
-//     password: "India@123"
-    userName: "piku@gmail.com",
-    password: "piku@gmail.com"
-//    userName: "superman@mailinator.com",
-//    password: "India@123",
+    // userName: "usharma@petroitg.com",
+    // password: "India@123"
+    // userName: "piku@gmail.com",
+    // password: "piku@gmail.com"
+   userName: "superman@mailinator.com",
+   password: "India@123",
     // userName: "sojha@petroitg.com",
     // password: "sumi"
   );
@@ -44,7 +44,7 @@ void authenticate(context) async {
       db.populateTableWithMapping(userTable, authObject.data.toMap());
     } else {dialog(wrongAuth, context);}
 
-    fetchedTableData = await db.fetchTablesData();
+    // fetchedTableData = await db.fetchTablesData();
 
     getDatafromFirebase(context);   //Get Notification Data From Firebase
     await Future.delayed(Duration(seconds: 10));

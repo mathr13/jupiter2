@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/Screens/Views/forgot_password.dart';
@@ -5,6 +6,8 @@ import 'package:jupiter/forms/main.dart';
 import 'dev_tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jupiter/Models/models.dart';
+
+var navigationData;
 
 class Menus extends StatefulWidget {
   @override
@@ -16,8 +19,7 @@ class _MenusState extends State<Menus> {
   int _currentSelected = 0;
   final db = new DatabaseHelper();
 
-  @override
-  Widget build(BuildContext context) {
+  @override Widget build(BuildContext context) {
     return new WillPopScope(
         onWillPop: () async {
           return true;
@@ -41,10 +43,7 @@ class _MenusState extends State<Menus> {
                     child: ListTile(
                         title: Container(child: Text("Dev Tools")),
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => new DevTools()));
+                          Navigator.push(context,MaterialPageRoute(builder: (context) => new DevTools()));
                         })),
                 Expanded(
                   child: new ListView(children: <Widget>[
@@ -79,6 +78,13 @@ class _MenusState extends State<Menus> {
                                                         builder: (context) =>
                                                             MyApp()));
 
+                                              if (position == 0) {
+                                                Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
+                                              }else {
+                                                var data = '[{"templateId":"Save Item","buttonId":"save","componentType":"button","componentSubType":"button","redirectTemplateId":"List Item","label":"save","operation":"save","containerId":"P1"},{"templateId":"Save Item","buttonId":"close","componentType":"button","componentSubType":"button","redirectTemplateId":"Dashboard","label":"close","operation":"close","containerId":"P1"}]';
+                                                navigationData = json.decode(data);
+                                                Navigator.push(context,MaterialPageRoute(builder: (context) =>GenericMenuPage()));
+                                              }
                                             }
                                             setState(() {
                                               _currentSelected = position;
@@ -117,5 +123,35 @@ class _MenusState extends State<Menus> {
               SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
           sharedPreferences.setString("TemplateID", res[0]['defaultTemplateId']);
 
+  }
+}
+
+
+
+class GenericMenuPage extends StatefulWidget {
+  @override _GenericMenuPageState createState() => _GenericMenuPageState();
+}
+
+class _GenericMenuPageState extends State<GenericMenuPage> {
+  @override Widget build(BuildContext context) {
+    List<String> buttons = ["one","do"];
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {Navigator.pop(context);},
+        ),
+      ),
+      body: new Center(
+        child: new ListView.builder(
+          itemCount: buttons.length,
+          itemBuilder: (context,index) {
+            return ListTile(
+              title: Text(navigationData[index]['label']),
+            );
+          },
+        )
+      ),
+    );
   }
 }

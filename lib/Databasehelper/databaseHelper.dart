@@ -85,7 +85,8 @@ class DatabaseHelper {
 
   Future<List<Map>> checkIfNotificationReceived(String tableName) async {
     var dbClient = await dbSystem;
-    return await dbClient.rawQuery("SELECT * FROM $tableName");
+    var res = await dbClient.rawQuery("SELECT * FROM $tableName");
+    return res;
   }
 
   Future<int> checkForDefaultProject() async {
@@ -108,7 +109,7 @@ class DatabaseHelper {
 
   Future<List> fetchTablesData() async {
     var dbClient = await dbSystem;
-    var res = await dbClient.rawQuery("SELECT tableName FROM system_tables_info WHERE tableName IS NOT NULL");
+    List<Map<String,dynamic>> res = await dbClient.rawQuery("SELECT tableName FROM system_tables_info WHERE tableName IS NOT NULL");
     return res.toList();
   }
 
@@ -121,6 +122,12 @@ class DatabaseHelper {
   Future<List<dynamic>> getProjectIdFromNotificationData() async {
     var dbClient=await dbSystem;
     List<dynamic> res = await dbClient.rawQuery('SELECT * FROM NotificationQueue WHERE projectId = -1');
+    var rese = await dbClient.rawQuery('SELECT * FROM NotificationQueue');
+    // print(rese.length);
+    // for(int q=0;q<rese.length;q++) {
+    //   print(rese[q]);
+    //   print("---------------------------------------------------------------");
+    // }
     return res;
   }
 
@@ -142,9 +149,9 @@ class DatabaseHelper {
     return res.toList();
   }
 
-  Future<int> checkLabelData() async {
+  Future<int> checkDefinitionData() async {
     var dbClient = await dbSystem;
-    var res = await dbClient.rawQuery("SELECT * FROM LABEL");
+    var res = await dbClient.rawQuery("SELECT * FROM DEFINITION");
     return res.length;
   }
 
@@ -178,12 +185,16 @@ class DatabaseHelper {
     return  res;
   }
   Future<void> createTable(String tableName, String columnName, String columnDataType) async {
-    var dbClient = await dbContent;
-    await dbClient.execute('CREATE TABLE IF NOT EXISTS $tableName($columnName $columnDataType)');
-  }
+		var dbClient = await dbContent;
+  await dbClient.execute('CREATE TABLE IF NOT EXISTS $tableName($columnName $columnDataType)');
+	}
   Future<void> addColumnToTable(String tableName, String columnName, String columnDataType) async {
-    var dbClient = await dbContent;
-    await dbClient.execute('ALTER TABLE $tableName ADD $columnName $columnDataType;');
-  }
-
+		var dbClient = await dbContent;
+		await dbClient.execute('ALTER TABLE $tableName ADD $columnName $columnDataType;');
+	}
+  Future<dynamic> checkIfTableExist(String tableName) async {
+		var dbClient = await dbSystem;
+		var res = await dbClient.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='$tableName'");
+    return res.length;
+	}
 }

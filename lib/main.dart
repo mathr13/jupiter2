@@ -7,6 +7,7 @@ import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 String baseUrl = "";
 bool isFirstLogin = true;
+List<Map> fetchedTableData = [];
 
 void main() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -18,6 +19,7 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(new FlutterApp());
   });
+  fetchedTableData = await db.fetchTablesData();
   baseUrl = await remoteConfig();
 }
 
