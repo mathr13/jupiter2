@@ -13,11 +13,11 @@ import 'jupiter_utlis.dart';
 String data = json.encode({
   "data": {
     "WORKSPACE": [{
-      "defaultTemplateId": "Save Item",
+      "defaultTemplateId": "ab62485f-522a-44a6-bba9-071f4c8c0365",
       "wsId": "15356537dedfer",
       "wsName": "Save Item",
       "navigationMapping": [{
-        "templateId": "Save Item",
+        "templateId": "ab62485f-522a-44a6-bba9-071f4c8c0365",
         "buttonId": "save",
         "componentType": "button",
         "componentSubType": "button",
@@ -37,7 +37,33 @@ String data = json.encode({
           "containerId": "P1"
         }
       ]
-    }],
+    },
+      {
+        "defaultTemplateId": "Save Item",
+        "wsId": "15356537d",
+        "wsName": "Save Item",
+        "navigationMapping": [{
+          "templateId": "ab62485f-522a-44a6-bba9-071f4c8c0365",
+          "buttonId": "save",
+          "componentType": "button",
+          "componentSubType": "button",
+          "redirectTemplateId": "List Item",
+          "label": "save",
+          "operation": "save",
+          "containerId": "P1"
+        },
+          {
+            "templateId": "Save Item",
+            "buttonId": "close",
+            "componentType": "button",
+            "componentSubType": "button",
+            "redirectTemplateId": "Dashboard",
+            "label": "close",
+            "operation": "close",
+            "containerId": "P1"
+          }
+        ]
+      }],
     "projectId": 12345
   }
 }

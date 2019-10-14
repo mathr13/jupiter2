@@ -5,6 +5,7 @@ import 'package:jupiter/Screens/Views/forgot_password.dart';
 import 'package:jupiter/forms/main.dart';
 import 'dev_tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jupiter/Models/models.dart';
 
 var navigationData;
 
@@ -68,10 +69,16 @@ class _MenusState extends State<Menus> {
                                                     ["value"]
                                                 .toString()),
                                           ),
-                                          onTap: () {
+                                          onTap: () async{
                                             {
+                                                await _workSpaceData(snapshot.data[position]['wsId'].toString());
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MyApp()));
+
                                               if (position == 0) {
-                                                _saveTemplateId();
                                                 Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
                                               }else {
                                                 var data = '[{"templateId":"Save Item","buttonId":"save","componentType":"button","componentSubType":"button","redirectTemplateId":"List Item","label":"save","operation":"save","containerId":"P1"},{"templateId":"Save Item","buttonId":"close","componentType":"button","componentSubType":"button","redirectTemplateId":"Dashboard","label":"close","operation":"close","containerId":"P1"}]';
@@ -107,10 +114,14 @@ class _MenusState extends State<Menus> {
               ])),
         ));
   }
-  _saveTemplateId()async{
-
+  _workSpaceData(String wsId)async{
+    var db = new DatabaseHelper();
+    var res = await db.fetchWorkSpaceData(wsId);
+//  NavigationMapping navigationMapping = new NavigationMapping.fromJson(res[0]);
+//print(navigationMapping.containerId);
+    print(res[0]['defaultTemplateId']);
               SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-          sharedPreferences.setString("TemplateID", '295737f6-70fd-42cc-a066-c6fe1529ca5f');
+          sharedPreferences.setString("TemplateID", res[0]['defaultTemplateId']);
 
   }
 }
