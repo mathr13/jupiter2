@@ -94,7 +94,12 @@ void getProjectData() async {
           if(k==1) {await Future.delayed(Duration(seconds: 1));}
           db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
         }
-        //TODO: cut paste
+        WorkSpaceDataModel workSpaceDataModel = new WorkSpaceDataModel.fromJson((json.decode(data))['data']);
+        for (int i = 0; i < workSpaceDataModel.workSpace.length; i++) {
+          db.populateTableWithMapping("WORKSPACE", workSpaceDataModel.workSpace[i].toMap());
+          for (int j=0;j<workSpaceDataModel.workSpace[i].navigationMapping.length;j++)
+            db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceDataModel.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceDataModel.workSpace[i].wsId);
+        }
       }
     }else if(checkTableExistance != 0) {
       responseApi = await callApi(result[i][modelUri], parameter[i].toString());
@@ -105,6 +110,16 @@ void getProjectData() async {
           db.populateTableWithCustomColumn(result[i]["message"], definitionResponseModel.definitionDataModel.definition[j].toMap(), "projectId", definitionResponseModel.definitionDataModel.projectId);
         }
       }
+      // else if(result[i]['message']=="WORKSPACE") {
+      //   WorkSpaceDataModel workSpaceDataModel = new WorkSpaceDataModel.fromJson(
+      //       data);
+      //   for (int i = 0; i < workSpaceDataModel.workSpace.length; i++) {
+      //     db.populateTableWithMapping(
+      //         "WORKSPACE", workSpaceDataModel.workSpace[i].toMap());
+      //     for (int j=0;j<workSpaceDataModel.workSpace[i].navigationMapping.length;j++)
+      //       db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceDataModel.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceDataModel.workSpace[i].wsId);
+      //   }
+      // }
       else {
         GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
         for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {

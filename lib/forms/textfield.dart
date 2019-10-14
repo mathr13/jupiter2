@@ -54,8 +54,6 @@ class _CustomState extends State<CustomText> {
               BlacklistingTextInputFormatter.singleLineFormatter,
             ],
             onChanged: (String value) {
-<<<<<<< HEAD:lib/forms/textfield.dart
-=======
 
 //              print(widget.item['nodehierarchy'].split('.').length);
 //              print(widget.item['nodehierarchy'].split('.').join('\'][\''));
@@ -64,7 +62,6 @@ class _CustomState extends State<CustomText> {
 //
 //
 //});
->>>>>>> 50f12c841a030f948b8c3ad55367631a252bec26:lib/forms/textfield.dart
               responseDetails.addAll({
 
                 "${widget.item['id']}":value
