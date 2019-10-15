@@ -14,12 +14,12 @@ class _State extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // new Future.delayed(const Duration(seconds: 3), () => Navigator.push(context,MaterialPageRoute(builder: (context) => SignIn())));
-    if(isFirstLogin==true) {
-      new Future.delayed(const Duration(seconds: 3), () => Navigator.push(context,MaterialPageRoute(builder: (context) => SignIn())));
-    }else {
-      new Future.delayed(const Duration(seconds: 3), () => Navigator.push(context,MaterialPageRoute(builder: (context) => Menus())));
-    }
+    new Future.delayed(const Duration(seconds: 3), () => Navigator.push(context,MaterialPageRoute(builder: (context) => SignIn())));
+    // if(isFirstLogin==true) {
+    //   new Future.delayed(const Duration(seconds: 3), () => Navigator.push(context,MaterialPageRoute(builder: (context) => SignIn())));
+    // }else {
+    //   new Future.delayed(const Duration(seconds: 3), () => Navigator.push(context,MaterialPageRoute(builder: (context) => Menus())));
+    // }
   }
 
     @override Widget build(BuildContext context) {

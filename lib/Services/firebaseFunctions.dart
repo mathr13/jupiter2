@@ -64,13 +64,6 @@ void getProjectData() async {
       //     db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
       //   }
       // }
-      final workSpaceResponse = json.decode(data);
-      WorkSpaceResponseModel workSpaceResponseModel = new WorkSpaceResponseModel.fromJson(workSpaceResponse);
-      for (int i = 0; i < workSpaceResponseModel.data.workSpace.length; i++) {
-        db.populateTableWithMapping("WORKSPACE", workSpaceResponseModel.data.workSpace[i].toMap());
-        for (int j=0;j<workSpaceResponseModel.data.workSpace[i].navigationMapping.length;j++)
-          db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceResponseModel.data.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceResponseModel.data.workSpace[i].wsId);
-      }
     }else if(checkTableExistance != 0) {
       responseApi = await callApi(result[i][modelUri], parameter[i].toString());
       final responseOfApi = json.decode(responseApi.body);
@@ -80,16 +73,16 @@ void getProjectData() async {
           db.populateTableWithCustomColumn(result[i]["message"], definitionResponseModel.definitionDataModel.definition[j].toMap(), "projectId", definitionResponseModel.definitionDataModel.projectId);
         }
       }
-      // else if(result[i]['message']=="WORKSPACE") {
-      //   WorkSpaceDataModel workSpaceDataModel = new WorkSpaceDataModel.fromJson(
-      //       data);
-      //   for (int i = 0; i < workSpaceDataModel.workSpace.length; i++) {
-      //     db.populateTableWithMapping(
-      //         "WORKSPACE", workSpaceDataModel.workSpace[i].toMap());
-      //     for (int j=0;j<workSpaceDataModel.workSpace[i].navigationMapping.length;j++)
-      //       db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceDataModel.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceDataModel.workSpace[i].wsId);
-      //   }
-      // }
+      else if(result[i]['message']=="WORKSPACE") {
+        responseApi = await callApi(result[i][modelUri], parameter[i].toString());
+        final responseOfApi = json.decode(responseApi.body);
+        WorkSpaceResponseModel workSpaceResponseModel = new WorkSpaceResponseModel.fromJson(responseOfApi);
+        for (int i = 0; i < workSpaceResponseModel.data.workSpace.length; i++) {
+          db.populateTableWithMapping("WORKSPACE", workSpaceResponseModel.data.workSpace[i].toMap());
+          for (int j=0;j<workSpaceResponseModel.data.workSpace[i].navigationMapping.length;j++)
+            db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceResponseModel.data.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceResponseModel.data.workSpace[i].wsId);
+        }
+      }
       else {
         GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
         for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
@@ -150,8 +143,6 @@ Future<String> remoteConfig() async {
     'baseURL': 'https://on.petroit.com/mozaic/services',
   });
   // await remoteConfig.fetch();
-  await remoteConfig.activateFetched();
-  // await remoteConfig.fetch(expiration: const Duration(seconds: 1));
   await remoteConfig.activateFetched();
   return remoteConfig.getValue("baseURL").asString();
 }

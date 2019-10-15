@@ -191,7 +191,7 @@ class DatabaseHelper {
   
   Future<List> fetchButtonData() async {
     var dbClient = await dbSystem;
-    var res = await dbClient.rawQuery("SELECT label FROM NAVIGATION_MAPPING WHERE wsId in (SELECT wsId FROM MENU)");
+    var res = await dbClient.rawQuery("SELECT * FROM NAVIGATION_MAPPING WHERE wsId in (SELECT wsId FROM MENU)");
     return res.toList();
   }
 }

@@ -67,9 +67,10 @@ class _AppState extends State<App> {
         home:Scaffold(
       appBar: new AppBar(
         title: new Text(title),
-//        leading: IconButton(icon: Icon(Icons.arrow_back),tooltip: 'Back!',
-//    onPressed:() =>
-//          Navigator.of(context).pop()
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back_ios),
+        //   onPressed: () {Navigator.pop(context);},
+        // )
 
 //    Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp())))
 // )

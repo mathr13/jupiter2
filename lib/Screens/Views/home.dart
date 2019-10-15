@@ -5,11 +5,10 @@ import 'package:jupiter/forms/main.dart';
 import 'dev_tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 var navigationData;
-List<String> buttons = [];
+List<dynamic> buttons = [];
 
 class Menus extends StatefulWidget {
-  @override
-  _MenusState createState() => _MenusState();
+  @override _MenusState createState() => _MenusState();
 }
 
 class _MenusState extends State<Menus> {
@@ -73,10 +72,10 @@ class _MenusState extends State<Menus> {
                                                 // Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
 
                                               if (position == 0) {
+                                                _workSpaceData("jdjd");
                                                 Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
                                               }else {
                                                 getButtonData();
-                                                await Future.delayed(Duration(seconds: 2));
                                                 Navigator.push(context,MaterialPageRoute(builder: (context) =>GenericMenuPage()));
                                               }
                                             }
@@ -109,19 +108,18 @@ class _MenusState extends State<Menus> {
         ));
   }
   _workSpaceData(String wsId)async{
-    var db = new DatabaseHelper();
-    var res = await db.fetchWorkSpaceData(wsId);
+    // var db = new DatabaseHelper();
+    // var res = await db.fetchWorkSpaceData(wsId);
 //  NavigationMapping navigationMapping = new NavigationMapping.fromJson(res[0]);
 //print(navigationMapping.containerId);
     print(res[0]['defaultTemplateId']);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setString("TemplateID", res[0]['defaultTemplateId']);
+    sharedPreferences.setString("TemplateID", "46c67145-0367-4b53-9264-7868703d077c");
   }
 }
 
 void getButtonData() async {
   buttons = await db.fetchButtonData();
-  print("buttons");
 }
 
 
@@ -143,10 +141,8 @@ class _GenericMenuPageState extends State<GenericMenuPage> {
         child: new ListView.builder(
           itemCount: buttons.length,
           itemBuilder: (context,index) {
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            print(buttons[index]);
             return ListTile(
-              title: Text("label"),
+              title: Text(buttons[index]['label']),
             );
           },
         )
