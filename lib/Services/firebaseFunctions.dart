@@ -10,64 +10,7 @@ import 'package:jupiter/Screens/Views/home.dart';
 import 'package:jupiter/Screens/Views/sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'jupiter_utlis.dart';
-String data = json.encode({
-  "data": {
-    "WORKSPACE": [{
-      "defaultTemplateId": "ab62485f-522a-44a6-bba9-071f4c8c0365",
-      "wsId": "15356537dedfer",
-      "wsName": "Save Item",
-      "navigationMapping": [{
-        "templateId": "ab62485f-522a-44a6-bba9-071f4c8c0365",
-        "buttonId": "save",
-        "componentType": "button",
-        "componentSubType": "button",
-        "redirectTemplateId": "List Item",
-        "label": "save",
-        "operation": "save",
-        "containerId": "P1"
-      },
-        {
-          "templateId": "Save Item",
-          "buttonId": "close",
-          "componentType": "button",
-          "componentSubType": "button",
-          "redirectTemplateId": "Dashboard",
-          "label": "close",
-          "operation": "close",
-          "containerId": "P1"
-        }
-      ]
-    },
-      {
-        "defaultTemplateId": "Save Item",
-        "wsId": "15356537d",
-        "wsName": "Save Item",
-        "navigationMapping": [{
-          "templateId": "ab62485f-522a-44a6-bba9-071f4c8c0365",
-          "buttonId": "save",
-          "componentType": "button",
-          "componentSubType": "button",
-          "redirectTemplateId": "List Item",
-          "label": "save",
-          "operation": "save",
-          "containerId": "P1"
-        },
-          {
-            "templateId": "Save Item",
-            "buttonId": "close",
-            "componentType": "button",
-            "componentSubType": "button",
-            "redirectTemplateId": "Dashboard",
-            "label": "close",
-            "operation": "close",
-            "containerId": "P1"
-          }
-        ]
-      }],
-    "projectId": 12345
-  }
-}
-);
+String data = '{"data":{"WORKSPACE":[{"defaultTemplateId":"Save Item","wsId":"save_Item","wsName":"Save Item","navigationMapping":[{"templateId":"Save Item","buttonId":"save","componentType":"button","componentSubType":"button","redirectTemplateId":"List Item","label":"save","operation":"save","containerId":"P1"},{"templateId":"Save Item","buttonId":"close","componentType":"button","componentSubType":"button","redirectTemplateId":"Dashboard","label":"close","operation":"close","containerId":"P1"}]}],"projectId":12345}}';
 String notifResponse = "";
 String contentDb;
 int cunt = 1;
@@ -111,21 +54,22 @@ void getProjectData() async {
     parameter[i]["timestamp"] = -1;
     int checkTableExistance = await db.checkIfTableExist(result[i]["message"]);
     if(result[i]["message"]=="MODEL") {
-      responseApi = await callApi(result[i][modelUri], parameter[i].toString());
-      final responseOfApi = json.decode(responseApi.body);
-      ModelReponseModel modelReponseModel = new ModelReponseModel.fromJson(responseOfApi);
-      for(int j=0;j<modelReponseModel.modelDataModel.models.length;j++) {
-        db.createTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[0].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[0].dataType);
-        for(int k=1;k<modelReponseModel.modelDataModel.models[j].tableColumns.length;k++) {
-          if(k==1) {await Future.delayed(Duration(seconds: 1));}
-          db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
-        }
-        WorkSpaceDataModel workSpaceDataModel = new WorkSpaceDataModel.fromJson((json.decode(data))['data']);
-        for (int i = 0; i < workSpaceDataModel.workSpace.length; i++) {
-          db.populateTableWithMapping("WORKSPACE", workSpaceDataModel.workSpace[i].toMap());
-          for (int j=0;j<workSpaceDataModel.workSpace[i].navigationMapping.length;j++)
-            db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceDataModel.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceDataModel.workSpace[i].wsId);
-        }
+      // responseApi = await callApi(result[i][modelUri], parameter[i].toString());
+      // final responseOfApi = json.decode(responseApi.body);
+      // ModelReponseModel modelReponseModel = new ModelReponseModel.fromJson(responseOfApi);
+      // for(int j=0;j<modelReponseModel.modelDataModel.models.length;j++) {
+      //   db.createTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[0].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[0].dataType);
+      //   for(int k=1;k<modelReponseModel.modelDataModel.models[j].tableColumns.length;k++) {
+      //     if(k==1) {await Future.delayed(Duration(seconds: 1));}
+      //     db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
+      //   }
+      // }
+      final workSpaceResponse = json.decode(data);
+      WorkSpaceResponseModel workSpaceResponseModel = new WorkSpaceResponseModel.fromJson(workSpaceResponse);
+      for (int i = 0; i < workSpaceResponseModel.data.workSpace.length; i++) {
+        db.populateTableWithMapping("WORKSPACE", workSpaceResponseModel.data.workSpace[i].toMap());
+        for (int j=0;j<workSpaceResponseModel.data.workSpace[i].navigationMapping.length;j++)
+          db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceResponseModel.data.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceResponseModel.data.workSpace[i].wsId);
       }
     }else if(checkTableExistance != 0) {
       responseApi = await callApi(result[i][modelUri], parameter[i].toString());

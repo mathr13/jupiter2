@@ -1,13 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/Screens/Views/forgot_password.dart';
 import 'package:jupiter/forms/main.dart';
 import 'dev_tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jupiter/Models/models.dart';
-
 var navigationData;
+List<String> buttons = [];
 
 class Menus extends StatefulWidget {
   @override
@@ -71,18 +69,14 @@ class _MenusState extends State<Menus> {
                                           ),
                                           onTap: () async{
                                             {
-                                                await _workSpaceData(snapshot.data[position]['wsId'].toString());
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            MyApp()));
+                                                // await _workSpaceData(snapshot.data[position]['wsId'].toString());
+                                                // Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
 
                                               if (position == 0) {
                                                 Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
                                               }else {
-                                                var data = '[{"templateId":"Save Item","buttonId":"save","componentType":"button","componentSubType":"button","redirectTemplateId":"List Item","label":"save","operation":"save","containerId":"P1"},{"templateId":"Save Item","buttonId":"close","componentType":"button","componentSubType":"button","redirectTemplateId":"Dashboard","label":"close","operation":"close","containerId":"P1"}]';
-                                                navigationData = json.decode(data);
+                                                getButtonData();
+                                                await Future.delayed(Duration(seconds: 2));
                                                 Navigator.push(context,MaterialPageRoute(builder: (context) =>GenericMenuPage()));
                                               }
                                             }
@@ -120,10 +114,14 @@ class _MenusState extends State<Menus> {
 //  NavigationMapping navigationMapping = new NavigationMapping.fromJson(res[0]);
 //print(navigationMapping.containerId);
     print(res[0]['defaultTemplateId']);
-              SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-          sharedPreferences.setString("TemplateID", res[0]['defaultTemplateId']);
-
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString("TemplateID", res[0]['defaultTemplateId']);
   }
+}
+
+void getButtonData() async {
+  buttons = await db.fetchButtonData();
+  print("buttons");
 }
 
 
@@ -134,7 +132,6 @@ class GenericMenuPage extends StatefulWidget {
 
 class _GenericMenuPageState extends State<GenericMenuPage> {
   @override Widget build(BuildContext context) {
-    List<String> buttons = ["one","do"];
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -146,8 +143,10 @@ class _GenericMenuPageState extends State<GenericMenuPage> {
         child: new ListView.builder(
           itemCount: buttons.length,
           itemBuilder: (context,index) {
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            print(buttons[index]);
             return ListTile(
-              title: Text(navigationData[index]['label']),
+              title: Text("label"),
             );
           },
         )

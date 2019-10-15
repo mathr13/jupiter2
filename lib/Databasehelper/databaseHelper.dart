@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:io' as io;
 import 'package:jupiter/Constant/string_constant.dart';
 import 'package:jupiter/Services/firebaseFunctions.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 
@@ -58,7 +55,7 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE USER(userName TEXT, firstName TEXT, lastName TEXT, userId NUMBER, lang TEXT, PRIMARY KEY(userId))");
     await db.execute("CREATE TABLE NotificationQueue(queueId TEXT ,projectId NUMBER,category TEXT ,message TEXT ,type TEXT ,seqNo NUMBER,groupSeqNo NUMBER, timestamp NUMBER,status TEXT, uri TEXT, params TEXT,PRIMARY KEY(queueId,projectId))");
     await db.execute("CREATE TABLE PROJECT(projectName TEXT, projectId NUMBER, init BOOL, defaultProject BOOL, db TEXT,PRIMARY KEY(projectId))");
-    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, perm TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
+    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, iconUrl TEXT, perm TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
     await db.execute("CREATE TABLE PERMISSION(permissionId TEXT, projectId NUMBER,PRIMARY KEY(projectId,permissionId))");
     await db.execute("CREATE TABLE GLOBALVARIABLE(projectId NUMBER, key TEXT, value TEXT)");
     await db.execute("CREATE TABLE LABEL(key TEXT, value TEXT, localization TEXT, projectId NUMBER, appType TEXT,PRIMARY KEY(projectId,key,localization))");
@@ -67,8 +64,6 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE DEFINITION(formId TEXT PRIMARY KEY, projectId Number, name TEXT, template TEXT)");
     await db.execute("CREATE TABLE WORKSPACE(wsId TEXT PRIMARY KEY, wsName Number,defaultTemplateId TEXT)");
     await db.execute("CREATE TABLE NAVIGATION_MAPPING(templateId TEXT,buttonId TEXT,componentType TEXT,  componentSubType TEXT, redirectTemplateId TEXT,label TEXT,operation TEXT,containerId TEXT,wsId TEXT,PRIMARY KEY (templateId,buttonId))");
-
-
   }
 
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value) async {
@@ -165,10 +160,6 @@ class DatabaseHelper {
     var value = await dbClient.rawQuery("SELECT COUNT(1) FROM '$table' ");
     return value;
   }
-  Future<void> insertWsIdInMenus() async{
-    var dbClient = await dbSystem;
-     await dbClient.rawQuery("UPDATE MENU SET wsId='15356537dedfer' WHERE menuIndex = 9 ");
-  }
   Future<List> fetchTemplateID(String id) async {
     var dbClient = await dbSystem;
     String query = "SELECT * FROM DEFINITION WHERE template LIKE '%$id%' ";
@@ -197,4 +188,10 @@ class DatabaseHelper {
 		var res = await dbClient.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='$tableName'");
     return res.length;
 	}
+  
+  Future<List> fetchButtonData() async {
+    var dbClient = await dbSystem;
+    var res = await dbClient.rawQuery("SELECT label FROM NAVIGATION_MAPPING WHERE wsId in (SELECT wsId FROM MENU)");
+    return res.toList();
+  }
 }

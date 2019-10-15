@@ -258,10 +258,17 @@ class TableColumn {
   }
 }
 
-//class WorkSpaceResponseModel{
-//  WorkSpaceResponseModel
-//
-//}
+class WorkSpaceResponseModel {
+  WorkSpaceDataModel data;
+
+  WorkSpaceResponseModel({this.data});
+
+  factory WorkSpaceResponseModel.fromJson(dynamic parsedJson) {
+    return WorkSpaceResponseModel(
+      data: WorkSpaceDataModel.fromJson(parsedJson['data'])
+    );
+  }
+}
 
 class WorkSpaceDataModel{
   List<WorkSpaceModel> workSpace;
