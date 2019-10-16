@@ -102,7 +102,8 @@ class _AppState extends State<App> {
                 onPressed: () async{
                  //  message();
 //                print(result.toString());
-                print(responseDetails.toString());
+//                print(responseDetails.toString());
+                print(jsonData.toString());
 //                   await getTemplate(id);
 //                   Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(),maintainState: true));
 

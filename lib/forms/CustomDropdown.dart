@@ -53,6 +53,16 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                         .toList(),
                     onChanged: ( newValue) {
                       setState(() {
+                        int i;
+                        for( i=0;i<widget.item['nodeHierarchy'].split('.').length;i++)
+                        {
+                          jsonData.putIfAbsent(
+                              '${widget.item['nodeHierarchy'].split('.')[i]}',()=><String,dynamic>{}
+                          );
+                        }
+                        jsonData['Item'].addAll({
+                          '${widget.item['id']}':newValue
+                        });
                         responseDetails.addAll({
 
                           "${widget.item['id']}":newValue

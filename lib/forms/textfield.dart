@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jupiter/Constant/string_constant.dart';
 import 'package:jupiter/forms/json_to_form.dart';
+import 'package:jupiter/forms/json_to_form.dart' as prefix0;
 
 class CustomText extends StatefulWidget {
    CustomText({
@@ -54,18 +55,21 @@ class _CustomState extends State<CustomText> {
               BlacklistingTextInputFormatter.singleLineFormatter,
             ],
             onChanged: (String value) {
-
-//              print(widget.item['nodehierarchy'].split('.').length);
-//              print(widget.item['nodehierarchy'].split('.').join('\'][\''));
-//print('[\''+widget.item['nodehierarchy'].split('.').join('\'][\'')+'\']');
-//jsonData.addAll({
-//
-//
-//});
-              responseDetails.addAll({
-
-                "${widget.item['id']}":value
+            int i;
+              for( i=0;i<widget.item['nodeHierarchy'].split('.').length;i++)
+                {
+                  jsonData.putIfAbsent(
+                '${widget.item['nodeHierarchy'].split('.')[i]}',()=><String,dynamic>{}
+                );
+               }
+              jsonData['Item'].addAll({
+    '${widget.item['entityColName']}':value
               });
+
+//              responseDetails.addAll({
+//
+//                "${widget.item['id']}":value
+//              });
 //              widget.formItems[widget.count]['response'] = value;
               _handleChanged();
             },

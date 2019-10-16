@@ -112,7 +112,7 @@ class _MenusState extends State<Menus> {
     // var res = await db.fetchWorkSpaceData(wsId);
 //  NavigationMapping navigationMapping = new NavigationMapping.fromJson(res[0]);
 //print(navigationMapping.containerId);
-    print(res[0]['defaultTemplateId']);
+//    print(res[0]['defaultTemplateId']);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setString("TemplateID", "46c67145-0367-4b53-9264-7868703d077c");
   }
@@ -120,6 +120,7 @@ class _MenusState extends State<Menus> {
 
 void getButtonData() async {
   buttons = await db.fetchButtonData();
+  print(buttons);
 }
 
 
@@ -130,6 +131,7 @@ class GenericMenuPage extends StatefulWidget {
 
 class _GenericMenuPageState extends State<GenericMenuPage> {
   @override Widget build(BuildContext context) {
+    getButtonData();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

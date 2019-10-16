@@ -445,31 +445,31 @@ dynamic inputData =
 "lovId": 1,
 "displayName": "Compluter1",
 "displayValue": 111,
-"type": "e912bc48-912a-4e72-a617-00f722d1f465"
+"type": "fa438fed-64af-495f-90a3-75114b10394c"
 },
 {
 "lovId": 2,
 "displayName": "Compluter2",
 "displayValue": 112,
-"type": "e912bc48-912a-4e72-a617-00f722d1f465"
+"type": "fa438fed-64af-495f-90a3-75114b10394c"
 },
 {
 "lovId": 3,
 "displayName": "Compluter3",
 "displayValue": 113,
-"type": "e912bc48-912a-4e72-a617-00f722d1f465"
+"type": "fa438fed-64af-495f-90a3-75114b10394c"
 },
 {
 "lovId": 4,
 "displayName": "Compluter4",
 "displayValue": 114,
-"type": "e912bc48-912a-4e72-a617-00f722d1f465"
+"type": "fa438fed-64af-495f-90a3-75114b10394c"
 },
 {
 "lovId": 5,
 "displayName": "Compluter5",
 "displayValue": 115,
-"type": "e912bc48-912a-4e72-a617-00f722d1f465"
+"type": "fa438fed-64af-495f-90a3-75114b10394c"
 },
 {
 "lovId": 6,
