@@ -8,12 +8,12 @@ import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/Models/models.dart';
 import 'package:jupiter/Screens/Views/home.dart';
 import 'package:jupiter/Screens/Views/sign_in.dart';
+import 'package:jupiter/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'jupiter_utlis.dart';
 String data = '{"data":{"WORKSPACE":[{"defaultTemplateId":"Save Item","wsId":"save_Item","wsName":"Save Item","navigationMapping":[{"templateId":"Save Item","buttonId":"save","componentType":"button","componentSubType":"button","redirectTemplateId":"List Item","label":"save","operation":"save","containerId":"P1"},{"templateId":"Save Item","buttonId":"close","componentType":"button","componentSubType":"button","redirectTemplateId":"Dashboard","label":"close","operation":"close","containerId":"P1"}]}],"projectId":12345}}';
 String notifResponse = "";
 String contentDb;
-int cunt = 1;
 List<Map<String, dynamic>> result = [];
 List<Map<String, dynamic>> parameter = [];
 dynamic responseApi;
@@ -23,17 +23,13 @@ Future<void> getDatafromFirebase(context) async {
   firebaseMessaging.configure(
     onMessage: (dynamic response) async {
       var notifResponse;
-      // print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-      // print(response[responseData]["data"]);
-      // print(cunt);
-      // cunt++;
       if(Platform.isAndroid) {
         notifResponse = json.decode(response[responseData]["data"].toString());
       }else if(Platform.isIOS) {
         notifResponse = json.decode(response[responseData].toString());
       }
       for(int i=0;i<notifResponse.length;i++) {
-        db.populateTableWithMapping(notificationTable, notifResponse[i]);
+        db.populateTableWithMapping(notificationTable, notifResponse[i],true);
       }
     },
   );
@@ -52,18 +48,28 @@ void getProjectData() async {
       parameter[i][key] = result[i][k];
     });
     parameter[i]["timestamp"] = -1;
-    int checkTableExistance = await db.checkIfTableExist(result[i]["message"]);
+    int checkTableExistance = await db.checkIfTableExist(result[i]["message"],true);
     if(result[i]["message"]=="MODEL") {
+      responseApi = await callApi(result[i][modelUri], parameter[i].toString());
+      final responseOfApi = json.decode(responseApi.body);
+      ModelReponseModel modelReponseModel = new ModelReponseModel.fromJson(responseOfApi);
+      for(int j=0;j<modelReponseModel.modelDataModel.models.length;j++) {
+        db.createTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[0].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[0].dataType);
+        for(int k=1;k<modelReponseModel.modelDataModel.models[j].tableColumns.length;k++) {
+          if(k==1) {await Future.delayed(Duration(seconds: 1));}
+          db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
+        }
+        fetchedContentTableData.add(modelReponseModel.modelDataModel.models[j].modelName);
+      }
+    }else if(result[i]['message']=="MASTERDATA") {
       // responseApi = await callApi(result[i][modelUri], parameter[i].toString());
       // final responseOfApi = json.decode(responseApi.body);
-      // ModelReponseModel modelReponseModel = new ModelReponseModel.fromJson(responseOfApi);
-      // for(int j=0;j<modelReponseModel.modelDataModel.models.length;j++) {
-      //   db.createTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[0].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[0].dataType);
-      //   for(int k=1;k<modelReponseModel.modelDataModel.models[j].tableColumns.length;k++) {
-      //     if(k==1) {await Future.delayed(Duration(seconds: 1));}
-      //     db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
+      // MasterDataResponseModel masterDataResponseModel = new MasterDataResponseModel.fromJson(responseOfApi);
+      // masterDataResponseModel.masterDataDataModel.masterDataModel.masterData.forEach((key,value) {
+      //   for(int j=0;j<masterDataResponseModel.masterDataDataModel.masterDataModel.masterData[key].length;j++) {
+      //     db.populateTableWithMapping(key.toUpperCase(), masterDataResponseModel.masterDataDataModel.masterDataModel.masterData[key][j],false);
       //   }
-      // }
+      // });
     }else if(checkTableExistance != 0) {
       responseApi = await callApi(result[i][modelUri], parameter[i].toString());
       final responseOfApi = json.decode(responseApi.body);
@@ -78,7 +84,7 @@ void getProjectData() async {
         final responseOfApi = json.decode(responseApi.body);
         WorkSpaceResponseModel workSpaceResponseModel = new WorkSpaceResponseModel.fromJson(responseOfApi);
         for (int i = 0; i < workSpaceResponseModel.data.workSpace.length; i++) {
-          db.populateTableWithMapping("WORKSPACE", workSpaceResponseModel.data.workSpace[i].toMap());
+          db.populateTableWithMapping("WORKSPACE", workSpaceResponseModel.data.workSpace[i].toMap(),true);
           for (int j=0;j<workSpaceResponseModel.data.workSpace[i].navigationMapping.length;j++)
             db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceResponseModel.data.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceResponseModel.data.workSpace[i].wsId);
         }
@@ -90,7 +96,7 @@ void getProjectData() async {
         }
       }
     }
- }
+  }
 }
 
 void saveMasterData(List<Map> result) async {
@@ -112,6 +118,7 @@ void saveMasterData(List<Map> result) async {
     for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
       if(result[i]["message"] == "PROJECT" && genericResponseModel.genericDataModel.genericModel[j].generic["defaultProject"] == true) {
         sharedPreferences.setInt('projectId', genericResponseModel.genericDataModel.genericModel[j].generic["projectId"]);
+        sharedPreferences.setString("contentDb", genericResponseModel.genericDataModel.genericModel[j].generic["db"]);
         contentDb = genericResponseModel.genericDataModel.genericModel[j].generic["db"];
         await db.dbContent;
         break;
@@ -120,6 +127,7 @@ void saveMasterData(List<Map> result) async {
     if(sharedPreferences.get('projectId') == null && result[i]["message"] == "PROJECT") {
       sharedPreferences.setInt('projectId', genericResponseModel.genericDataModel.genericModel[0].generic["projectId"]);
       contentDb = genericResponseModel.genericDataModel.genericModel[0].generic["db"];
+      sharedPreferences.setString("contentDb", genericResponseModel.genericDataModel.genericModel[0].generic["db"]);
       await db.dbContent;
     }
   }
