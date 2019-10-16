@@ -16,7 +16,6 @@ import 'firebaseFunctions.dart';
 
 String finalUrl = "";
 List<Map> checkNotificationData;
-// List<Map> fetchedTableData = [];
 List<Map> fetchedProjectFromNotificationData = [];
 
 void authenticate(context) async {
@@ -41,7 +40,7 @@ void authenticate(context) async {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Progress()));
       AuthenticationObject authObject = new AuthenticationObject.fromJson(jsonUserResponse);
       sharedPreferences.setInt('userId', authObject.data.userId);
-      db.populateTableWithMapping(userTable, authObject.data.toMap());
+      db.populateTableWithMapping(userTable, authObject.data.toMap(),true);
     } else {dialog(wrongAuth, context);}
 
     // fetchedTableData = await db.fetchTablesData();

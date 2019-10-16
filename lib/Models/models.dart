@@ -355,3 +355,40 @@ class NavigationMapping {
     return map;
   }
 }
+
+
+class MasterDataResponseModel {
+  MasterDataDataModel masterDataDataModel;
+
+  MasterDataResponseModel({this.masterDataDataModel});
+
+  factory MasterDataResponseModel.fromJson(dynamic parsedJson) {
+    return MasterDataResponseModel(
+      masterDataDataModel: MasterDataDataModel.fromJson(parsedJson['data'])
+    );
+  }
+}
+
+class MasterDataDataModel {
+  MasterDataModel masterDataModel;
+
+  MasterDataDataModel({this.masterDataModel});
+
+  factory MasterDataDataModel.fromJson(dynamic parsedJson) {
+    return MasterDataDataModel(
+      masterDataModel: MasterDataModel.fromJson(parsedJson['MASTERDATA'])
+    );
+  }
+}
+
+class MasterDataModel {
+  Map<String,dynamic> masterData;
+
+  MasterDataModel({this.masterData});
+
+  factory MasterDataModel.fromJson(Map<String, dynamic> parsedJson) {
+    return MasterDataModel(
+      masterData: parsedJson
+    );
+  }
+}

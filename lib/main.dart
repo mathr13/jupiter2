@@ -7,19 +7,26 @@ import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 String baseUrl = "";
 bool isFirstLogin = true;
-List<Map> fetchedTableData = [];
+List<Map> fetchedSystemTableData = [];
+List<String> fetchedContentTableData = [];
 
 void main() async {
+  var db = DatabaseHelper();
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   if(sharedPreferences.containsKey("FirstTimeLogin")==true && sharedPreferences.get("FirstTimeLogin")==false) {
+    contentDb = sharedPreferences.getString("contentDb");
+    var buffer = await db.fetchTablesData(false);
+    for(int i=0;i<buffer.length;i++) {
+      fetchedContentTableData.add(buffer[i]['name']);
+    }
+    print(fetchedContentTableData);
     isFirstLogin = false;
   }
-  var db = DatabaseHelper();
  await db.dbSystem;
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(new FlutterApp());
   });
-  fetchedTableData = await db.fetchTablesData();
+  fetchedSystemTableData = await db.fetchTablesData(true);
   baseUrl = await remoteConfig();
 }
 

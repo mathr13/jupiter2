@@ -26,8 +26,8 @@ class DatabaseHelper {
     if (_dbContent != null) {
       return _dbContent;
     }
-      _dbContent=await initDbContent(contentDb+".db");
-      return _dbContent;
+    _dbContent=await initDbContent(contentDb+".db");
+    return _dbContent;
   }
 
   DatabaseHelper.internal();
@@ -66,8 +66,9 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE NAVIGATION_MAPPING(templateId TEXT,buttonId TEXT,componentType TEXT,  componentSubType TEXT, redirectTemplateId TEXT,label TEXT,operation TEXT,containerId TEXT,wsId TEXT,PRIMARY KEY (templateId,buttonId))");
   }
 
-  Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value) async {
-    var dbClient=await dbSystem;
+  Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value, bool isSystemDatabase) async {
+    var dbClient;
+    if(isSystemDatabase==true) {dbClient=await dbSystem;}else {dbClient=await dbContent;}
     await dbClient.insert(tableName, value,conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -102,9 +103,13 @@ class DatabaseHelper {
     return res.toList();
   }
 
-  Future<List> fetchTablesData() async {
-    var dbClient = await dbSystem;
-    List<Map<String,dynamic>> res = await dbClient.rawQuery("SELECT tableName FROM system_tables_info WHERE tableName IS NOT NULL");
+  Future<List> fetchTablesData(bool isSystemtable) async {
+    var dbClient;
+    if(isSystemtable == true) {
+      dbClient = await dbSystem;
+    }else {dbClient = await dbContent;}
+    // List<Map<String,dynamic>> res = await dbClient.rawQuery("SELECT tableName FROM system_tables_info WHERE tableName IS NOT NULL");
+    List<Map> res = await dbClient.rawQuery('SELECT name FROM sqlite_master WHERE type = "table" AND name != "system_tables_info"');
     return res.toList();
   }
 
@@ -117,12 +122,6 @@ class DatabaseHelper {
   Future<List<dynamic>> getProjectIdFromNotificationData() async {
     var dbClient=await dbSystem;
     List<dynamic> res = await dbClient.rawQuery('SELECT * FROM NotificationQueue WHERE projectId = -1');
-    var rese = await dbClient.rawQuery('SELECT * FROM NotificationQueue');
-    // print(rese.length);
-    // for(int q=0;q<rese.length;q++) {
-    //   print(rese[q]);
-    //   print("---------------------------------------------------------------");
-    // }
     return res;
   }
 
@@ -150,13 +149,19 @@ class DatabaseHelper {
     return res.length;
   }
 
-  Future<List> fetchData(String table) async {
-    var dbClient = await dbSystem;
+  Future<List> fetchData(String table,bool isSystemDatabase) async {
+    var dbClient;
+    if(isSystemDatabase==true) {
+      dbClient = await dbSystem;
+    }else {dbClient = await dbContent;}
     var data = await dbClient.rawQuery("SELECT * FROM '$table' ");
     return data.toList();
   }
-  Future<List> count(String table) async {
-    var dbClient = await dbSystem;
+  Future<List> count(String table,bool isSystemDatabase) async {
+    var dbClient;
+    if(isSystemDatabase==true) {
+      dbClient = await dbSystem;
+    }else {dbClient = await dbContent;}
     var value = await dbClient.rawQuery("SELECT COUNT(1) FROM '$table' ");
     return value;
   }
@@ -181,10 +186,15 @@ class DatabaseHelper {
 	}
   Future<void> addColumnToTable(String tableName, String columnName, String columnDataType) async {
 		var dbClient = await dbContent;
+    //TODO: remove hard coded columnName
+    if(columnName == "group") {columnName = "groups";}
 		await dbClient.execute('ALTER TABLE $tableName ADD $columnName $columnDataType;');
 	}
-  Future<dynamic> checkIfTableExist(String tableName) async {
-		var dbClient = await dbSystem;
+  Future<dynamic> checkIfTableExist(String tableName, bool isSystemDatabase) async {
+    var dbClient;
+    if(isSystemDatabase==true) {
+      dbClient = await dbSystem;
+    }else {dbClient = await dbContent;}
 		var res = await dbClient.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='$tableName'");
     return res.length;
 	}

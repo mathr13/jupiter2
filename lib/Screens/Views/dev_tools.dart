@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
-import 'package:jupiter/Screens/Views/home.dart';
+import 'package:jupiter/Services/firebaseFunctions.dart';
 
 import '../../main.dart';
 
@@ -8,6 +8,7 @@ List<String> _tablesData = [];
 String dropdownValue;
 List<Map> bufferList;
 Widget buildbody = null;
+bool buffer = true;
 var count;
 var data ;
 ScrollController _scrollController = new ScrollController();
@@ -17,10 +18,12 @@ class DevTools extends StatefulWidget {
   @override _DevToolsState createState() => _DevToolsState();
 }
 
-Future getDataOfSystemTable() async {
-  for(int i=0;i<fetchedTableData.length;i++) {
-    _tablesData.add(fetchedTableData[i]['tableName']);
-  }
+void getDataOfTables(bool isSystemDatabase) {
+  if(isSystemDatabase==true) {
+    for(int i=0;i<fetchedSystemTableData.length;i++) {
+      _tablesData.add(fetchedSystemTableData[i]['name']);
+    }
+  }else {_tablesData.addAll(fetchedContentTableData);}
 }
 
 // Future getDataOfSystemTable() async {
@@ -32,8 +35,14 @@ Future getDataOfSystemTable() async {
 // }
 
 class _DevToolsState extends State<DevTools> {
+  String databaseCheck = "System";
   @override Widget build(BuildContext context) {
-    if(_tablesData.length==0) {getDataOfSystemTable();}
+    if(_tablesData.length==0) {
+      if(databaseCheck!="System") {
+        buffer = false;
+      }
+      getDataOfTables(buffer);
+    }
     return WillPopScope(
       onWillPop: () async {
         dropdownValue = null;
@@ -47,6 +56,28 @@ class _DevToolsState extends State<DevTools> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          Center(
+            child: RaisedButton(
+              child: Text(databaseCheck),
+              onPressed: () {
+                setState(() {
+                  if(databaseCheck=="System") {
+                    databaseCheck = contentDb;
+                    _tablesData.clear();
+                    buffer = false;
+                    dropdownValue = null;
+                    getDataOfTables(buffer);
+                  }else {
+                    databaseCheck = "System";
+                    _tablesData.clear();
+                    buffer = true;
+                    dropdownValue = null;
+                    getDataOfTables(buffer);
+                  }
+                });
+              },
+            )
+          ),
           DropdownButton<String>(
             value: dropdownValue,
             items: _tablesData.map((String value) => DropdownMenuItem<String>(
@@ -55,8 +86,8 @@ class _DevToolsState extends State<DevTools> {
             )).toList(),
             onChanged: (String newValue) async {
               var db = new DatabaseHelper();
-              data = await db.fetchData(newValue);
-              count = await db.count(newValue);
+              data = await db.fetchData(newValue,buffer);
+              count = await db.count(newValue,buffer);
               setState(() {
                 dropdownValue = newValue;
                 buildbody = form();
