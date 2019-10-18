@@ -108,7 +108,6 @@ class DatabaseHelper {
     if(isSystemtable == true) {
       dbClient = await dbSystem;
     }else {dbClient = await dbContent;}
-    // List<Map<String,dynamic>> res = await dbClient.rawQuery("SELECT tableName FROM system_tables_info WHERE tableName IS NOT NULL");
     List<Map> res = await dbClient.rawQuery('SELECT name FROM sqlite_master WHERE type = "table" AND name != "system_tables_info"');
     return res.toList();
   }
@@ -189,6 +188,7 @@ class DatabaseHelper {
     //TODO: remove hard coded columnName
     if(columnName == "group") {columnName = "groups";}
 		await dbClient.execute('ALTER TABLE $tableName ADD $columnName $columnDataType;');
+    // await dbClient.execute('ALTER TABLE $tableName ADD PRIMARY KEY $columnName $columnDataType;');
 	}
   Future<dynamic> checkIfTableExist(String tableName, bool isSystemDatabase) async {
     var dbClient;
@@ -199,9 +199,50 @@ class DatabaseHelper {
     return res.length;
 	}
   
-  Future<List> fetchButtonData() async {
+  Future<List> fetchButtonData(String wsId, String containerId, String templateId) async {
     var dbClient = await dbSystem;
-    var res = await dbClient.rawQuery("SELECT * FROM NAVIGATION_MAPPING WHERE wsId in (SELECT wsId FROM MENU)");
+    var res = await dbClient.rawQuery("SELECT * FROM NAVIGATION_MAPPING WHERE wsId IS '$wsId' AND containerId IS '$containerId' AND templateId IS '$templateId'");
     return res.toList();
+  }
+
+  // Future<void> createContentTable(String tableName, List<String> columnNames, List<String> columnDataTypes) {
+  //   String query = "CREATE TABLE IF NOT EXISTS $tableName(";
+  //   for(int i=0;i<columnNames.length;i++) {
+  //     var columnNamebuf = columnNames[i];
+  //     var dataTypeBuf = columnDataTypes[i];
+  //     if(i==columnNames.length-1) {
+  //       query += "$columnNamebuf $dataTypeBuf)";
+  //     }else {
+  //       query += "$columnNamebuf $dataTypeBuf,";
+  //     }
+  //   }
+  // }
+  Future<void> createContentTable(String tableName, List<String> columnNames, List<String> columnDataTypes, List<String> primaryKey) async {
+    String query = "CREATE TABLE IF NOT EXISTS $tableName(";
+    var dbClient = await dbContent;
+    String pkColumnName;
+    for(int i=0;i<columnNames.length;i++) {
+      var columnNamebuf = columnNames[i];
+      var dataTypeBuf = columnDataTypes[i];
+      // if(i==primaryKey) {pkColumnName = columnNamebuf;}
+      if(columnNamebuf == "group") {columnNamebuf = "groups";}
+      if(i==columnNames.length-1) {
+        query += "$columnNamebuf $dataTypeBuf";
+        if(primaryKey.length>0) {
+          query += ", PRIMARY KEY (";
+          for(int c=0;c<primaryKey.length;c++) {
+            pkColumnName = primaryKey[c];
+            if(c==primaryKey.length-1) {
+              query += "$pkColumnName)";
+            }else {
+              query += "$pkColumnName,";
+            }
+          }
+        }
+        query += ")";
+      }else {query += "$columnNamebuf $dataTypeBuf,";}
+    }
+    print(query);
+    dbClient.execute(query);
   }
 }

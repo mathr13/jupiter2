@@ -16,10 +16,7 @@ void main() async {
   if(sharedPreferences.containsKey("FirstTimeLogin")==true && sharedPreferences.get("FirstTimeLogin")==false) {
     contentDb = sharedPreferences.getString("contentDb");
     var buffer = await db.fetchTablesData(false);
-    for(int i=0;i<buffer.length;i++) {
-      fetchedContentTableData.add(buffer[i]['name']);
-    }
-    print(fetchedContentTableData);
+    for(int i=0;i<buffer.length;i++) {fetchedContentTableData.add(buffer[i]['name']);}
     isFirstLogin = false;
   }
  await db.dbSystem;

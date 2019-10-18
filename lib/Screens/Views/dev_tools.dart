@@ -26,14 +26,6 @@ void getDataOfTables(bool isSystemDatabase) {
   }else {_tablesData.addAll(fetchedContentTableData);}
 }
 
-// Future getDataOfSystemTable() async {
-//   bufferList = await db.fetchTablesData();
-//   await Future.delayed(Duration(seconds: 2));
-//    for(int i=0;i<bufferList.length;i++) {
-//     _tablesData.add(bufferList[i]['tableName']);
-//   }
-// }
-
 class _DevToolsState extends State<DevTools> {
   String databaseCheck = "System";
   @override Widget build(BuildContext context) {

@@ -10,9 +10,7 @@ Object obj;
  String title="Form1";
  var res;
 class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context)
-  {
+  @override Widget build(BuildContext context) {
 //  return WillPopScope(
 //  onWillPop: () {
 //    if(flag==true)
@@ -35,13 +33,10 @@ return  MaterialApp(
 }
 dynamic formValue;
 class App extends StatefulWidget {
-  App({
-    this.formItems,
-  });
+  App({this.formItems});
   final dynamic formItems;
 
-  @override
-  _AppState createState() => _AppState();
+  @override _AppState createState() => _AppState();
 }
 
 class _AppState extends State<App> {
@@ -53,8 +48,7 @@ class _AppState extends State<App> {
 //    var parsedFormData = json.decode(json.encode(formData));
   }
 
-  @override
-  Widget build(BuildContext context) {
+  @override Widget build(BuildContext context) {
     return new MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -63,13 +57,6 @@ class _AppState extends State<App> {
         home:Scaffold(
       appBar: new AppBar(
         title: new Text(title),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back_ios),
-        //   onPressed: () {Navigator.pop(context);},
-        // )
-
-//    Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp())))
-// )
 ),
       body: new SingleChildScrollView(
         child: new Container(
@@ -79,6 +66,7 @@ class _AppState extends State<App> {
                 builder: (BuildContext context,
                     AsyncSnapshot<dynamic> snapshot) {
                   if (!snapshot.hasData) return CircularProgressIndicator();
+                  // Navigator.push(context,MaterialPageRoute(builder: (context) => new Progress()));
                   return CoreForm(
                       form:formValue.toString(),
                        jsonForm: res[0]['template'],
@@ -93,20 +81,15 @@ class _AppState extends State<App> {
 //              templateId:templateId ,
 //              jsonForm: res,
 //            ),
-            new RaisedButton(
-                child: new Text('Send'),
-                onPressed: () async{
-                 //  message();
-//                print(result.toString());
-                print(responseDetails.toString());
-//                   await getTemplate(id);
-//                   Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(),maintainState: true));
-
-
-
-
-
-                })
+//             new RaisedButton(
+//                 child: new Text('Send'),
+//                 onPressed: () async{
+//                  //  message();
+// //                print(result.toString());
+//                 print(responseDetails.toString());
+// //                   await getTemplate(id);
+// //                   Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(),maintainState: true));
+//                 }),
           ]),
         ),
       ),
@@ -179,5 +162,4 @@ class _AppState extends State<App> {
       },
     );
   }
-
 }

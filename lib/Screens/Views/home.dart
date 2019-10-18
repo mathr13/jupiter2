@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
+import 'package:jupiter/Models/models.dart';
 import 'package:jupiter/Screens/Views/forgot_password.dart';
 import 'package:jupiter/forms/main.dart';
 import 'dev_tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 var navigationData;
 List<dynamic> buttons = [];
+String wsId;
 
 class Menus extends StatefulWidget {
+
+  static const rootName = '/menus';
+
   @override _MenusState createState() => _MenusState();
 }
 
@@ -67,18 +72,15 @@ class _MenusState extends State<Menus> {
                                                 .toString()),
                                           ),
                                           onTap: () async{
-                                            {
-                                                // await _workSpaceData(snapshot.data[position]['wsId'].toString());
-                                                // Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
-
-                                              if (position == 0) {
-                                                _workSpaceData("jdjd");
-                                                Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
-                                              }else {
-                                                getButtonData();
-                                                Navigator.push(context,MaterialPageRoute(builder: (context) =>GenericMenuPage()));
-                                              }
-                                            }
+                                            await _workSpaceData(snapshot.data[position]['wsId'].toString());
+                                            wsId = snapshot.data[position]['wsId'].toString();
+                                            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                                            sharedPreferences.setString("wsId", wsId);
+                                            Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
+                                            // Navigator.push(context, MaterialPageRoute(builder: (context) => Progress()));
+                                            // await Future.delayed(Duration(seconds: 1));
+                                            // Navigator.push(context, MaterialPageRoute(builder: (context) => Menus()));
+                                            // Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
                                             setState(() {
                                               _currentSelected = position;
                                             });
@@ -108,45 +110,50 @@ class _MenusState extends State<Menus> {
         ));
   }
   _workSpaceData(String wsId)async{
-    // var db = new DatabaseHelper();
-    // var res = await db.fetchWorkSpaceData(wsId);
-//  NavigationMapping navigationMapping = new NavigationMapping.fromJson(res[0]);
-//print(navigationMapping.containerId);
-    print(res[0]['defaultTemplateId']);
+    var db = new DatabaseHelper();
+    var res = await db.fetchWorkSpaceData(wsId);
+    NavigationMapping navigationMapping = new NavigationMapping.fromJson(res[0]);
+    print(navigationMapping.containerId);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setString("TemplateID", "46c67145-0367-4b53-9264-7868703d077c");
+    sharedPreferences.setString("TemplateId", "98240c0d-8c4d-4305-a396-bba71bbacb2b");
   }
 }
 
-void getButtonData() async {
-  buttons = await db.fetchButtonData();
-}
+// void getButtonData(String wsId, String containerId) async {
+//   buttons = await db.fetchButtonData(wsId,containerId);
+// }
 
 
-
+/*
 class GenericMenuPage extends StatefulWidget {
   @override _GenericMenuPageState createState() => _GenericMenuPageState();
 }
 
 class _GenericMenuPageState extends State<GenericMenuPage> {
   @override Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {Navigator.pop(context);},
-        ),
-      ),
-      body: new Center(
-        child: new ListView.builder(
-          itemCount: buttons.length,
-          itemBuilder: (context,index) {
-            return ListTile(
-              title: Text(buttons[index]['label']),
-            );
-          },
-        )
-      ),
+    return new Center(
+      child: new Column(
+        children: <Widget>[
+          ListView.builder(
+            itemCount: buttons.length,
+            itemBuilder: (context,index) {
+              return ListTile(
+                title: Text(buttons[index]['label']),
+              );
+            },
+          )
+        ],
+      )
     );
+  }
+}
+*/
+
+void checkIfButtonsAreFetched(context) async {
+  if(buttons.length>0) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
+  }
+  else {
+    checkIfButtonsAreFetched(context);
   }
 }
