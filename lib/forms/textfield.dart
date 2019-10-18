@@ -84,11 +84,6 @@ class _CustomState extends State<CustomText> {
                 '${widget.item['entityColName']}':value
               });
 
-//              responseDetails.addAll({
-//
-//                "${widget.item['id']}":value
-//              });
-//              widget.formItems[widget.count]['response'] = value;
               _handleChanged();
             },
             obscureText: widget.item['type'] == "Password" ? true : false,
