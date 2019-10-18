@@ -254,17 +254,14 @@ class DatabaseHelper {
     if(isSystemDatabase==true) {dbClient=await dbSystem;}else {dbClient=await dbContent;}
     await dbClient.rawQuery("UPDATE $tableName SET $columnName = '$value' WHERE id='12345'");
   }
-  Future<dynamic> fetchLabelFromGV(String defaultValue) async {
+  Future<String> fetchLabelFromGV(String defaultValue) async {
     var dbClient = await dbSystem;
-    var res = dbClient.rawQuery("SELECT * FROM GLOBALVARIABLE WHERE KEY IS '$defaultValue'");
-    return res;
-  }
-  Future<String> getTextFieldLabel( dynamic key) async {
-    var dbClient = await dbSystem;
-    var res =await dbClient.rawQuery("SELECT value FROM LABEL WHERE key = '$key'");
+    var res = await dbClient.rawQuery("SELECT value FROM GLOBALVARIABLE WHERE KEY IS '$defaultValue'");
     return res[0]['value'];
   }
-
-
-
+  // Future<String> getTextFieldLabel( dynamic key) async {
+  //   var dbClient = await dbSystem;
+  //   var res =await dbClient.rawQuery("SELECT value FROM LABEL WHERE key = '$key'");
+  //   return res[0]['value'];
+  // }
 }

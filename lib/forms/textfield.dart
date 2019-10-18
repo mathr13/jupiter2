@@ -36,7 +36,7 @@ class _CustomState extends State<CustomText> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           FutureBuilder<String>(
-            future: db.getTextFieldLabel(widget.item['label']),
+            // future: db.getTextFieldLabel(widget.item['label']),
         builder: (BuildContext context,
             AsyncSnapshot<String> snapshot) {
           if (!snapshot.hasData) return new Text(addAsterisk(widget.item['label']),
@@ -51,11 +51,6 @@ class _CustomState extends State<CustomText> {
 
           );
         }),
-//              padding: new EdgeInsets.only(top: 5.0, bottom: 5.0),
-//              child: new Text(addAsterisk(),
-//                style:
-//                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-
           (new TextField(
             controller: null,
             decoration: new InputDecoration(
@@ -83,12 +78,6 @@ class _CustomState extends State<CustomText> {
               listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({
                 '${widget.item['entityColName']}':value
               });
-
-//              responseDetails.addAll({
-//
-//                "${widget.item['id']}":value
-//              });
-//              widget.formItems[widget.count]['response'] = value;
               _handleChanged();
             },
             obscureText: widget.item['type'] == "Password" ? true : false,

@@ -18,6 +18,7 @@ dynamic result=json.decode(inputData);
 dynamic lov = json.decode(json.encode(inputData));
 var id;
 var db = new DatabaseHelper();
+int cont = 1;
 
 Map<String,dynamic> responseDetails={};
 Map<String,dynamic> jsonData={};
@@ -73,7 +74,11 @@ class _CoreFormState extends State<CoreForm> {
             //    responseDetails=response;
             //   }
             // ));
-            listWidget.add(CustomHiddenField(defaultValue: item['defaultValue']));
+            listWidget.add(
+                CustomHidden(
+                  item: item, count: count, onChanged: (dynamic response) {
+                  responseDetails=response;
+                }, formItems: formItems, defaultValue: item['defaultValue'],));
           }
           else if (item['type'] == "radio") {
             // var db = new DatabaseHelper();
@@ -101,12 +106,14 @@ class _CoreFormState extends State<CoreForm> {
               result = response;
             }, formItems: formItems,)
             );
-          else if (item['type'] == "date")
+          else if (item['type'] == "date") {
+            print(cont);
+            cont++;
             listWidget.add(CustomDatePicker(
               item: item, count: count, onChanged: (dynamic response) {
               result = response;
             }, formItems: formItems,));
-          else if(item['type']=="navigationContainer") {
+          }else if(item['type']=="navigationContainer") {
             listWidget.add(CustomButton(
               buttons: buttons,
               item: item,
