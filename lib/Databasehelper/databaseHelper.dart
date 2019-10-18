@@ -225,6 +225,11 @@ class DatabaseHelper {
     if(isSystemDatabase==true) {dbClient=await dbSystem;}else {dbClient=await dbContent;}
     await dbClient.rawQuery("UPDATE $tableName SET $columnName = '$value' WHERE id=12345");
   }
+  Future<String> getTextFieldLabel( dynamic key) async {
+    var dbClient = await dbSystem;
+    var res =await dbClient.rawQuery("SELECT value FROM LABEL WHERE key = '$key'");
+    return res[0]['value'];
+  }
 
 
 
