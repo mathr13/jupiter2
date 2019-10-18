@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/Screens/Views/home.dart';
 import 'package:jupiter/forms/CustomButtons.dart';
+import 'package:jupiter/forms/CustomHiddenField.dart';
 import 'package:meta/meta.dart';
 import 'switch.dart';
 import 'radio.dart';
@@ -12,6 +13,7 @@ import 'checkbox.dart';
 import 'jsondata.dart';
 import 'package:jupiter/forms/CustomDropdown.dart';
 import 'package:jupiter/forms/Custom_Datepicker.dart';
+import 'package:jupiter/Screens/Views/home.dart';
 dynamic result=json.decode(inputData);
 dynamic lov = json.decode(json.encode(inputData));
 var id;
@@ -64,6 +66,14 @@ class _CoreFormState extends State<CoreForm> {
                   item: item, count: count, onChanged: (dynamic response) {
                   responseDetails=response;
                 }, formItems: formItems));
+          }
+          else if(item['type'] == "hidden") {
+            // listWidget.add(CustomText(
+            //   item: item, count: count, formItems: formItems, onChanged: (dynamic response) {
+            //    responseDetails=response;
+            //   }
+            // ));
+            listWidget.add(CustomHiddenField(defaultValue: item['defaultValue']));
           }
           else if (item['type'] == "radio") {
             // var db = new DatabaseHelper();

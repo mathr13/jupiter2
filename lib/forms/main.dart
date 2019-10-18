@@ -4,11 +4,13 @@ import 'package:jupiter/forms/json_to_form.dart';
 import 'dart:convert';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:core';
 
 
 Object obj;
  String title="Form1";
  var res;
+ List<Map> listOfHierarchy = [{}];
 class MyApp extends StatelessWidget {
   @override Widget build(BuildContext context) {
 //  return WillPopScope(
@@ -19,15 +21,21 @@ class MyApp extends StatelessWidget {
 //      return Future.value(true);
 //
 //  },
-return  MaterialApp(
-      title: 'Welcome to Flutter',
-      debugShowCheckedModeBanner: false,
-      home: App(),
-//    onGenerateRoute: FluroRouter.router.generator,
-    theme: ThemeData(
-        primarySwatch: Colors.green
-      ),
- // )
+// return  MaterialApp(
+//       title: 'Welcome to Flutter',
+//       debugShowCheckedModeBanner: false,
+//       home: App(),
+// //    onGenerateRoute: FluroRouter.router.generator,
+//     theme: ThemeData(
+//         primarySwatch: Colors.green
+//       ),
+//  // )
+    // );
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: App(),
     );
   }
 }
@@ -86,10 +94,17 @@ class _AppState extends State<App> {
 //                 onPressed: () async{
 //                  //  message();
 // //                print(result.toString());
-//                 print(responseDetails.toString());
+// //                print(responseDetails.toString());
+//                   _saveDataHierarchy();
+//                 print(listOfHierarchy.toString());
 // //                   await getTemplate(id);
 // //                   Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(),maintainState: true));
-//                 }),
+
+
+
+
+
+//                 })
           ]),
         ),
       ),
@@ -100,26 +115,15 @@ class _AppState extends State<App> {
    _getTemplateId()async{
     var db = new DatabaseHelper();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String id= sharedPreferences.get('TemplateID');
+    String id= sharedPreferences.get('TemplateId');
     res=  await db.fetchTemplateID(id);
 //print(res[0]['template'].toString());
 
     return res[0]['template'].toString();
 
   }
-//  getTemplate(dynamic item) {
-////    var navigationInfo = json.decode(nagivationData);
-////    String source = item['dataSource'][0]['entityName'];
-//    String sourceColumn = item['dataSource'][0]['entityColName'];
-//    getTemplateId(sourceColumn, item).then((res) {
-//      print(res['templateId'].toString().runtimeType);
-//      templateId=res['templateId'].toString();
-//      title=res['title'].toString();
-//
-//
-//      print(templateId);
-//    });
-//  }
+
+
   String message(){
     int i;
     String msg=' ';

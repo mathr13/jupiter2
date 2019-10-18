@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/Models/models.dart';
+import 'package:jupiter/Screens/CustomViews/progress_indicator.dart';
 import 'package:jupiter/Screens/Views/forgot_password.dart';
 import 'package:jupiter/forms/main.dart';
 import 'dev_tools.dart';
@@ -77,10 +78,11 @@ class _MenusState extends State<Menus> {
                                             SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                                             sharedPreferences.setString("wsId", wsId);
                                             Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
-                                            // Navigator.push(context, MaterialPageRoute(builder: (context) => Progress()));
-                                            // await Future.delayed(Duration(seconds: 1));
+                                            Navigator.push(context, MaterialPageRoute(builder: (context) => Progress()));
+                                            await Future.delayed(Duration(seconds: 1));
                                             // Navigator.push(context, MaterialPageRoute(builder: (context) => Menus()));
                                             // Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()));
+                                            Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp(),fullscreenDialog: true));
                                             setState(() {
                                               _currentSelected = position;
                                             });
@@ -118,36 +120,6 @@ class _MenusState extends State<Menus> {
     sharedPreferences.setString("TemplateId", "98240c0d-8c4d-4305-a396-bba71bbacb2b");
   }
 }
-
-// void getButtonData(String wsId, String containerId) async {
-//   buttons = await db.fetchButtonData(wsId,containerId);
-// }
-
-
-/*
-class GenericMenuPage extends StatefulWidget {
-  @override _GenericMenuPageState createState() => _GenericMenuPageState();
-}
-
-class _GenericMenuPageState extends State<GenericMenuPage> {
-  @override Widget build(BuildContext context) {
-    return new Center(
-      child: new Column(
-        children: <Widget>[
-          ListView.builder(
-            itemCount: buttons.length,
-            itemBuilder: (context,index) {
-              return ListTile(
-                title: Text(buttons[index]['label']),
-              );
-            },
-          )
-        ],
-      )
-    );
-  }
-}
-*/
 
 void checkIfButtonsAreFetched(context) async {
   if(buttons.length>0) {

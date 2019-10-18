@@ -95,7 +95,7 @@ void getProjectData() async {
       if(result[i]["message"]=="DEFINITION") {
         DefinitionResponseModel definitionResponseModel = new DefinitionResponseModel.fromJson(responseOfApi);
         for(int j=0;j<definitionResponseModel.definitionDataModel.definition.length;j++) {
-          db.populateTableWithCustomColumn(result[i]["message"], definitionResponseModel.definitionDataModel.definition[j].toMap(), "projectId", definitionResponseModel.definitionDataModel.projectId);
+          db.populateTableWithCustomColumn(result[i]["message"], definitionResponseModel.definitionDataModel.definition[j].toMap(), "projectId", definitionResponseModel.definitionDataModel.projectId,true);
         }
       }
       else if(result[i]['message']=="WORKSPACE") {
@@ -105,13 +105,13 @@ void getProjectData() async {
         for (int i = 0; i < workSpaceResponseModel.data.workSpace.length; i++) {
           db.populateTableWithMapping("WORKSPACE", workSpaceResponseModel.data.workSpace[i].toMap(),true);
           for (int j=0;j<workSpaceResponseModel.data.workSpace[i].navigationMapping.length;j++)
-            db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceResponseModel.data.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceResponseModel.data.workSpace[i].wsId);
+            db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceResponseModel.data.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceResponseModel.data.workSpace[i].wsId,true);
         }
       }
       else {
         GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
         for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
-          db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId);
+          db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId,true);
         }
       }
     }
@@ -130,7 +130,7 @@ void saveMasterData(List<Map> result) async {
     final responseOfApi = json.decode(responseApi.body);
     GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
     for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
-      db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId);
+      db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId,true);
     }
 
     //To save defaultProjectId in Persistent Storage

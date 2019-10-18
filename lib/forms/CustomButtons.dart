@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:jupiter/Screens/Views/home.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'main.dart';
 
 var db = DatabaseHelper();
 
@@ -32,7 +36,7 @@ class _CustomButtonState extends State<CustomButton> {
               var operationOnButtonClick = buttons[index]['operation'];
               switch (operationOnButtonClick) {
                 case "SAVE": {
-                  //TODO: save
+                  _saveDataHierarchy();
                 }
                 break;
                 case "CLOSE": {
@@ -51,6 +55,47 @@ class _CustomButtonState extends State<CustomButton> {
 
 void getButtonData(String wsId, String containerId) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  var tId = sharedPreferences.get("TemplateId");
   buttons = await db.fetchButtonData(wsId,containerId, sharedPreferences.get("TemplateId"));
+}
+
+
+_saveDataHierarchy()async{
+  var db = new DatabaseHelper();
+  var listHierarchy=json.decode(json.encode(listOfHierarchy[0]));
+  listHierarchy.forEach((key,value)async
+      {
+        //print('keys '+key);
+    if((key.split('.').length)==1)
+      {
+        print(value as Map<String,dynamic>);
+       await db.populateTableWithCustomColumn(key.toUpperCase(), value as Map<String,dynamic>,'id', 12345,false);
+      } else{
+      var keysArray =  key.split('.');
+      for(int i=0;i<keysArray.length;i++)
+        {
+
+         var parentTableName =  keysArray[(keysArray.length - 1)];
+         var childTableName =  keysArray[(keysArray.length - 2)];
+       await  db.checkIfTableExist(childTableName.toUpperCase(), false).then((isChildTableExist)async{
+           if(isChildTableExist > 0)
+           {
+             //print(value as Map<String,dynamic>);
+              await db.isColumnExistInTable(childTableName.toUpperCase(), parentTableName).then((isColumnExist)async{
+                if (isColumnExist > 0)
+                {
+                  var valueJSON = (value as Map<String,dynamic>).toString();
+                 // print(valueJSON);
+                  await db.updateTableColumn(childTableName.toUpperCase(), json.encode(value), parentTableName, false);
+
+                  //             await db.populateTableWithMapping(key, value as Map<String,dynamic> , false);
+                }
+              });
+
+           }
+         });
+
+        }
+    }
+  });
+
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jupiter/forms/json_to_form.dart';
+import 'package:jupiter/forms/json_to_form.dart' as prefix0;
+import 'package:jupiter/forms/main.dart';
+import 'package:jupiter/forms/main.dart' as prefix1;
 
 class CustomText extends StatefulWidget {
    CustomText({
@@ -53,18 +56,39 @@ class _CustomState extends State<CustomText> {
               BlacklistingTextInputFormatter.singleLineFormatter,
             ],
             onChanged: (String value) {
-
-//              print(widget.item['nodehierarchy'].split('.').length);
-//              print(widget.item['nodehierarchy'].split('.').join('\'][\''));
-//print('[\''+widget.item['nodehierarchy'].split('.').join('\'][\'')+'\']');
-//jsonData.addAll({
+            int i;
+//              for( i=0;i<widget.item['nodeHierarchy'].split('.').length;i++)
+//                {
+//                  jsonData.putIfAbsent(
+//                '${widget.item['nodeHierarchy'].split('.').                                        [i]}',()=><Map<String,dynamic>>[{}]
+//                );
+//               } a['Item'][0]);
+//              jsonData['Item'].forEach( (data) {
+//                print(data);
+//                print('Hello Mr. $data}');
+//                (jsonData['Item'][0]).addAll({
+//                  '${widget.item['entityColName']}':value
+//                });
 //
-//
-//});
-              responseDetails.addAll({
+//              });
 
-                "${widget.item['id']}":value
+              if (listOfHierarchy.length==1) {
+                listOfHierarchy.first.putIfAbsent(
+                  '${widget.item['nodeHierarchy']}',()=>{}
+                );
+              } else {
+                listOfHierarchy[listOfHierarchy.length].putIfAbsent(
+                  '${widget.item['nodeHierarchy']}',()=>{}
+                );
+              }
+              listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({
+                '${widget.item['entityColName']}':value
               });
+
+//              responseDetails.addAll({
+//
+//                "${widget.item['id']}":value
+//              });
 //              widget.formItems[widget.count]['response'] = value;
               _handleChanged();
             },

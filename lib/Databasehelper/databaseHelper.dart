@@ -73,8 +73,13 @@ class DatabaseHelper {
   }
 
 
-  Future<void> populateTableWithCustomColumn(String tableName, Map<String, dynamic> value,String columnName,dynamic columnValue) async {
-    var dbClient = await dbSystem;
+  Future<void> populateTableWithCustomColumn(String tableName, Map<String, dynamic> value,String columnName,dynamic columnValue, bool isSystemDatabase) async {
+    var dbClient;
+    if(isSystemDatabase==true) {
+      dbClient = await dbSystem;
+    }else {
+      dbClient = await dbContent;
+    }
     value.putIfAbsent("$columnName", () => columnValue);
     await dbClient.insert(tableName, value,conflictAlgorithm: ConflictAlgorithm.replace);
   }
@@ -195,8 +200,8 @@ class DatabaseHelper {
     if(isSystemDatabase==true) {
       dbClient = await dbSystem;
     }else {dbClient = await dbContent;}
-		var res = await dbClient.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='$tableName'");
-    return res.length;
+		var result = await dbClient.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='$tableName'");
+    return result.length;
 	}
   
   Future<List> fetchButtonData(String wsId, String containerId, String templateId) async {
@@ -205,18 +210,6 @@ class DatabaseHelper {
     return res.toList();
   }
 
-  // Future<void> createContentTable(String tableName, List<String> columnNames, List<String> columnDataTypes) {
-  //   String query = "CREATE TABLE IF NOT EXISTS $tableName(";
-  //   for(int i=0;i<columnNames.length;i++) {
-  //     var columnNamebuf = columnNames[i];
-  //     var dataTypeBuf = columnDataTypes[i];
-  //     if(i==columnNames.length-1) {
-  //       query += "$columnNamebuf $dataTypeBuf)";
-  //     }else {
-  //       query += "$columnNamebuf $dataTypeBuf,";
-  //     }
-  //   }
-  // }
   Future<void> createContentTable(String tableName, List<String> columnNames, List<String> columnDataTypes, List<String> primaryKey) async {
     String query = "CREATE TABLE IF NOT EXISTS $tableName(";
     var dbClient = await dbContent;
@@ -244,5 +237,26 @@ class DatabaseHelper {
     }
     print(query);
     dbClient.execute(query);
+  }
+  Future<List> fetchColumnData(String tableName) async {
+    var dbClient = await dbContent;
+    var res = await dbClient.rawQuery("SELECT name FROM PRAGMA_TABLE_INFO('$tableName')");
+    return res.toList();
+  }
+
+  Future<dynamic> isColumnExistInTable(String tableName,String columnName) async {
+    var dbClient = await dbContent;
+    var res = await dbClient.rawQuery("SELECT name FROM PRAGMA_TABLE_INFO('$tableName') WHERE name = '$columnName'");
+    return res.length;
+  }
+  Future<void> updateTableColumn(String tableName, dynamic value,String columnName, bool isSystemDatabase) async {
+    var dbClient;
+    if(isSystemDatabase==true) {dbClient=await dbSystem;}else {dbClient=await dbContent;}
+    await dbClient.rawQuery("UPDATE $tableName SET $columnName = '$value' WHERE id='12345'");
+  }
+  Future<dynamic> fetchLabelFromGV(String defaultValue) async {
+    var dbClient = await dbSystem;
+    var res = dbClient.rawQuery("SELECT * FROM GLOBALVARIABLE WHERE KEY IS '$defaultValue'");
+    return res;
   }
 }
