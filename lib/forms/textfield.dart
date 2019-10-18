@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jupiter/forms/json_to_form.dart';
-import 'package:jupiter/forms/json_to_form.dart' as prefix0;
 import 'package:jupiter/forms/main.dart';
-import 'package:jupiter/forms/main.dart' as prefix1;
+import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 class CustomText extends StatefulWidget {
    CustomText({
@@ -28,6 +27,7 @@ class _CustomState extends State<CustomText> {
 
   @override
   Widget build(BuildContext context) {
+    var db =DatabaseHelper();
     widget.formItems[widget.count]['response'] = null;
     return Container(
       child: Column(
@@ -35,12 +35,27 @@ class _CustomState extends State<CustomText> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          new Container(
-              padding: new EdgeInsets.only(top: 5.0, bottom: 5.0),
-              child: new Text(addAsterisk(),
-                style:
-                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-              )),
+          FutureBuilder<String>(
+            future: db.getTextFieldLabel(widget.item['label']),
+        builder: (BuildContext context,
+            AsyncSnapshot<String> snapshot) {
+          if (!snapshot.hasData) return new Text(addAsterisk(widget.item['label']),
+            style:
+            new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+
+          );
+          return new Text(addAsterisk(snapshot.data.toString()),
+              style:
+                   new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+
+
+          );
+        }),
+//              padding: new EdgeInsets.only(top: 5.0, bottom: 5.0),
+//              child: new Text(addAsterisk(),
+//                style:
+//                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+
           (new TextField(
             controller: null,
             decoration: new InputDecoration(
@@ -56,22 +71,6 @@ class _CustomState extends State<CustomText> {
               BlacklistingTextInputFormatter.singleLineFormatter,
             ],
             onChanged: (String value) {
-            int i;
-//              for( i=0;i<widget.item['nodeHierarchy'].split('.').length;i++)
-//                {
-//                  jsonData.putIfAbsent(
-//                '${widget.item['nodeHierarchy'].split('.').                                        [i]}',()=><Map<String,dynamic>>[{}]
-//                );
-//               } a['Item'][0]);
-//              jsonData['Item'].forEach( (data) {
-//                print(data);
-//                print('Hello Mr. $data}');
-//                (jsonData['Item'][0]).addAll({
-//                  '${widget.item['entityColName']}':value
-//                });
-//
-//              });
-
               if (listOfHierarchy.length==1) {
                 listOfHierarchy.first.putIfAbsent(
                   '${widget.item['nodeHierarchy']}',()=>{}
@@ -111,11 +110,11 @@ class _CustomState extends State<CustomText> {
       return TextInputType.phone;
     else return TextInputType.text;
   }
-  String addAsterisk(){
+  String addAsterisk(String textFieldName ){
     if(widget.item['constraint']=='MANDATORY')
-      return '*'+widget.item['label'];
+      return '*'+textFieldName;
     else
-      return widget.item['label'];
+      return textFieldName;
 
   }
 

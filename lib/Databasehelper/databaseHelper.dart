@@ -259,4 +259,12 @@ class DatabaseHelper {
     var res = dbClient.rawQuery("SELECT * FROM GLOBALVARIABLE WHERE KEY IS '$defaultValue'");
     return res;
   }
+  Future<String> getTextFieldLabel( dynamic key) async {
+    var dbClient = await dbSystem;
+    var res =await dbClient.rawQuery("SELECT value FROM LABEL WHERE key = '$key'");
+    return res[0]['value'];
+  }
+
+
+
 }
