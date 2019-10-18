@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jupiter/forms/Databasehelper.dart';
+import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/forms/json_to_form.dart';
+import 'package:jupiter/forms/main.dart';
 class DropdownButtonHint extends StatefulWidget {
   const DropdownButtonHint({
     @required this.onChanged,
@@ -39,7 +40,7 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                     style: new TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16.0))),
             FutureBuilder<List<dynamic>>(
-                future: db.fetchTablesData(widget.formItems[widget.count]['lov']),
+                future: db.fetchDataSourceData(widget.formItems[widget.count]['dataSource']),
                 builder: (BuildContext context,
                     AsyncSnapshot<List<dynamic>> snapshot) {
                   if (!snapshot.hasData) return CircularProgressIndicator();
@@ -47,26 +48,28 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                     value:dropdownValue,
                   items: snapshot.data.toList()
                       .map(( dynamic value) => DropdownMenuItem<dynamic>(
-                child: Text(value['displayName'].toString()),
-                value: value['displayName'],
+                child: Text(value[widget.formItems[widget.count]['dataSource'][0]['displayMember']].toString()),
+                value: value[widget.formItems[widget.count]['dataSource'][0]['displayMember']],
            ))
                         .toList(),
                     onChanged: ( newValue) {
                       setState(() {
-                        int i;
-                        for( i=0;i<widget.item['nodeHierarchy'].split('.').length;i++)
                         {
-                          jsonData.putIfAbsent(
-                              '${widget.item['nodeHierarchy'].split('.')[i]}',()=><String,dynamic>{}
-                          );
-                        }
-                        jsonData['Item'].addAll({
-                          '${widget.item['id']}':newValue
-                        });
-                        responseDetails.addAll({
+                          if (listOfHierarchy.length==1) {
+                            listOfHierarchy.first.putIfAbsent(
+                                '${widget.item['nodeHierarchy']}',()=>{}
+                            );
+                          } else {
+                            listOfHierarchy[listOfHierarchy.length].putIfAbsent(
+                                '${widget.item['nodeHierarchy']}',()=>{}
+                            );
+                          }
+                          listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({
+                            '${widget.item['entityColName']}':newValue
+                          });
 
-                          "${widget.item['id']}":newValue
-                        });
+                          _handleChanged();
+                        }
                         dropdownValue=newValue;
                         _handleChanged();
                       });

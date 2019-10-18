@@ -36,7 +36,7 @@ class _CustomState extends State<CustomText> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           FutureBuilder<String>(
-            // future: db.getTextFieldLabel(widget.item['label']),
+            future: db.getTextFieldLabel(widget.item['label']),
         builder: (BuildContext context,
             AsyncSnapshot<String> snapshot) {
           if (!snapshot.hasData) return new Text(addAsterisk(widget.item['label']),

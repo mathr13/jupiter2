@@ -3,6 +3,7 @@ import 'package:jupiter/Constant/string_constant.dart';
 import 'package:jupiter/Services/firebaseFunctions.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'dart:core';
 
 
 
@@ -259,9 +260,35 @@ class DatabaseHelper {
     var res = await dbClient.rawQuery("SELECT value FROM GLOBALVARIABLE WHERE KEY IS '$defaultValue'");
     return res[0]['value'];
   }
-  // Future<String> getTextFieldLabel( dynamic key) async {
-  //   var dbClient = await dbSystem;
-  //   var res =await dbClient.rawQuery("SELECT value FROM LABEL WHERE key = '$key'");
-  //   return res[0]['value'];
-  // }
+  Future<String> getTextFieldLabel( dynamic key) async {
+    var dbClient = await dbSystem;
+    var res =await dbClient.rawQuery("SELECT value FROM LABEL WHERE key = '$key'");
+    return res[0]['value'];
+  }
+  Future<List> fetchDataSourceData(dynamic dataSource) async {
+    var dbClient = await dbContent;
+    var res;
+   await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()} ").then((result){
+      res =result.toList();
+    });
+   print(res);
+//    if(dataSource[0]['filters'].length>0) {
+//      for (int i = 0; i < dataSource[0]['filters'].length; i++) {
+//
+//      }
+//    }else {
+//      print(dataSource[0]['entityName'].toUpperCase());
+////      res = await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}' ");
+//         dbClient.rawQuery("SELECT * FROM LOV ").then((result){
+//           res = result;
+//         });
+//
+//    }
+    return res;
+
+  }
+
+
+
+
 }

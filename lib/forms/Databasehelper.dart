@@ -41,10 +41,8 @@ class DatabaseHelper {
     dbClient.insert(tableName, map,conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List> fetchTablesData(String type) async {
+  Future<List> fetchTablesData(dynamic type) async {
     var dbClient = await dbRender;
-//    String query = "SELECT * FROM LOV WHERE type LIKE '$type' ";
-//    print(query);
     var res = await dbClient.rawQuery("SELECT * FROM LOV WHERE type LIKE '$type' ");
     return  res.toList();
 
