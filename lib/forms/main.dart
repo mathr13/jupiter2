@@ -4,11 +4,13 @@ import 'package:jupiter/forms/json_to_form.dart';
 import 'dart:convert';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:core';
 
 
 Object obj;
  String title="Form1";
  var res;
+ List<Map> listOfHierarchy = [{}];
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context)
@@ -99,7 +101,8 @@ class _AppState extends State<App> {
                  //  message();
 //                print(result.toString());
 //                print(responseDetails.toString());
-                print(jsonData.toString());
+                  _saveDataHierarchy();
+                print(listOfHierarchy.toString());
 //                   await getTemplate(id);
 //                   Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(),maintainState: true));
 
@@ -125,19 +128,70 @@ class _AppState extends State<App> {
     return res[0]['template'].toString();
 
   }
-//  getTemplate(dynamic item) {
-////    var navigationInfo = json.decode(nagivationData);
-////    String source = item['dataSource'][0]['entityName'];
-//    String sourceColumn = item['dataSource'][0]['entityColName'];
-//    getTemplateId(sourceColumn, item).then((res) {
-//      print(res['templateId'].toString().runtimeType);
-//      templateId=res['templateId'].toString();
-//      title=res['title'].toString();
-//
-//
-//      print(templateId);
-//    });
+
+_saveDataHierarchy()async{
+  var db = new DatabaseHelper();
+  var listHierarchy=json.decode(json.encode(listOfHierarchy[0]));
+  listHierarchy.forEach((key,value)async
+      {
+        //print('keys '+key);
+    if((key.split('.').length)==1)
+      {
+        print(value as Map<String,dynamic>);
+       await db.populateTableWithMapping(key, value as Map<String,dynamic> , false);
+       await db.populateTableWithCustomColumn(key.toUpperCase(), value as Map<String,dynamic>,'id', 12345,false);
+      } else{
+      var keysArray =  key.split('.');
+      for(int i=0;i<keysArray.length;i++)
+        {
+
+         var parentTableName =  keysArray[(keysArray.length - 1)];
+         var childTableName =  keysArray[(keysArray.length - 2)];
+      //   var isParentTableExist =  await db.checkIfTableExist(parentTableName, false);
+         //var isChildTableExist=  await db.checkIfTableExist(childTableName, false);
+//         await db.checkIfTableExist(parentTableName, false).then((isParentTableExist)async{
+//           if(isParentTableExist > 0) {
+//             print(value as Map<String,dynamic>);
+//             var isColumnExist = await db.isColumnExistInTable(parentTableName, childTableName);
+//             if (isColumnExist.length > 0)
+//             {
+//               var valueJSON = (value as Map<String,dynamic>).toString();
+//               print(valueJSON);
+//             }
+//           }
+//         });
+       await  db.checkIfTableExist(childTableName.toUpperCase(), false).then((isChildTableExist)async{
+           if(isChildTableExist > 0)
+           {
+             //print(value as Map<String,dynamic>);
+              await db.isColumnExistInTable(childTableName.toUpperCase(), parentTableName).then((isColumnExist)async{
+                if (isColumnExist > 0)
+                {
+                  var valueJSON = (value as Map<String,dynamic>).toString();
+                 // print(valueJSON);
+                  await db.updateTableColumn(childTableName, json.encode(value), parentTableName, false);
+
+                  //             await db.populateTableWithMapping(key, value as Map<String,dynamic> , false);
+                }
+              });
+
+           }
+         });
+
+        }
+    }
+  });
+//  for(int i=0;i<(savedData as Map).length;i++) {
+//    var tableInfo = await db.fetchTablesData(false);
+//    for (int j = 0; j < tableInfo.length; j++) {
+//      if (tableInfo[i]['name'].contains(savedData[i].key) == true) {
+//        var columnInfo = await db.fetchColumnData(tableInfo[i]['name']);
+//        print(columnInfo);
+//      }
+//    }
 //  }
+
+}
   String message(){
     int i;
     String msg=' ';

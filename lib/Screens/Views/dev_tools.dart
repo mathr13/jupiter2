@@ -119,9 +119,9 @@ class _DevToolsState extends State<DevTools> {
             shrinkWrap: true,
             itemCount: count[0]['COUNT(1)'],
             itemBuilder: (context, int index) {
-              return new Text(
-                data[index].toString(),
-                style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold)
+              return new ListTile(
+                title:Text(data[index].toString(),
+                style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold))
               );
             }
           ),
