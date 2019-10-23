@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:jupiter/forms/json_to_form.dart';
-import 'package:jupiter/forms/main.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 var db =DatabaseHelper();
@@ -37,6 +34,7 @@ class _CustomState extends State<CustomHidden> {
     // });
 
     widget.formItems[widget.count]['response'] = null;
+    return Container();
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -53,13 +51,12 @@ class _CustomState extends State<CustomHidden> {
            future: db.fetchLabelFromGV(widget.defaultValue.split("##")[1]),
         builder: (BuildContext context,
             AsyncSnapshot<String> snapshot) {
-          if (snapshot.hasData) 
-         return new Text((snapshot.data.toString()),
-              style:
-                   new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-
-
-          );
+          if (snapshot.hasData) {
+            return new Text((snapshot.data.toString()), style:new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+          }else {
+            return new Text((" "), style:new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+          }
+          
           
         }),
           (new Text(defaultV ?? "")),
@@ -68,18 +65,18 @@ class _CustomState extends State<CustomHidden> {
     );
   }
 
-  void _handleChanged() {
-    widget.onChanged(responseDetails);
-  }
-  TextInputType selectType (){
-    if(widget.item['subType']=='text')
-      return TextInputType.text;
-    else if(widget.item['subType']=='number')
-      return TextInputType.number;
-    else if(widget.item['subType']=='decimal')
-      return TextInputType.phone;
-    else return TextInputType.text;
-  }
+  // void _handleChanged() {
+  //   widget.onChanged(responseDetails);
+  // }
+  // TextInputType selectType (){
+  //   if(widget.item['subType']=='text')
+  //     return TextInputType.text;
+  //   else if(widget.item['subType']=='number')
+  //     return TextInputType.number;
+  //   else if(widget.item['subType']=='decimal')
+  //     return TextInputType.phone;
+  //   else return TextInputType.text;
+  // }
   
 }
 

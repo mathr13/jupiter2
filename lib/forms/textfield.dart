@@ -25,8 +25,7 @@ class _CustomState extends State<CustomText> {
   String value;
   var obj;
 
-  @override
-  Widget build(BuildContext context) {
+  @override Widget build(BuildContext context) {
     var db =DatabaseHelper();
     widget.formItems[widget.count]['response'] = null;
     return Container(
@@ -37,51 +36,34 @@ class _CustomState extends State<CustomText> {
         children: <Widget>[
           FutureBuilder<String>(
             future: db.getTextFieldLabel(widget.item['label']),
-        builder: (BuildContext context,
-            AsyncSnapshot<String> snapshot) {
-          if (!snapshot.hasData) return new Text(addAsterisk(widget.item['label']),
-            style:
-            new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-
-          );
-          return new Text(addAsterisk(snapshot.data.toString()),
-              style:
-                   new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-
-
-          );
-        }),
-          (new TextField(
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (!snapshot.hasData) return new Text(addAsterisk(widget.item['label']), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+              return new Text(addAsterisk(snapshot.data.toString()), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+            }),
+          new TextField(
             controller: null,
             decoration: new InputDecoration(
               hintText: widget.item['id'] ?? "",
             ),
-//            maxLines: widget.item['type'] == "text" ? 10 : 1,
+            // maxLines: widget.item['type'] == "text" ? 10 : 1,
             keyboardType: selectType(),
-            //       inputFormatters: [WhitelistingTextInputFormatter(RegExp(widget.menus['regex'])),],
+            // inputFormatters: [WhitelistingTextInputFormatter(RegExp(widget.menus['regex'])),],
             inputFormatters: <TextInputFormatter>[
-//              WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
-//              BlacklistingTextInputFormatter(RegExp(widget.item['regex'])),
-
+              // WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
+              // BlacklistingTextInputFormatter(RegExp(widget.item['regex'])),
               BlacklistingTextInputFormatter.singleLineFormatter,
             ],
             onChanged: (String value) {
               if (listOfHierarchy.length==1) {
-                listOfHierarchy.first.putIfAbsent(
-                  '${widget.item['nodeHierarchy']}',()=>{}
-                );
+                listOfHierarchy.first.putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
               } else {
-                listOfHierarchy[listOfHierarchy.length].putIfAbsent(
-                  '${widget.item['nodeHierarchy']}',()=>{}
-                );
+                listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
               }
-              listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({
-                '${widget.item['entityColName']}':value
-              });
+              listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({'${widget.item['entityColName']}':value});
               _handleChanged();
             },
             obscureText: widget.item['type'] == "Password" ? true : false,
-          )),
+          )
         ],
       ),
     );
@@ -90,7 +72,8 @@ class _CustomState extends State<CustomText> {
   void _handleChanged() {
     widget.onChanged(responseDetails);
   }
-  TextInputType selectType (){
+
+  TextInputType selectType () {
     if(widget.item['subType']=='text')
       return TextInputType.text;
     else if(widget.item['subType']=='number')
@@ -99,12 +82,10 @@ class _CustomState extends State<CustomText> {
       return TextInputType.phone;
     else return TextInputType.text;
   }
-  String addAsterisk(String textFieldName ){
-    if(widget.item['constraint']=='MANDATORY')
-      return '*'+textFieldName;
-    else
-      return textFieldName;
 
+  String addAsterisk(String textFieldName) {
+    if(widget.item['constraint']=='MANDATORY') return '*'+textFieldName;
+    else return textFieldName;
   }
 
 }

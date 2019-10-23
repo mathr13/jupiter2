@@ -54,17 +54,19 @@ class DatabaseHelper {
 
   Future _onCreate(Database db, int version) async {
     await db.execute("CREATE TABLE USER(userName TEXT, firstName TEXT, lastName TEXT, userId NUMBER, lang TEXT, PRIMARY KEY(userId))");
-    await db.execute("CREATE TABLE NotificationQueue(queueId TEXT ,projectId NUMBER,category TEXT ,message TEXT ,type TEXT ,seqNo NUMBER,groupSeqNo NUMBER, timestamp NUMBER,status TEXT, uri TEXT, params TEXT,PRIMARY KEY(queueId,projectId))");
+    await db.execute("CREATE TABLE NOTIFICATION_QUEUE(queueId TEXT ,projectId NUMBER,category TEXT ,message TEXT ,type TEXT ,seqNo NUMBER,groupSeqNo NUMBER, timestamp NUMBER,status TEXT, uri TEXT, params TEXT,PRIMARY KEY(queueId,projectId))");
     await db.execute("CREATE TABLE PROJECT(projectName TEXT, projectId NUMBER, init BOOL, defaultProject BOOL, db TEXT,PRIMARY KEY(projectId))");
     await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, iconUrl TEXT, perm TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
     await db.execute("CREATE TABLE PERMISSION(permissionId TEXT, projectId NUMBER,PRIMARY KEY(projectId,permissionId))");
     await db.execute("CREATE TABLE GLOBALVARIABLE(projectId NUMBER, key TEXT, value TEXT)");
     await db.execute("CREATE TABLE LABEL(key TEXT, value TEXT, localization TEXT, projectId NUMBER, appType TEXT,PRIMARY KEY(projectId,key,localization))");
     await db.execute("CREATE TABLE system_tables_info(tableId NUMBER, tableName TEXT, status BOOLEAN,PRIMARY KEY(tableId))");
-    await db.execute("INSERT INTO system_tables_info(tableId, tableName) VALUES(1,'USER'),(2,'NotificationQueue'),(3,'PROJECT'),(4,'MENU'),(5,'PERMISSION'),(6,'GLOBALVARIABLE'),(7,'LABEL'),(8,'DEFINITION')");
+    await db.execute("INSERT INTO system_tables_info(tableId, tableName) VALUES(1,'USER'),(2,'NOTIFICATION_QUEUE'),(3,'PROJECT'),(4,'MENU'),(5,'PERMISSION'),(6,'GLOBALVARIABLE'),(7,'LABEL'),(8,'DEFINITION')");
     await db.execute("CREATE TABLE DEFINITION(formId TEXT PRIMARY KEY, projectId Number, name TEXT, template TEXT)");
     await db.execute("CREATE TABLE WORKSPACE(wsId TEXT PRIMARY KEY, wsName Number,defaultTemplateId TEXT)");
     await db.execute("CREATE TABLE NAVIGATION_MAPPING(templateId TEXT,buttonId TEXT,componentType TEXT,  componentSubType TEXT, redirectTemplateId TEXT,label TEXT,operation TEXT,containerId TEXT,wsId TEXT,PRIMARY KEY (templateId,buttonId))");
+    // await db.execute("CREATE TABLE TRANS_QUEUE(transQueueId TEXT, requestId TEXT, requestData TEXT, lookUpData TEXT, projectId NUMBER, userId NUMBER, status TEXT, syncStatus TEXT, conflicts TEXT, responseData TEXT, wsId NUMBER, createdData TEXT, updateData TEXT)");
+    // await db.execute("CREATE TABLE TRANS_DOC_QUEUE(transDocId TEXT, requestId TEXT, transDocMetaData TEXT, status TEXT, syncStatus TEXT, noOfAttempts NUMBER, docLocalPath TEXT, docName TEXT, createdDate TEXT, updatedDat TEXT)");
   }
 
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value, bool isSystemDatabase) async {
@@ -120,25 +122,25 @@ class DatabaseHelper {
 
   Future<List<dynamic>> sortingNotificationData() async {
     var dbClient=await dbSystem;
-    List<dynamic> res = await dbClient.rawQuery('SELECT * FROM NotificationQueue WHERE type = "BO" AND category = "INIT" AND status = "ACTIVE" AND projectId = -1 ORDER BY groupSeqNo, seqNo ASC');
+    List<dynamic> res = await dbClient.rawQuery('SELECT * FROM NOTIFICATION_QUEUE WHERE type = "BO" AND category = "INIT" AND status = "ACTIVE" AND projectId = -1 ORDER BY groupSeqNo, seqNo ASC');
     return res;
   }
 
   Future<List<dynamic>> getProjectIdFromNotificationData() async {
     var dbClient=await dbSystem;
-    List<dynamic> res = await dbClient.rawQuery('SELECT * FROM NotificationQueue WHERE projectId = -1');
+    List<dynamic> res = await dbClient.rawQuery('SELECT * FROM NOTIFICATION_QUEUE WHERE projectId = -1');
     return res;
   }
 
   Future<List<dynamic>> fetchInitNotificationRecords() async {
     var dbClient=await dbSystem;
-    List<dynamic> res = await dbClient.rawQuery('SELECT * from NotificationQueue WHERE projectId in (SELECT projectId FROM PROJECT WHERE init = 1) AND type = "BO" AND category = "INIT" AND status = "ACTIVE" ORDER BY groupSeqNo, seqNo ASC');
+    List<dynamic> res = await dbClient.rawQuery('SELECT * from NOTIFICATION_QUEUE WHERE projectId in (SELECT projectId FROM PROJECT WHERE init = 1) AND type = "BO" AND category = "INIT" AND status = "ACTIVE" ORDER BY groupSeqNo, seqNo ASC');
     return res.toList();
   }
 
   Future<List<dynamic>> fetchInitNotificationRecordsForDefaultProject() async {
     var dbClient=await dbSystem;
-    List<dynamic> res = await dbClient.rawQuery('SELECT * from NotificationQueue WHERE projectId in (SELECT projectId FROM PROJECT WHERE defaultProject = 1) AND type = "BO" AND category = "INIT" AND status = "ACTIVE" ORDER BY groupSeqNo, seqNo ASC');
+    List<dynamic> res = await dbClient.rawQuery('SELECT * from NOTIFICATION_QUEUE WHERE projectId in (SELECT projectId FROM PROJECT WHERE defaultProject = 1) AND type = "BO" AND category = "INIT" AND status = "ACTIVE" ORDER BY groupSeqNo, seqNo ASC');
     return res.toList();
   }
 
@@ -173,7 +175,6 @@ class DatabaseHelper {
   Future<List> fetchTemplateID(String id) async {
     var dbClient = await dbSystem;
     String query = "SELECT * FROM DEFINITION WHERE template LIKE '%$id%' ";
-//    print(query);
     var res = await dbClient.rawQuery(query);
     return  res;
   }
@@ -181,7 +182,6 @@ class DatabaseHelper {
   Future<List> fetchWorkSpaceData(String id) async {
     var dbClient = await dbSystem;
     String query = "SELECT * FROM WORKSPACE WHERE wsId = '$id' ";
-//    print(query);
     var res = await dbClient.rawQuery(query);
     return  res;
   }
@@ -218,7 +218,6 @@ class DatabaseHelper {
     for(int i=0;i<columnNames.length;i++) {
       var columnNamebuf = columnNames[i];
       var dataTypeBuf = columnDataTypes[i];
-      // if(i==primaryKey) {pkColumnName = columnNamebuf;}
       if(columnNamebuf == "group") {columnNamebuf = "groups";}
       if(i==columnNames.length-1) {
         query += "$columnNamebuf $dataTypeBuf";
@@ -228,15 +227,12 @@ class DatabaseHelper {
             pkColumnName = primaryKey[c];
             if(c==primaryKey.length-1) {
               query += "$pkColumnName)";
-            }else {
-              query += "$pkColumnName,";
-            }
+            }else {query += "$pkColumnName,";}
           }
         }
         query += ")";
       }else {query += "$columnNamebuf $dataTypeBuf,";}
     }
-    print(query);
     dbClient.execute(query);
   }
   Future<List> fetchColumnData(String tableName) async {
@@ -250,10 +246,10 @@ class DatabaseHelper {
     var res = await dbClient.rawQuery("SELECT name FROM PRAGMA_TABLE_INFO('$tableName') WHERE name = '$columnName'");
     return res.length;
   }
-  Future<void> updateTableColumn(String tableName, dynamic value,String columnName, bool isSystemDatabase) async {
+  Future<void> updateTableColumn(String tableName, dynamic value,String columnName, bool isSystemDatabase, {dynamic interimId = 12345}) async {
     var dbClient;
     if(isSystemDatabase==true) {dbClient=await dbSystem;}else {dbClient=await dbContent;}
-    await dbClient.rawQuery("UPDATE $tableName SET $columnName = '$value' WHERE id='12345'");
+    await dbClient.rawQuery("UPDATE $tableName SET $columnName = '$value' WHERE id='$interimId'");
   }
   Future<String> fetchLabelFromGV(String defaultValue) async {
     var dbClient = await dbSystem;
@@ -262,33 +258,50 @@ class DatabaseHelper {
   }
   Future<String> getTextFieldLabel( dynamic key) async {
     var dbClient = await dbSystem;
-    var res =await dbClient.rawQuery("SELECT value FROM LABEL WHERE key = '$key'");
-    return res[0]['value'];
+    var res =await dbClient.rawQuery("SELECT * FROM LABEL WHERE key = '$key'");
+    if(res.isEmpty==false) {
+      return res[0]['value'];
+    }else {return key;}
   }
   Future<List> fetchDataSourceData(dynamic dataSource) async {
     var dbClient = await dbContent;
     var res;
-   await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()} ").then((result){
+    if(dataSource[0]['filters'].length!=0) {
+      String query = " WHERE ";
+      for(int i=0;i<dataSource[0]['filters'].length;i++) {
+        query += "${dataSource[0]['filters'][i]['key']} = '${dataSource[0]['filters'][i]['value']}'";
+        if(i != dataSource[0]['filters'].length-1 || i!=0) {
+          query += " AND ";
+        }
+      }
+      if(dataSource[0]['sorting'].length!=0) {
+        var order;
+        if(dataSource[0]['sorting'][0]['reverse']==true) order = ' DESC';
+        else order = ' ASC';
+        query += " ORDER BY ${dataSource[0]['displayMember']}"+order;
+      }
+      await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}"+query).then((result) {
       res =result.toList();
-    });
-   print(res);
-//    if(dataSource[0]['filters'].length>0) {
-//      for (int i = 0; i < dataSource[0]['filters'].length; i++) {
-//
-//      }
-//    }else {
-//      print(dataSource[0]['entityName'].toUpperCase());
-////      res = await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}' ");
-//         dbClient.rawQuery("SELECT * FROM LOV ").then((result){
-//           res = result;
-//         });
-//
-//    }
+      });
+    }else {
+      await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}").then((result) {
+        res =result.toList();
+      });
+    }
     return res;
-
   }
 
-
-
+  Future<List> checkIfPkExist(String tableName) async {
+    var dbClient = await dbContent;
+    var res = await dbClient.rawQuery("PRAGMA table_info ($tableName)");
+    return res.toList();
+  }
+  // int checkPkColumnInMap(String columnName, Map value) {
+  //   if(value.containsKey(columnName) == true) {
+  //     return 1;
+  //   }else {
+  //     return 0;
+  //   }
+  // }
 
 }

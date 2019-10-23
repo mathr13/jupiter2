@@ -1,13 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:jupiter/Screens/Views/home.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'main.dart';
+import 'package:uuid/uuid.dart';
 
 var db = DatabaseHelper();
+dynamic interimId;
 
 class CustomButton extends StatefulWidget {
   final String wsId;
@@ -28,20 +28,13 @@ class _CustomButtonState extends State<CustomButton> {
         itemCount: widget.buttons.length,
         physics: NeverScrollableScrollPhysics(),
         itemBuilder: (context,index) {
-          // return ListTile(
-          //   title: Center(child: Text(widget.buttons[index]['label'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25))),
-          // );
           return RaisedButton(
             onPressed: () {
               var operationOnButtonClick = buttons[index]['operation'];
               switch (operationOnButtonClick) {
-                case "SAVE": {
-                  _saveDataHierarchy();
-                }
+                case "SAVE": {_saveDataHierarchy();}
                 break;
-                case "CLOSE": {
-                  Navigator.push(context,MaterialPageRoute(builder: (context) =>Menus(),fullscreenDialog: true));
-                }
+                case "CLOSE": {Navigator.push(context,MaterialPageRoute(builder: (context) =>Menus(),fullscreenDialog: true));}
                 break;
               }
             },
@@ -62,30 +55,37 @@ void getButtonData(String wsId, String containerId) async {
 _saveDataHierarchy()async{
   var db = new DatabaseHelper();
   var listHierarchy=json.decode(json.encode(listOfHierarchy[0]));
-  listHierarchy.forEach((key,value)async
-      {
-        //print('keys '+key);
-    if((key.split('.').length)==1)
-      {
-        print(value as Map<String,dynamic>);
-       await db.populateTableWithCustomColumn(key.toUpperCase(), value as Map<String,dynamic>,'id', 12345,false);
+  print(listHierarchy);
+  listHierarchy.forEach((key,value) async {
+    if((key.split('.').length)==1) {
+        var pkColumnNameList = await db.checkIfPkExist(key);
+        var pkColName = pkColumnNameList[0]['name'];
+        // if(value.containsKey(pkColName) == true) {
+        //   return 1;
+        // }else {
+        //   return 0;
+        // }
+        if(value.containsKey(pkColName) == true) {
+          //TODO: edit case
+        }
+        else{
+          var uuid = new Uuid();
+          interimId = uuid.v4();
+          await db.populateTableWithCustomColumn(key.toUpperCase(), value as Map<String,dynamic>,pkColName, interimId,false);
+        }
       } else{
       var keysArray =  key.split('.');
-      for(int i=0;i<keysArray.length;i++)
-        {
-
+      for(int i=0;i<keysArray.length;i++) {
          var parentTableName =  keysArray[(keysArray.length - 1)];
          var childTableName =  keysArray[(keysArray.length - 2)];
        await  db.checkIfTableExist(childTableName.toUpperCase(), false).then((isChildTableExist)async{
-           if(isChildTableExist > 0)
-           {
+           if(isChildTableExist > 0) {
              //print(value as Map<String,dynamic>);
               await db.isColumnExistInTable(childTableName.toUpperCase(), parentTableName).then((isColumnExist)async{
-                if (isColumnExist > 0)
-                {
+                if (isColumnExist > 0) {
                   var valueJSON = (value as Map<String,dynamic>).toString();
                  // print(valueJSON);
-                  await db.updateTableColumn(childTableName.toUpperCase(), json.encode(value), parentTableName, false);
+                  await db.updateTableColumn(childTableName.toUpperCase(), json.encode(value), parentTableName, false, interimId: interimId);
 
                   //             await db.populateTableWithMapping(key, value as Map<String,dynamic> , false);
                 }
