@@ -67,14 +67,14 @@ class _CoreFormState extends State<CoreForm> {
                   responseDetails=response;
                 }, formItems: formItems));
           }
-          else if(item['type'] == "hidden") {
-            // listWidget.add(CustomText(
-            //   item: item, count: count, formItems: formItems, onChanged: (dynamic response) {
-            //    responseDetails=response;
-            //   }
-            // ));
-            listWidget.add(CustomHiddenField(defaultValue: item['defaultValue']));
-          }
+//          else if(item['type'] == "hidden") {
+//            // listWidget.add(CustomText(
+//            //   item: item, count: count, formItems: formItems, onChanged: (dynamic response) {
+//            //    responseDetails=response;
+//            //   }
+//            // ));
+//            listWidget.add(CustomHidden(defaultValue: item['defaultValue']));
+//          }
           else if (item['type'] == "radio") {
             // var db = new DatabaseHelper();
             // db.fetchData(item['lov']).then((data) {

@@ -257,8 +257,8 @@ class DatabaseHelper {
   }
   Future<dynamic> fetchLabelFromGV(String defaultValue) async {
     var dbClient = await dbSystem;
-    var res = dbClient.rawQuery("SELECT * FROM GLOBALVARIABLE WHERE KEY IS '$defaultValue'");
-    return res;
+    var res = await dbClient.rawQuery("SELECT * FROM GLOBALVARIABLE WHERE KEY IS '$defaultValue'");
+    return res[0]['value'];
   }
   Future<String> getTextFieldLabel( dynamic key) async {
     var dbClient = await dbSystem;

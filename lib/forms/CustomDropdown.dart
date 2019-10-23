@@ -49,7 +49,7 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                   items: snapshot.data.toList()
                       .map(( dynamic value) => DropdownMenuItem<dynamic>(
                 child: Text(value[widget.formItems[widget.count]['dataSource'][0]['displayMember']].toString()),
-                value: value[widget.formItems[widget.count]['dataSource'][0]['displayMember']],
+                value: value[widget.formItems[widget.count]['dataSource'][0]['valueMember']],
            ))
                         .toList(),
                     onChanged: ( newValue) {

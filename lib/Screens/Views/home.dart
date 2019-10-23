@@ -36,7 +36,7 @@ class _MenusState extends State<Menus> {
                 new Container(
                     child: new UserAccountsDrawerHeader(
                   accountEmail: new Text(emailController.text),
-                  accountName: new Text("Abc"),
+                  accountName: new Text(""),
                   currentAccountPicture: new CircleAvatar(
                     backgroundColor: Colors.lightGreen,
                     child: new Text("ab"),
