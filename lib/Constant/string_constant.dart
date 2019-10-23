@@ -28,4 +28,4 @@ String modelUri = "uri";
 
 
 //----------------------------------------TABLE NAMES----------------------------------------
-String notificationTable = "NotificationQueue";
+String notificationTable = "NOTIFICATION_QUEUE";

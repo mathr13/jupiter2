@@ -168,8 +168,7 @@ void checkIfDataIsStored(context) async {
     if(labelData>0) {
       sharedPreferences.setBool("FirstTimeLogin", false);
       Navigator.push(context, MaterialPageRoute(builder: (context) => Menus()));
-    }
-    else {checkIfDataIsStored(context);}
+    }else {checkIfDataIsStored(context);}
   });
 }
 

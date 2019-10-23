@@ -37,6 +37,7 @@ class _CustomState extends State<CustomHidden> {
     // });
 
     widget.formItems[widget.count]['response'] = null;
+    return Container();
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -44,41 +45,30 @@ class _CustomState extends State<CustomHidden> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           new Text((widget.item['label']),
-              style:
-                   new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+            style:
+            new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
 
 
           ),
           FutureBuilder<String>(
-           future: db.fetchLabelFromGV(widget.defaultValue.split("##")[1]),
-        builder: (BuildContext context,
-            AsyncSnapshot<String> snapshot) {
-          if (snapshot.hasData) {
-            return new Text((snapshot.data.toString()), style:new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-          }
-          else {
-            return new Text((" "), style:new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-          }
-          
-          
-        }),
+              future: db.fetchLabelFromGV(widget.defaultValue.split("##")[1]),
+              builder: (BuildContext context,
+                  AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  return new Text((snapshot.data.toString()),
+                      style: new TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16.0));
+                }
+                else {
+                  return new Text((" "), style: new TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16.0));
+                }
+              }),
+          (new Text(defaultV ?? "")),
         ],
       ),
     );
   }
-
-  void _handleChanged() {
-    widget.onChanged(responseDetails);
-  }
-  TextInputType selectType (){
-    if(widget.item['subType']=='text')
-      return TextInputType.text;
-    else if(widget.item['subType']=='number')
-      return TextInputType.number;
-    else if(widget.item['subType']=='decimal')
-      return TextInputType.phone;
-    else return TextInputType.text;
-  }
-  
 }
+
 

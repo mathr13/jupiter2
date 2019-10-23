@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/forms/json_to_form.dart';
 import 'package:jupiter/forms/main.dart';
+
+
 class DropdownButtonHint extends StatefulWidget {
   const DropdownButtonHint({
     @required this.onChanged,
@@ -17,8 +19,7 @@ class DropdownButtonHint extends StatefulWidget {
   final dynamic formItems;
   final lovItems;
 
-  @override
-  _DropdownButtonState createState() => _DropdownButtonState();
+  @override _DropdownButtonState createState() => _DropdownButtonState();
 }
 
 class _DropdownButtonState extends State<DropdownButtonHint> {
@@ -26,8 +27,7 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
   final db = new DatabaseHelper();
 
 
-  @override
-  Widget build(BuildContext context) {
+  @override Widget build(BuildContext context) {
     return Container(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -35,10 +35,15 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             new Container(
-                margin: new EdgeInsets.only(top: 5.0, bottom: 5.0),
-                child: new Text(widget.item['label'],
-                    style: new TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16.0))),
+              margin: new EdgeInsets.only(top: 5.0, bottom: 5.0),
+              child: new FutureBuilder(
+                future: db.getTextFieldLabel(widget.item['label']),
+                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (!snapshot.hasData) return new Text(widget.item['label'], style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+                  return new Text(snapshot.data.toString(), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+                }
+              )
+            ),
             FutureBuilder<List<dynamic>>(
                 future: db.fetchDataSourceData(widget.formItems[widget.count]['dataSource']),
                 builder: (BuildContext context,

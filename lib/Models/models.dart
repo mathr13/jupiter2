@@ -160,33 +160,6 @@ class DefinitionModel {
   }
 }
 
-// class DefinitionModel {
-//   String nextSeq;
-//   String templateName;
-//   String templateId;
-//   String definition;
-
-//   DefinitionModel({this.nextSeq,this.templateName,this.templateId,this.definition});
-
-//   factory DefinitionModel.fromJson(Map<String, dynamic> parsedJson) {
-//     return DefinitionModel(
-//       templateId: parsedJson['templateId'],
-//       templateName: parsedJson['templateName'],
-//       nextSeq: parsedJson['nextSeq'],
-//       definition: json.encode(parsedJson['defintion'])
-//     );
-//   }
-//   Map<dynamic, dynamic> toMap() {
-//     var map=new Map<String, dynamic>();
-//     map["templateId"]=templateId;
-//     map["templateName"]=templateName;
-//     map["nextSeq"]=nextSeq;
-//     map["definition"]=definition;
-//     return map;
-//   }
-// }
-
-
 
 class ModelReponseModel {
   ModelDataModel modelDataModel;
@@ -325,8 +298,7 @@ class NavigationMapping {
   String operation;
   String containerId;
 
-  NavigationMapping(
-      {this.templateId, this.buttonId, this.componentSubType, this.componentType, this.containerId, this.label, this.operation, this.redirectTemplateId});
+  NavigationMapping({this.templateId, this.buttonId, this.componentSubType, this.componentType, this.containerId, this.label, this.operation, this.redirectTemplateId});
 
   factory NavigationMapping.fromJson(Map<String, dynamic> parsedJson){
     return NavigationMapping(
