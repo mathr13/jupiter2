@@ -81,14 +81,10 @@ class _CoreFormState extends State<CoreForm> {
                 }, formItems: formItems, defaultValue: item['defaultValue'],));
           }
           else if (item['type'] == "radio") {
-            // var db = new DatabaseHelper();
-            // db.fetchData(item['lov']).then((data) {
-            //   print(data);
                 listWidget.add(CustomRadio(
                   item: item, count: count, onChanged: (dynamic response) {
                   result = response;
                 }, formItems: formItems,));
-            // });
           }
           else if (item['type'] == "Switch")
             listWidget.add(CustomSwitch(
@@ -99,7 +95,7 @@ class _CoreFormState extends State<CoreForm> {
             listWidget.add(CustomCheckBox(
               item: item, count: count, onChanged: (dynamic response) {
               result = response;
-            }, formItems: formItems,));
+            }, formItems: formItems));
           else if (item['type'] == "select")
             listWidget.add(DropdownButtonHint(
               item: item, count: count, onChanged: (dynamic response) {

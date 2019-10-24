@@ -41,12 +41,7 @@ class _CustomState extends State<CustomHidden> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          new Text((widget.item['label']),
-              style:
-                   new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-
-
-          ),
+          new Text((widget.item['label']), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
           FutureBuilder<String>(
            future: db.fetchLabelFromGV(widget.defaultValue.split("##")[1]),
         builder: (BuildContext context,
@@ -56,8 +51,6 @@ class _CustomState extends State<CustomHidden> {
           }else {
             return new Text((" "), style:new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
           }
-          
-          
         }),
           (new Text(defaultV ?? "")),
         ],

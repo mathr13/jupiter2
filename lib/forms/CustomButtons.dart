@@ -55,7 +55,6 @@ void getButtonData(String wsId, String containerId) async {
 _saveDataHierarchy()async{
   var db = new DatabaseHelper();
   var listHierarchy=json.decode(json.encode(listOfHierarchy[0]));
-  print(listHierarchy);
   listHierarchy.forEach((key,value) async {
     if((key.split('.').length)==1) {
         var pkColumnNameList = await db.checkIfPkExist(key);
