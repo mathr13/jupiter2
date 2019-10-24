@@ -30,14 +30,32 @@ class _CustomState extends State<CustomHidden> {
   String value;
   var obj;
 
-  @override Widget build(BuildContext context) {
+  @override
+  void initState(){
+    super.initState();
+    _getHiddenData();
+
+
+  }
+_getHiddenData() async{
+    var db = await DatabaseHelper();
+    db.fetchLabelFromGV(widget.defaultValue.split("##")[1]).then((value){
+      if (listOfHierarchy.length==1) {
+        listOfHierarchy.first.putIfAbsent('${widget.item['nodeHierarchy']}',()=>[{}]);
+      } else {
+        listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>[{}]);
+      }
+      listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({'${widget.item['entityColName']}':value});
+    });
+
+}
+  Widget build(BuildContext context) {
     // db.fetchLabelFromGV(widget.defaultValue.split("##")[1]).then((res) {
     //   // widget.defaultValue = res[0]['key'];
     //   defaultV = res[0]['value'];
     // });
-
     widget.formItems[widget.count]['response'] = null;
-    return Container();
+//    return Container();
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -58,13 +76,18 @@ class _CustomState extends State<CustomHidden> {
                   return new Text((snapshot.data.toString()),
                       style: new TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16.0));
-                }
+    if (listOfHierarchy.length==1) {
+    listOfHierarchy.first.putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
+    } else {
+    listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
+    }
+    listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({'${widget.item['entityColName']}':value});
+    }
                 else {
                   return new Text((" "), style: new TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 16.0));
                 }
               }),
-          (new Text(defaultV ?? "")),
         ],
       ),
     );

@@ -54,41 +54,65 @@ void getButtonData(String wsId, String containerId) async {
 
 _saveDataHierarchy()async{
   var db = new DatabaseHelper();
+  print(listOfHierarchy);
   var listHierarchy=json.decode(json.encode(listOfHierarchy[0]));
   print(listHierarchy);
   listHierarchy.forEach((key,value) async {
     if((key.split('.').length)==1) {
-        var pkColumnNameList = await db.checkIfPkExist(key);
+      print("store model.map "+key);
+      var pkColumnNameList = await db.checkIfPkExist(key);
         var pkColName = pkColumnNameList[0]['name'];
         // if(value.containsKey(pkColName) == true) {
         //   return 1;
         // }else {
         //   return 0;
         // }
-        if(value.containsKey(pkColName) == true) {
+        if(value[0].containsKey(pkColName) == true) {
           //TODO: edit case
         }
         else{
           var uuid = new Uuid();
           interimId = uuid.v4();
-          await db.populateTableWithCustomColumn(key.toUpperCase(), value as Map<String,dynamic>,pkColName, interimId,false);
+          mapOfPrimaryKeys.putIfAbsent(key,()=>interimId );
+          print(mapOfPrimaryKeys);
+          await db.populateTableWithCustomColumn(key.toUpperCase(), value[0] as Map<String,dynamic>,pkColName, interimId,false);
         }
       } else{
       var keysArray =  key.split('.');
       for(int i=0;i<keysArray.length;i++) {
-         var parentTableName =  keysArray[(keysArray.length - 1)];
-         var childTableName =  keysArray[(keysArray.length - 2)];
-       await  db.checkIfTableExist(childTableName.toUpperCase(), false).then((isChildTableExist)async{
-           if(isChildTableExist > 0) {
+         var parentTableName =  keysArray[(keysArray.length - 2)];
+         var childTableName =  keysArray[(keysArray.length - 1)];
+       await  db.checkIfTableExist(parentTableName.toUpperCase(), false).then((isParentTableExist)async{
+           if(isParentTableExist > 0) {
              //print(value as Map<String,dynamic>);
-              await db.isColumnExistInTable(childTableName.toUpperCase(), parentTableName).then((isColumnExist)async{
+              await db.isColumnExistInTable(parentTableName.toUpperCase(), childTableName).then((isColumnExist)async{
                 if (isColumnExist > 0) {
-                  var valueJSON = (value as Map<String,dynamic>).toString();
-                 // print(valueJSON);
-                  await db.updateTableColumn(childTableName.toUpperCase(), json.encode(value), parentTableName, false, interimId: interimId);
+                  print("store model.json " + key);
+                  List<String> keyHierarchy= key.toString().split('.');
+                     keyHierarchy.removeLast();
+                     var parentPrimaryKey = mapOfPrimaryKeys[keyHierarchy.join('.')];
+                  await db.updateTableColumn(parentTableName.toUpperCase(), json.encode(value[0]), childTableName, false, interimId: parentPrimaryKey);
 
                   //             await db.populateTableWithMapping(key, value as Map<String,dynamic> , false);
+                }else {
+                  print("store model.modelmap "+ key);
+                  await db.isColumnExistInTable(
+                      childTableName.toUpperCase(), childTableName).then((
+                      isColumnExist) async {
+                    var pkColumnNameList = await db.checkIfPkExist(
+                        childTableName);
+                    var pkColName = pkColumnNameList[0]['name'];
+
+                    var uuid = new Uuid();
+                    interimId = uuid.v4();
+                    mapOfPrimaryKeys.putIfAbsent(key, () => interimId);
+                    print(mapOfPrimaryKeys);
+                    await db.populateTableWithCustomColumn(childTableName
+                        .toUpperCase(), value[0] as Map<String, dynamic>,
+                        pkColName, interimId, false);
+                  });
                 }
+
               });
 
            }

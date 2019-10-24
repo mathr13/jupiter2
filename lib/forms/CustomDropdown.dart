@@ -62,14 +62,14 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                         {
                           if (listOfHierarchy.length==1) {
                             listOfHierarchy.first.putIfAbsent(
-                                '${widget.item['nodeHierarchy']}',()=>{}
+                                '${widget.item['nodeHierarchy']}',()=>[{}]
                             );
                           } else {
                             listOfHierarchy[listOfHierarchy.length].putIfAbsent(
-                                '${widget.item['nodeHierarchy']}',()=>{}
+                                '${widget.item['nodeHierarchy']}',()=>[{}]
                             );
                           }
-                          listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({
+                          listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({
                             '${widget.item['entityColName']}':newValue
                           });
 

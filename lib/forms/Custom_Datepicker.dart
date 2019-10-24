@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:jupiter/forms/main.dart';
 class CustomDatePicker extends StatefulWidget {
   const CustomDatePicker({
     @required this.onChanged,
@@ -30,6 +31,13 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       setState(() {
         selectedDate = picked;
         widget.formItems[widget.count]['value'] = "${selectedDate.day}-${selectedDate.month}-${selectedDate.year}";
+        if (listOfHierarchy.length==1) {
+          listOfHierarchy.first.putIfAbsent('${widget.item['nodeHierarchy']}',()=>[{}]);
+        } else {
+          listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>[{}]);
+        }
+        print(listOfHierarchy[0]['${widget.item['nodeHierarchy']}']);
+        listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({'${widget.item['entityColName']}':'${selectedDate.day}-${selectedDate.month}-${selectedDate.year}'});
         _handleChanged();
 
       });
@@ -45,7 +53,6 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           children: <Widget>[
        new Container(
         padding: new EdgeInsets.all(32.0),
-        child: new Center(
           child: new Column(
             children: <Widget>[
               new Text("${selectedDate.day}-${selectedDate.month}-${selectedDate.year}"
@@ -53,7 +60,6 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
               new RaisedButton(onPressed: _selectDate, child: new Text('Click me'),)
             ],
           ),
-        ),
       )
     ]
     ),

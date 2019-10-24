@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jupiter/forms/Databasehelper.dart';
+import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/forms/json_to_form.dart';
+import 'package:jupiter/forms/main.dart';
 class CustomRadio extends StatefulWidget {
   const CustomRadio({
     @required this.onChanged,
@@ -24,7 +25,7 @@ class CustomRadio extends StatefulWidget {
 
 class _CustomState extends State<CustomRadio> {
   String value;
-  int radioValue;
+  String radioValue;
   final db = new DatabaseHelper();
 
 
@@ -38,11 +39,16 @@ class _CustomState extends State<CustomRadio> {
           children: <Widget>[
             new Container(
                 margin: new EdgeInsets.only(top: 5.0, bottom: 5.0),
-                child: new Text(widget.item['label'],
-                    style: new TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16.0))),
+                child: new FutureBuilder(
+                    future: db.getTextFieldLabel(widget.item['label']),
+                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (!snapshot.hasData) return new Text(widget.item['label'], style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+                      return new Text(snapshot.data.toString(), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+                    }
+                )
+            ),
             FutureBuilder<List<dynamic>>(
-                future: db.fetchTablesData(widget.formItems[widget.count]['lov']),
+                future: db.fetchDataSourceData(widget.formItems[widget.count]['dataSource']),
                 builder: (BuildContext context,
                     AsyncSnapshot<List<dynamic>> snapshot) {
                   if (!snapshot.hasData) return CircularProgressIndicator();
@@ -50,7 +56,8 @@ class _CustomState extends State<CustomRadio> {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: column(snapshot.data));
+                     children: column(snapshot.data)
+                  );
                 }
                   ),
     ]
@@ -58,41 +65,34 @@ class _CustomState extends State<CustomRadio> {
     );
                 }
 
-//            new Container(
-//                margin: new EdgeInsets.only(top: 5.0, bottom: 5.0),
-//                child: new Text(widget.item['label'],
-//                    style: new TextStyle(
-//                        fontWeight: FontWeight.bold, fontSize: 16.0))),
-//            new Container(
-//              child: Column(
-//                  mainAxisSize: MainAxisSize.max,
-//                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                  crossAxisAlignment: CrossAxisAlignment.stretch,
-//                  children: column()),
-//            ),
-//          ]),
-//    );
- // }
-
   List<Widget> column(dynamic list) {
     List<Widget> radioList=new List<Widget>();
-    radioValue=widget.item['value'];
     for (var i=0; i < list.length; i++) {
         radioList.add(new Row(children: <Widget>[
           new Expanded(
               child: new Text(
-                  list[i]['displayName'].toString())),
-          new Radio<int>(
-              value: int.parse(list[i]['displayValue']),
+                  list[i][widget.formItems[widget.count]['dataSource'][0]['displayMember'].toString()].toString())),
+          new Radio<String>(
+              value: list[i][widget.formItems[widget.count]['dataSource'][0]['valueMember'].toString()],
               groupValue: radioValue,
-              onChanged: (int value) {
+              //int.parse(list[i]['displayValue']),
+              onChanged: (String value) {
                 this.setState(() {
                   radioValue = value;
-                  responseDetails.addAll({
-
-                    "${widget.item['id']}":value
-                  });
-                  widget.formItems[widget.count]['value'] = value;
+                  {
+                    if (listOfHierarchy.length==1) {
+                      listOfHierarchy.first.putIfAbsent(
+                          '${widget.item['nodeHierarchy']}',()=>[{}]
+                      );
+                    } else {
+                      listOfHierarchy[listOfHierarchy.length].putIfAbsent(
+                          '${widget.item['nodeHierarchy']}',()=>[{}]
+                      );
+                    }
+                    listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({
+                      '${widget.item['entityColName']}':value
+                    });
+                  }
                   _handleChanged();
                 });
               })
