@@ -19,7 +19,7 @@ class CustomCheckBox extends StatefulWidget {
 }
 
 class _CustomState extends State<CustomCheckBox> {
- List<bool> value;
+  List<bool> value;
   dynamic response;
   Map<String,bool> map ={};
   List<bool> booleans = [false];

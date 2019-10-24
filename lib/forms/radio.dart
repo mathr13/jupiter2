@@ -79,13 +79,21 @@ class _CustomState extends State<CustomRadio> {
               onChanged: (String value) {
                 this.setState(() {
                   radioValue = value;
-                  // if (listOfHierarchy.length==1) {
-                  //     listOfHierarchy.first.putIfAbsent('${widget.item['nodeHierarchy']}',()=>[{}]);
-                  //   } else {
-                  //     listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>[{}]);
-                  //   }
-                  //   listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({'${widget.item['entityColName']}':value});
-                  //   _handleChanged();
+                  {
+                    if (listOfHierarchy.length==1) {
+                      listOfHierarchy.first.putIfAbsent(
+                          '${widget.item['nodeHierarchy']}',()=>[{}]
+                      );
+                    } else {
+                      listOfHierarchy[listOfHierarchy.length].putIfAbsent(
+                          '${widget.item['nodeHierarchy']}',()=>[{}]
+                      );
+                    }
+                    listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({
+                      '${widget.item['entityColName']}':value
+                    });
+                  }
+                  _handleChanged();
                 });
               })
         ]));

@@ -43,40 +43,50 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                   return new Text(widget.item['label'], style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
                 return new Text(snapshot.data.toString(), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
                 }
-            )
-          ),
-          FutureBuilder<List<dynamic>>(
-            future: db.fetchDataSourceData(widget.formItems[widget.count]['dataSource']),
-            builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-              if (!snapshot.hasData) return CircularProgressIndicator();
-              return DropdownButton<dynamic>(
-                value:dropdownValue,
-                items: snapshot.data.toList().map(
-                  (dynamic value) => DropdownMenuItem<dynamic>(
-                    child: Text(value[widget.formItems[widget.count]['dataSource'][0]['displayMember']].toString()),
-                    value: value[widget.formItems[widget.count]['dataSource'][0]['valueMember']],
-                  )
-                ).toList(),
-              onChanged: (newValue) {
-                setState(() {
-                  if (listOfHierarchy.length==1) {
-                    listOfHierarchy.first.putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
-                  } else {
-                    listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
-                  }
-                  listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({'${widget.item['entityColName']}':newValue});
-                  _handleChanged();
-                  dropdownValue=newValue;
-                  _handleChanged();
-                });
-              },
-              isExpanded: false,
-              hint: Text('Select'),
-              );
-            }
-          ),
-        ],
-      ),
+              )
+            ),
+            FutureBuilder<List<dynamic>>(
+                future: db.fetchDataSourceData(widget.formItems[widget.count]['dataSource']),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<dynamic>> snapshot) {
+                  if (!snapshot.hasData) return CircularProgressIndicator();
+                  return DropdownButton<dynamic>(
+                    value:dropdownValue,
+                  items: snapshot.data.toList()
+                      .map(( dynamic value) => DropdownMenuItem<dynamic>(
+                child: Text(value[widget.formItems[widget.count]['dataSource'][0]['displayMember']].toString()),
+                value: value[widget.formItems[widget.count]['dataSource'][0]['valueMember']],
+           ))
+                        .toList(),
+                    onChanged: ( newValue) {
+                      setState(() {
+                        {
+                          if (listOfHierarchy.length==1) {
+                            listOfHierarchy.first.putIfAbsent(
+                                '${widget.item['nodeHierarchy']}',()=>[{}]
+                            );
+                          } else {
+                            listOfHierarchy[listOfHierarchy.length].putIfAbsent(
+                                '${widget.item['nodeHierarchy']}',()=>[{}]
+                            );
+                          }
+                          listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({
+                            '${widget.item['entityColName']}':newValue
+                          });
+
+                          _handleChanged();
+                        }
+                        dropdownValue=newValue;
+                        _handleChanged();
+                      });
+                    },
+                    isExpanded: false,
+                    hint: Text('Select'),
+                  );
+                }),
+
+          ],
+        ),
     );
   }
   void _handleChanged() {

@@ -49,17 +49,17 @@ class _CustomState extends State<CustomText> {
             keyboardType: selectType(),
             // inputFormatters: [WhitelistingTextInputFormatter(RegExp(widget.menus['regex'])),],
             inputFormatters: <TextInputFormatter>[
-              // WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
+              //  WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
               // BlacklistingTextInputFormatter(RegExp(widget.item['regex'])),
-              BlacklistingTextInputFormatter.singleLineFormatter,
+              // BlacklistingTextInputFormatter.singleLineFormatter,
             ],
             onChanged: (String value) {
               if (listOfHierarchy.length==1) {
-                listOfHierarchy.first.putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
+                listOfHierarchy.first.putIfAbsent('${widget.item['nodeHierarchy']}',()=>[{}]);
               } else {
-                listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
+                listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>[{}]);
               }
-              listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({'${widget.item['entityColName']}':value});
+              listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({'${widget.item['entityColName']}':value});
               _handleChanged();
             },
             obscureText: widget.item['type'] == "Password" ? true : false,

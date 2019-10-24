@@ -20,14 +20,14 @@ List<Map> fetchedProjectFromNotificationData = [];
 
 void authenticate(context) async {
   User user = User(
-    // userName: emailController.text,
-    // password: passwordController.text,
+    userName: emailController.text,
+    password: passwordController.text,
     // userName: "usharma@petroitg.com",
     // password: "India@123"
     // userName: "piku@gmail.com",
     // password: "piku@gmail.com"
-   userName: "superman@mailinator.com",
-   password: "India@123",
+  //  userName: "superman@mailinator.com",
+  //  password: "India@123",
     // userName: "sojha@petroitg.com",
     // password: "sumi"
   );
@@ -51,7 +51,6 @@ void authenticate(context) async {
     fetchedProjectFromNotificationData = await db.getProjectIdFromNotificationData();
     if(fetchedProjectFromNotificationData.length == 0) {
       await Future.delayed(Duration(seconds: 5));
-      print(fetchedProjectFromNotificationData.length);
     }
     saveMasterData(fetchedProjectFromNotificationData);    //Project Data
     await Future.delayed(Duration(seconds: 5));
@@ -97,21 +96,19 @@ Future<http.Response> callApi(String url, String header) async {
 
 
 void checkNull(context) {
-  // print(emailController.text);
-  // print(passwordController.text);
-  // if (passwordController.text.length == 0 && emailController.text.length == 0) {
-  //   dialog(nullEmailPass, context);
-  //   return null;
-  // } else if (passwordController.text.length == 0) {
-  //   dialog(nullPassword, context);
-  //   return null;
-  // } else if (emailController.text.length == 0) {
-  //   dialog(nullEmail, context);
-  //   return null;
-  // } else {
-  //   authenticate(context);
-  // }
-  authenticate(context);
+  if (passwordController.text.length == 0 && emailController.text.length == 0) {
+    dialog(nullEmailPass, context);
+    return null;
+  } else if (passwordController.text.length == 0) {
+    dialog(nullPassword, context);
+    return null;
+  } else if (emailController.text.length == 0) {
+    dialog(nullEmail, context);
+    return null;
+  } else {
+    authenticate(context);
+  }
+  // authenticate(context);
 }
 
 /*

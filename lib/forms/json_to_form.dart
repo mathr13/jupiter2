@@ -60,14 +60,14 @@ class _CoreFormState extends State<CoreForm> {
       formItems = data[0]['definition'];
         for (var count = 0; count < formItems.length; count++) {
           Map item = formItems[count];
-          if (item['type'] == "text" ||
-              item['type'] == "Password") {
+          if ((item['type'] == "text" || item['type'] == "Password") && (item['subType'] != 'date')) {
             listWidget.add(
                 CustomText(
                   item: item, count: count, onChanged: (dynamic response) {
                   responseDetails=response;
                 }, formItems: formItems));
           }
+
           else if(item['type'] == "hidden") {
             // listWidget.add(CustomText(
             //   item: item, count: count, formItems: formItems, onChanged: (dynamic response) {
@@ -102,7 +102,7 @@ class _CoreFormState extends State<CoreForm> {
               result = response;
             }, formItems: formItems,)
             );
-          else if (item['type'] == "date") {
+          else if (item['subType'] == "date") {
             print(cont);
             cont++;
             listWidget.add(CustomDatePicker(
