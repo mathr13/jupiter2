@@ -49,7 +49,7 @@ class _CustomState extends State<CustomText> {
             keyboardType: selectType(),
             // inputFormatters: [WhitelistingTextInputFormatter(RegExp(widget.menus['regex'])),],
             inputFormatters: <TextInputFormatter>[
-               WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
+//               WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
               // BlacklistingTextInputFormatter(RegExp(widget.item['regex'])),
               BlacklistingTextInputFormatter.singleLineFormatter,
             ],
@@ -59,7 +59,6 @@ class _CustomState extends State<CustomText> {
               } else {
                 listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>[{}]);
               }
-              print(listOfHierarchy[0]['${widget.item['nodeHierarchy']}']);
               listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({'${widget.item['entityColName']}':value});
               _handleChanged();
             },
