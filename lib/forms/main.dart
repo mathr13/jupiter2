@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:jupiter/Screens/Views/home.dart';
 import 'package:jupiter/forms/json_to_form.dart';
 import 'dart:convert';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
@@ -8,30 +9,14 @@ import 'dart:core';
 
 
 Object obj;
- String title="Form1";
- var res;
- List<Map> listOfHierarchy = [{}];
- Map mapOfPrimaryKeys ={};
+String formTitle="Form";
+var res;
+List<Map> listOfHierarchy = [{}];
+Map mapOfPrimaryKeys ={};
+dynamic formValue;
+
 class MyApp extends StatelessWidget {
   @override Widget build(BuildContext context) {
-//  return WillPopScope(
-//  onWillPop: () {
-//    if(flag==true)
-//      return Future.value(false);
-//    else
-//      return Future.value(true);
-//
-//  },
-// return  MaterialApp(
-//       title: 'Welcome to Flutter',
-//       debugShowCheckedModeBanner: false,
-//       home: App(),
-// //    onGenerateRoute: FluroRouter.router.generator,
-//     theme: ThemeData(
-//         primarySwatch: Colors.green
-//       ),
-//  // )
-    // );
     return WillPopScope(
       onWillPop: () async {
         return true;
@@ -40,7 +25,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-dynamic formValue;
+
 class App extends StatefulWidget {
   App({this.formItems});
   final dynamic formItems;
@@ -49,79 +34,40 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+
   void initState(){
     super.initState();
-//     _getTemplateId();
-
-
-//    var parsedFormData = json.decode(json.encode(formData));
   }
 
   @override Widget build(BuildContext context) {
     return new MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-      primarySwatch: Colors.green
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.green
       ),
-        home:Scaffold(
-      appBar: new AppBar(
-        title: new Text(title),
-),
-      body: new SingleChildScrollView(
-        child: new Container(
-          child: new Column(children: <Widget>[
-            FutureBuilder<dynamic>(
-                future: _getTemplateId(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<dynamic> snapshot) {
-                  if (!snapshot.hasData) return CircularProgressIndicator();
-                  // Navigator.push(context,MaterialPageRoute(builder: (context) => new Progress()));
-                  return CoreForm(
-                      form:formValue.toString(),
-                       jsonForm: res[0]['template'],
-                  )  ;
-                }
-
-            ),
-
-//            new CoreForm(
-//              form:formValue.toString(),
-//              index: 0,
-//              templateId:templateId ,
-//              jsonForm: res,
-//            ),
-//             new RaisedButton(
-//                 child: new Text('Send'),
-//                 onPressed: () async{
-//                  //  message();
-// //                print(result.toString());
-// //                print(responseDetails.toString());
-//                   _saveDataHierarchy();
-//                 print(listOfHierarchy.toString());
-// //                   await getTemplate(id);
-// //                   Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(),maintainState: true));
-
-
-
-
-
-//                 })
-          ]),
+      home:Scaffold(
+        drawer: menuDrawer(context),
+        appBar: new AppBar(
+          title: new Text(formTitle),
         ),
-      ),
+        body: new SingleChildScrollView(
+          child: new Container(
+            child: new Column(children: <Widget>[
+              FutureBuilder<dynamic>(
+                future: _getTemplateId(),
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (!snapshot.hasData) return CircularProgressIndicator();
+                  return CoreForm(
+                    form:formValue.toString(),
+                    jsonForm: res[0]['template'],
+                  );
+                }
+              )
+            ]),
+          ),
+        ),
       )
     );
-  }
-
-   _getTemplateId()async{
-    var db = new DatabaseHelper();
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String id= sharedPreferences.get('TemplateId');
-    res=  await db.fetchTemplateID(id);
-//print(res[0]['template'].toString());
-
-    return res[0]['template'].toString();
-
   }
 
 
@@ -167,4 +113,12 @@ class _AppState extends State<App> {
       },
     );
   }
+}
+
+_getTemplateId() async {
+  var db = new DatabaseHelper();
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  String id= sharedPreferences.get('TemplateId');
+  res=  await db.fetchTemplateID(id);
+  return res[0]['template'].toString();
 }

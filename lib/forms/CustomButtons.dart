@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 
 var db = DatabaseHelper();
 dynamic interimId;
+Map<String, dynamic> transQData = {'transQueueId': '', 'requestId': '', 'requestData': '', 'lookUpData': '','projectId': '','userId': '', 'status': '', 'syncStatus': '', 'conflicts': '', 'responseData': '', 'wsId': '', 'createdData': '', 'updateData': ''};
 
 class CustomButton extends StatefulWidget {
   final String wsId;
@@ -52,9 +53,8 @@ void getButtonData(String wsId, String containerId) async {
 }
 
 
-_saveDataHierarchy()async{
+_saveDataHierarchy() async {
   var db = new DatabaseHelper();
-  print(listOfHierarchy);
   var listHierarchy=json.decode(json.encode(listOfHierarchy[0]));
   listHierarchy.forEach((key,value) async {
     if((key.split('.').length)==1) {
@@ -72,53 +72,83 @@ _saveDataHierarchy()async{
         else{
           var uuid = new Uuid();
           interimId = uuid.v4();
-          mapOfPrimaryKeys.putIfAbsent(key,()=>interimId );
-          print(mapOfPrimaryKeys);
+          mapOfPrimaryKeys.putIfAbsent(key,()=>interimId);
           await db.populateTableWithCustomColumn(key.toUpperCase(), value[0] as Map<String,dynamic>,pkColName, interimId,false);
         }
-      } else{
+      }else {
       var keysArray =  key.split('.');
       for(int i=0;i<keysArray.length;i++) {
-         var parentTableName =  keysArray[(keysArray.length - 2)];
-         var childTableName =  keysArray[(keysArray.length - 1)];
-       await  db.checkIfTableExist(parentTableName.toUpperCase(), false).then((isParentTableExist)async{
-           if(isParentTableExist > 0) {
-             //print(value as Map<String,dynamic>);
-              await db.isColumnExistInTable(parentTableName.toUpperCase(), childTableName).then((isColumnExist)async{
-                if (isColumnExist > 0) {
-                  print("store model.json " + key);
-                  List<String> keyHierarchy= key.toString().split('.');
-                     keyHierarchy.removeLast();
-                     var parentPrimaryKey = mapOfPrimaryKeys[keyHierarchy.join('.')];
-                  await db.updateTableColumn(parentTableName.toUpperCase(), json.encode(value[0]), childTableName, false, interimId: parentPrimaryKey);
-
-                  //             await db.populateTableWithMapping(key, value as Map<String,dynamic> , false);
-                }else {
-                  print("store model.modelmap "+ key);
-                  await db.isColumnExistInTable(
-                      childTableName.toUpperCase(), childTableName).then((
-                      isColumnExist) async {
-                    var pkColumnNameList = await db.checkIfPkExist(
-                        childTableName);
-                    var pkColName = pkColumnNameList[0]['name'];
-
-                    var uuid = new Uuid();
-                    interimId = uuid.v4();
-                    mapOfPrimaryKeys.putIfAbsent(key, () => interimId);
-                    print(mapOfPrimaryKeys);
-                    await db.populateTableWithCustomColumn(childTableName
-                        .toUpperCase(), value[0] as Map<String, dynamic>,
-                        pkColName, interimId, false);
-                  });
-                }
-
-              });
-
-           }
-         });
-
-        }
+        var parentTableName =  keysArray[(keysArray.length - 2)];
+        var childTableName =  keysArray[(keysArray.length - 1)];
+        await  db.checkIfTableExist(parentTableName.toUpperCase(), false).then((isParentTableExist) async {
+          if(isParentTableExist > 0) {
+            await db.isColumnExistInTable(parentTableName.toUpperCase(), childTableName).then((isColumnExist)async{
+              if (isColumnExist > 0) {
+                print("store model.json " + key);
+                List<String> keyHierarchy= key.toString().split('.');
+                keyHierarchy.removeLast();
+                var parentPrimaryKey = mapOfPrimaryKeys[keyHierarchy.join('.')];
+                await db.updateTableColumn(parentTableName.toUpperCase(), json.encode(value[0]), childTableName, false, interimId: parentPrimaryKey);
+              }else {
+                print("store model.modelmap "+ key);
+                await db.isColumnExistInTable(childTableName.toUpperCase(), childTableName).then((isColumnExist) async {
+                  var pkColumnNameList = await db.checkIfPkExist(childTableName);
+                  var pkColName = pkColumnNameList[0]['name'];
+                  var uuid = new Uuid();
+                  interimId = uuid.v4();
+                  mapOfPrimaryKeys.putIfAbsent(key, () => interimId);
+                  await db.populateTableWithCustomColumn(childTableName.toUpperCase(), value[0] as Map<String, dynamic>, pkColName, interimId, false);
+                });
+              }
+            });
+          }
+        });
+      }
     }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    DateTime timeStamp = DateTime.now();
+    String currentTime = timeStamp.toIso8601String();
+    transQData.forEach((key,val) async {
+      switch (key) {
+        case "transQueueId": {
+          var transUuid = new Uuid();
+          transQData[key] = transUuid.v4();
+        }
+        break;
+        case "requestId": {
+          transQData[key] = mapOfPrimaryKeys['Item'];
+        }
+        break;
+        case "projectId": {
+          transQData[key] = sharedPreferences.get("projectId");
+        }
+        break;
+        case "userId": {
+          transQData[key] = sharedPreferences.get("userId");
+        }
+        break;
+        case "status": {
+          transQData[key] = 1;
+        }
+        break;
+        case "syncStatus": {
+          transQData[key] = 'NOT SYNC';
+        }
+        break;
+        case "wsId": {
+          transQData[key] = sharedPreferences.get("wsId");
+        }
+        break;
+        case "createdData": {
+          transQData[key] = currentTime;
+        }
+        break;
+        case "updateData": {
+          transQData[key] = currentTime;
+        }
+        break;
+      }
+    });
+    db.populateTableWithMapping("TRANS_QUEUE", transQData, true);
   });
-
 }

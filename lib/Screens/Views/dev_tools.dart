@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
+import 'package:jupiter/Screens/Views/home.dart';
 import 'package:jupiter/Services/firebaseFunctions.dart';
-
 import '../../main.dart';
+
 
 List<String> _tablesData = [];
 String dropdownValue;
@@ -30,71 +31,72 @@ class _DevToolsState extends State<DevTools> {
   String databaseCheck = "System";
   @override Widget build(BuildContext context) {
     if(_tablesData.length==0) {
-      if(databaseCheck!="System") {
-        buffer = false;
-      }
+      if(databaseCheck!="System") buffer = false;
       getDataOfTables(buffer);
     }
-    return WillPopScope(
+    return WillPopScope (
       onWillPop: () async {
         dropdownValue = null;
         return true;
       },
-      child: Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Center(
-            child: RaisedButton(
-              child: Text(databaseCheck),
-              onPressed: () {
-                setState(() {
-                  if(databaseCheck=="System") {
-                    databaseCheck = contentDb;
-                    _tablesData.clear();
-                    buffer = false;
-                    dropdownValue = null;
-                    getDataOfTables(buffer);
-                  }else {
-                    databaseCheck = "System";
-                    _tablesData.clear();
-                    buffer = true;
-                    dropdownValue = null;
-                    getDataOfTables(buffer);
-                  }
-                });
-              },
-            )
+      child: Scaffold (
+        drawer: menuDrawer(context),
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          title: Text("DEV TOOLS"),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Center(
+                child: RaisedButton(
+                  child: Text(databaseCheck),
+                  onPressed: () {
+                    setState(() {
+                      if(databaseCheck=="System") {
+                        databaseCheck = contentDb;
+                        _tablesData.clear();
+                        buffer = false;
+                        dropdownValue = null;
+                        getDataOfTables(buffer);
+                      }else {
+                        databaseCheck = "System";
+                        _tablesData.clear();
+                        buffer = true;
+                        dropdownValue = null;
+                        getDataOfTables(buffer);
+                      }
+                    });
+                  },
+                )
+              ),
+              DropdownButton<String>(
+                value: dropdownValue,
+                items: _tablesData.map((String value) => DropdownMenuItem<String>(
+                  child: Text(value),
+                  value: value,
+                )).toList(),
+                onChanged: (String newValue) async {
+                  var db = new DatabaseHelper();
+                  data = await db.fetchData(newValue,buffer);
+                  count = await db.count(newValue,buffer);
+                  setState(() {
+                    dropdownValue = newValue;
+                    buildbody = form();
+                  });
+                },
+                isExpanded: false,
+                hint: Text('Select'),
+              ),
+              Container(
+                child:buildbody
+              )
+            ]
           ),
-          DropdownButton<String>(
-            value: dropdownValue,
-            items: _tablesData.map((String value) => DropdownMenuItem<String>(
-              child: Text(value),
-              value: value,
-            )).toList(),
-            onChanged: (String newValue) async {
-              var db = new DatabaseHelper();
-              data = await db.fetchData(newValue,buffer);
-              count = await db.count(newValue,buffer);
-              setState(() {
-                dropdownValue = newValue;
-                buildbody = form();
-              });
-            },
-            isExpanded: false,
-            hint: Text('Select'),
-          ),
-          Container(
-            child:buildbody
-          )
-        ]
+        )
       ),
-      )
-    ),
     );
   }
 

@@ -65,7 +65,7 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE DEFINITION(formId TEXT PRIMARY KEY, projectId Number, name TEXT, template TEXT)");
     await db.execute("CREATE TABLE WORKSPACE(wsId TEXT PRIMARY KEY, wsName Number,defaultTemplateId TEXT)");
     await db.execute("CREATE TABLE NAVIGATION_MAPPING(templateId TEXT,buttonId TEXT,componentType TEXT,  componentSubType TEXT, redirectTemplateId TEXT,label TEXT,operation TEXT,containerId TEXT,wsId TEXT,PRIMARY KEY (templateId,buttonId))");
-    // await db.execute("CREATE TABLE TRANS_QUEUE(transQueueId TEXT, requestId TEXT, requestData TEXT, lookUpData TEXT, projectId NUMBER, userId NUMBER, status TEXT, syncStatus TEXT, conflicts TEXT, responseData TEXT, wsId NUMBER, createdData TEXT, updateData TEXT)");
+    await db.execute("CREATE TABLE TRANS_QUEUE(transQueueId TEXT, requestId TEXT, requestData TEXT, lookUpData TEXT, projectId NUMBER, userId NUMBER, status TEXT, syncStatus TEXT, conflicts TEXT, responseData TEXT, wsId NUMBER, createdData TEXT, updateData TEXT)");
     // await db.execute("CREATE TABLE TRANS_DOC_QUEUE(transDocId TEXT, requestId TEXT, transDocMetaData TEXT, status TEXT, syncStatus TEXT, noOfAttempts NUMBER, docLocalPath TEXT, docName TEXT, createdDate TEXT, updatedDat TEXT)");
   }
 
@@ -256,9 +256,10 @@ class DatabaseHelper {
     var res = await dbClient.rawQuery("SELECT value FROM GLOBALVARIABLE WHERE KEY IS '$defaultValue'");
     return res[0]['value'];
   }
-  Future<String> getTextFieldLabel( dynamic key) async {
+  Future<String> getTextFieldLabel( dynamic key, {String localization = 'en-us'}) async {
+    //TODO: create a global variable for localization (multi-lingual)
     var dbClient = await dbSystem;
-    var res =await dbClient.rawQuery("SELECT * FROM LABEL WHERE key = '$key'");
+    var res =await dbClient.rawQuery("SELECT * FROM LABEL WHERE key = '$key' AND localization = '$localization'");
     if(res.isEmpty==false) {
       return res[0]['value'];
     }else {
@@ -272,9 +273,7 @@ class DatabaseHelper {
       String query = " WHERE ";
       for(int i=0;i<dataSource[0]['filters'].length;i++) {
         query += "${dataSource[0]['filters'][i]['key']} = '${dataSource[0]['filters'][i]['value']}'";
-        if(i != dataSource[0]['filters'].length-1 || i!=0) {
-          query += " AND ";
-        }
+        if(i != dataSource[0]['filters'].length-1 || i!=0) query += " AND ";
       }
       if(dataSource[0]['sorting'].length!=0) {
         var order;
@@ -298,14 +297,13 @@ class DatabaseHelper {
     var res = await dbClient.rawQuery("PRAGMA table_info ($tableName)");
     return res.toList();
   }
-  // int checkPkColumnInMap(String columnName, Map value) {
-  //   if(value.containsKey(columnName) == true) {
-  //     return 1;
-  //   }else {
-  //     return 0;
-  //   }
-  // }
 
+  Future<String> getUserName(int userId) async {
+    var dbClient = await dbSystem;
+    var res = await dbClient.rawQuery("SELECT * FROM USER WHERE userId = '$userId'");
+    if(res.isEmpty==true) return "";
+    else return res[0]['firstName'];
+  }
   Future<List> getListingResults(String table,String query,dynamic searchAttributes) async {
     var dbClient = await dbContent;
     String sqlQuery = " ";
@@ -327,6 +325,4 @@ class DatabaseHelper {
           return res.toList();
         }
   }
-
-
 }

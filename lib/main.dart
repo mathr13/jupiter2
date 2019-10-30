@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Routes/routes.dart';
 import 'package:flutter/services.dart';
+import 'package:jupiter/Screens/Views/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Services/firebaseFunctions.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
@@ -16,6 +17,7 @@ void main() async {
   if(sharedPreferences.containsKey("FirstTimeLogin")==true && sharedPreferences.get("FirstTimeLogin")==false) {
     contentDb = sharedPreferences.getString("contentDb");
     var buffer = await db.fetchTablesData(false);
+    userName = sharedPreferences.get("userName");
     for(int i=0;i<buffer.length;i++) {fetchedContentTableData.add(buffer[i]['name']);}
     isFirstLogin = false;
   }

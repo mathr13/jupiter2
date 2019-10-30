@@ -60,61 +60,75 @@ class _CoreFormState extends State<CoreForm> {
       formItems = data[0]['definition'];
         for (var count = 0; count < formItems.length; count++) {
           Map item = formItems[count];
-          if ((item['type'] == "text" || item['type'] == "Password") && (item['subType'] != 'date')) {
-            listWidget.add(
-                CustomText(
-                  item: item, count: count, onChanged: (dynamic response) {
-                  responseDetails=response;
-                }, formItems: formItems));
-          }
-
-          else if(item['type'] == "hidden") {
-            // listWidget.add(CustomText(
-            //   item: item, count: count, formItems: formItems, onChanged: (dynamic response) {
-            //    responseDetails=response;
-            //   }
-            // ));
-            listWidget.add(
-                CustomHidden(
-                  item: item, count: count, onChanged: (dynamic response) {
-                  responseDetails=response;
-                }, formItems: formItems, defaultValue: item['defaultValue'],));
-          }
-          else if (item['type'] == "radio") {
-                listWidget.add(CustomRadio(
-                  item: item, count: count, onChanged: (dynamic response) {
-                  responseDetails = response;
-                }, formItems: formItems,));
-          }
-          else if (item['type'] == "Switch")
-            listWidget.add(CustomSwitch(
-              item: item, count: count, onChanged: (dynamic response) {
-              responseDetails = response;
-            }, formItems: formItems,));
-          else if (item['type'] == "checkbox")
-            listWidget.add(CustomCheckBox(
-              item: item, count: count, onChanged: (dynamic response) {
-              responseDetails = response;
-            }, formItems: formItems));
-          else if (item['type'] == "select")
-            listWidget.add(DropdownButtonHint(
-              item: item, count: count, onChanged: (dynamic response) {
-              responseDetails = response;
-            }, formItems: formItems,)
-            );
-          else if (item['subType'] == "date") {
-            print(cont);
-            cont++;
-            listWidget.add(CustomDatePicker(
-              item: item, count: count, onChanged: (dynamic response) {
-              responseDetails = response;
-            }, formItems: formItems,));
-          }else if(item['type']=="navigationContainer") {
-            listWidget.add(CustomButton(
-              buttons: buttons,
-              item: item,
-              wsId: wsId,
-            ));
+          switch (item['type']) {
+            case "text": {
+              if(item['subType'] != 'date') {
+                listWidget.add(CustomText(
+                  item: item, count: count, onChanged: (dynamic response) {responseDetails=response;},
+                  formItems: formItems
+                ));
+              }
+            }
+            break;
+            case "Password": {
+              if(item['subType'] != 'date') {
+                listWidget.add(CustomText(
+                  item: item, count: count, onChanged: (dynamic response) {responseDetails=response;},
+                  formItems: formItems
+                ));
+              }
+            }
+            break;
+            case "hidden": {
+              listWidget.add(CustomHidden(
+                item: item, count: count, onChanged: (dynamic response) {responseDetails=response;},
+                formItems: formItems, defaultValue: item['defaultValue']
+              ));
+            }
+            break;
+            case "radio": {
+              listWidget.add(CustomRadio(
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
+                formItems: formItems
+              ));
+            }
+            break;
+            case "Switch": {
+              listWidget.add(CustomSwitch(
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
+                formItems: formItems
+              ));
+            }
+            break;
+            case "checkbox": {
+              listWidget.add(CustomCheckBox(
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
+                formItems: formItems
+              ));
+            }
+            break;
+            case "select": {
+              listWidget.add(DropdownButtonHint(
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
+                formItems: formItems,
+              ));
+            }
+            break;
+            case "date": {
+              listWidget.add(CustomDatePicker(
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
+                formItems: formItems
+              ));
+            }
+            break;
+            case "navigationContainer": {
+              listWidget.add(CustomButton(
+                buttons: buttons,
+                item: item,
+                wsId: wsId,
+              ));
+            }
+            break;
           }
       }
     return listWidget;
