@@ -3,15 +3,9 @@ import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/forms/json_to_form.dart';
 import 'package:jupiter/forms/main.dart';
 
-
 class DropdownButtonHint extends StatefulWidget {
-  const DropdownButtonHint({
-    @required this.onChanged,
-    this.item,
-    this.count,
-    this.formItems,
-    this.lovItems
-  });
+  const DropdownButtonHint(
+      {this.onChanged, this.item, this.count, this.formItems, this.lovItems});
 
   final int count;
   final Map item;
@@ -19,15 +13,17 @@ class DropdownButtonHint extends StatefulWidget {
   final dynamic formItems;
   final lovItems;
 
-  @override _DropdownButtonState createState() => _DropdownButtonState();
+  @override
+  _DropdownButtonState createState() => _DropdownButtonState();
 }
 
 class _DropdownButtonState extends State<DropdownButtonHint> {
-  String dropdownValue ;
+  String dropdownValue;
+
   final db = new DatabaseHelper();
 
-
-  @override Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -75,20 +71,20 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                           });
 
                           _handleChanged();
-                        }
-                        dropdownValue=newValue;
-                        _handleChanged();
-                      });
-                    },
-                    isExpanded: false,
-                    hint: Text('Select'),
-                  );
-                }),
-
-          ],
-        ),
+                      }
+                      dropdownValue = newValue;
+                      _handleChanged();
+                    });
+                  },
+                  isExpanded: false,
+                  hint: Text('Select'),
+                );
+              }),
+        ],
+      ),
     );
   }
+
   void _handleChanged() {
     widget.onChanged(responseDetails);
   }

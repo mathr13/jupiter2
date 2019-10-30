@@ -74,7 +74,7 @@ class _AppState extends State<App> {
   String message(){
     int i;
     String msg=' ';
-    dynamic formItems=json.decode(json.encode(result));
+    dynamic formItems=json.decode(json.encode("hjk"));
     for( i=0;i<formItems.length;i++) {
       if (formItems[i]['type'] == 'text') {
         if (formItems[i]['response']== ""||formItems[i]['response']== null)

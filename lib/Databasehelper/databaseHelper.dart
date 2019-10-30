@@ -304,4 +304,25 @@ class DatabaseHelper {
     if(res.isEmpty==true) return "";
     else return res[0]['firstName'];
   }
+  Future<List> getListingResults(String table,String query,dynamic searchAttributes) async {
+    var dbClient = await dbContent;
+    String sqlQuery = " ";
+    if (searchAttributes.length != 0) {
+      for (int i = 0; i < searchAttributes.length; i++) {
+        sqlQuery += searchAttributes[i] + ' LIKE ' + '"\%$query%\"';
+        if (i != searchAttributes.length - 1)
+          sqlQuery += ' OR ';
+      }
+    }
+        if (query == "") {
+          var res = await dbClient.rawQuery(" SELECT * FROM $table");
+          return res.toList();
+        }
+
+        else {
+          var res = await dbClient.rawQuery(
+              " SELECT * FROM $table WHERE $sqlQuery");
+          return res.toList();
+        }
+  }
 }

@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
@@ -14,21 +13,21 @@ import 'jsondata.dart';
 import 'package:jupiter/forms/CustomDropdown.dart';
 import 'package:jupiter/forms/Custom_Datepicker.dart';
 
-dynamic result=json.decode(inputData);
-dynamic lov = json.decode(json.encode(inputData));
 var id;
 var db = new DatabaseHelper();
 int cont = 1;
 
-Map<String,dynamic> responseDetails={};
-Map<String,dynamic> jsonData={};
+Map<String, dynamic> responseDetails = {};
+Map<String, dynamic> jsonData = {};
+
 class CoreForm extends StatefulWidget {
-   CoreForm({@required this.form, this.jsonForm});
+  CoreForm({@required this.form, this.jsonForm});
 
   final String form;
   String jsonForm;
 
-  @override _CoreFormState createState() => new _CoreFormState();
+  @override
+  _CoreFormState createState() => new _CoreFormState();
 }
 
 class _CoreFormState extends State<CoreForm> {
@@ -54,6 +53,7 @@ class _CoreFormState extends State<CoreForm> {
   // }
   dynamic data;
   dynamic formItems;
+
   List<Widget> jsonToForm() {
     data = json.decode(widget.jsonForm);
     List<Widget> listWidget = new List<Widget>();
@@ -88,35 +88,35 @@ class _CoreFormState extends State<CoreForm> {
             break;
             case "radio": {
               listWidget.add(CustomRadio(
-                item: item, count: count, onChanged: (dynamic response) {result = response;},
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
                 formItems: formItems
               ));
             }
             break;
             case "Switch": {
               listWidget.add(CustomSwitch(
-                item: item, count: count, onChanged: (dynamic response) {result = response;},
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
                 formItems: formItems
               ));
             }
             break;
             case "checkbox": {
               listWidget.add(CustomCheckBox(
-                item: item, count: count, onChanged: (dynamic response) {result = response;},
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
                 formItems: formItems
               ));
             }
             break;
             case "select": {
               listWidget.add(DropdownButtonHint(
-                item: item, count: count, onChanged: (dynamic response) {result = response;},
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
                 formItems: formItems,
               ));
             }
             break;
             case "date": {
               listWidget.add(CustomDatePicker(
-                item: item, count: count, onChanged: (dynamic response) {result = response;},
+                item: item, count: count, onChanged: (dynamic response) {responseDetails = response;},
                 formItems: formItems
               ));
             }
@@ -134,8 +134,8 @@ class _CoreFormState extends State<CoreForm> {
     return listWidget;
   }
 
-
-  @override Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: new EdgeInsets.all(8.0),
       child: new Column(

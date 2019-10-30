@@ -49,7 +49,7 @@ class _CustomState extends State<CustomText> {
             keyboardType: selectType(),
             // inputFormatters: [WhitelistingTextInputFormatter(RegExp(widget.menus['regex'])),],
             inputFormatters: <TextInputFormatter>[
-              //  WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
+//               WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
               // BlacklistingTextInputFormatter(RegExp(widget.item['regex'])),
               // BlacklistingTextInputFormatter.singleLineFormatter,
             ],
