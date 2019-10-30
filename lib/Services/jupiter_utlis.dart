@@ -20,33 +20,33 @@ List<Map> fetchedProjectFromNotificationData = [];
 
 void authenticate(context) async {
   User user = User(
-    userName: emailController.text,
-    password: passwordController.text,
+    // userName: emailController.text,
+    // password: passwordController.text,
     // userName: "usharma@petroitg.com",
     // password: "India@123"
     // userName: "piku@gmail.com",
     // password: "piku@gmail.com"
-  //  userName: "superman@mailinator.com",
-  //  password: "India@123",
+   userName: "superman@mailinator.com",
+   password: "India@123",
     // userName: "sojha@petroitg.com",
     // password: "sumi"
   );
   fetchUserApi(user).then((userDataResponse) async {
     var db = new DatabaseHelper();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
     final jsonUserResponse = json.decode(userDataResponse.body);
     if (jsonUserResponse[statusApi][messageCodeApi] == 1200) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Progress()));
       AuthenticationObject authObject = new AuthenticationObject.fromJson(jsonUserResponse);
       sharedPreferences.setInt('userId', authObject.data.userId);
+      sharedPreferences.setString("userName", authObject.data.firstName);
       db.populateTableWithMapping(userTable, authObject.data.toMap(),true);
     } else {dialog(wrongAuth, context);}
 
     // fetchedTableData = await db.fetchTablesData();
 
     getDatafromFirebase(context);   //Get Notification Data From Firebase
-    await Future.delayed(Duration(seconds: 10));
+    await Future.delayed(Duration(seconds: 1));
 
     fetchedProjectFromNotificationData = await db.getProjectIdFromNotificationData();
     if(fetchedProjectFromNotificationData.length == 0) {
@@ -96,19 +96,19 @@ Future<http.Response> callApi(String url, String header) async {
 
 
 void checkNull(context) {
-  if (passwordController.text.length == 0 && emailController.text.length == 0) {
-    dialog(nullEmailPass, context);
-    return null;
-  } else if (passwordController.text.length == 0) {
-    dialog(nullPassword, context);
-    return null;
-  } else if (emailController.text.length == 0) {
-    dialog(nullEmail, context);
-    return null;
-  } else {
-    authenticate(context);
-  }
-  // authenticate(context);
+  // if (passwordController.text.length == 0 && emailController.text.length == 0) {
+  //   dialog(nullEmailPass, context);
+  //   return null;
+  // } else if (passwordController.text.length == 0) {
+  //   dialog(nullPassword, context);
+  //   return null;
+  // } else if (emailController.text.length == 0) {
+  //   dialog(nullEmail, context);
+  //   return null;
+  // } else {
+  //   authenticate(context);
+  // }
+  authenticate(context);
 }
 
 /*

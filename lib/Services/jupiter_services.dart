@@ -32,7 +32,6 @@ Future<dynamic> fetchUserApi(User user) async {
 
   String firebaseToken = await firebaseMessaging.getToken();
   String theBody = '{"userName": "$userName","password": "$password","deviceId": "$deviceId","deviceModel": "$deviceModel","firebaseToken": "$firebaseToken","os": "$deviceOsModel"}';
-  print(firebaseToken);
   // String theBody = '{"userName": "shweta.singh@petroitg.com","password": "Shweta@123","deviceId": "123456","firebaseToken": "$firebaseToken","deviceModel": "SamsungS10","os": "Android 10"}';
   final response = await http.post('$userApiUrl',
     headers: {
