@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:jupiter/forms/json_to_form.dart';
 import 'package:jupiter/forms/main.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
@@ -55,39 +53,26 @@ _getHiddenData() async{
     //   defaultV = res[0]['value'];
     // });
     widget.formItems[widget.count]['response'] = null;
-//    return Container();
+   return Container();
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          new Text((widget.item['label']),
-            style:
-            new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-
-
-          ),
+          new Text((widget.item['label']), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),),
           FutureBuilder<String>(
-              future: db.fetchLabelFromGV(widget.defaultValue.split("##")[1]),
-              builder: (BuildContext context,
-                  AsyncSnapshot<String> snapshot) {
-                if (snapshot.hasData) {
-                  return new Text((snapshot.data.toString()),
-                      style: new TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16.0));
-    if (listOfHierarchy.length==1) {
-    listOfHierarchy.first.putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
-    } else {
-    listOfHierarchy[listOfHierarchy.length].putIfAbsent('${widget.item['nodeHierarchy']}',()=>{});
-    }
-    listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].addAll({'${widget.item['entityColName']}':value});
-    }
-                else {
-                  return new Text((" "), style: new TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16.0));
-                }
-              }),
+            future: db.fetchLabelFromGV(widget.defaultValue.split("##")[1]),
+            builder: (BuildContext context,
+                AsyncSnapshot<String> snapshot) {
+              if (snapshot.hasData) {
+                return new Text((snapshot.data.toString()), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+              }
+              else {
+                return new Text((" "), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+              }
+            }
+          ),
         ],
       ),
     );

@@ -261,7 +261,9 @@ class DatabaseHelper {
     var res =await dbClient.rawQuery("SELECT * FROM LABEL WHERE key = '$key'");
     if(res.isEmpty==false) {
       return res[0]['value'];
-    }else {return key;}
+    }else {
+      return key;
+    }
   }
   Future<List> fetchDataSourceData(dynamic dataSource) async {
     var dbClient = await dbContent;

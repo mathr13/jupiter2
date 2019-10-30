@@ -56,7 +56,6 @@ _saveDataHierarchy()async{
   var db = new DatabaseHelper();
   print(listOfHierarchy);
   var listHierarchy=json.decode(json.encode(listOfHierarchy[0]));
-  print(listHierarchy);
   listHierarchy.forEach((key,value) async {
     if((key.split('.').length)==1) {
       print("store model.map "+key);

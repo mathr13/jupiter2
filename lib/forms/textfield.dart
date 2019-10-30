@@ -51,7 +51,7 @@ class _CustomState extends State<CustomText> {
             inputFormatters: <TextInputFormatter>[
 //               WhitelistingTextInputFormatter(RegExp(widget.item['regex'])),
               // BlacklistingTextInputFormatter(RegExp(widget.item['regex'])),
-              BlacklistingTextInputFormatter.singleLineFormatter,
+              // BlacklistingTextInputFormatter.singleLineFormatter,
             ],
             onChanged: (String value) {
               if (listOfHierarchy.length==1) {

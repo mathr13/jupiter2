@@ -57,79 +57,66 @@ class _CoreFormState extends State<CoreForm> {
   List<Widget> jsonToForm() {
     data = json.decode(widget.jsonForm);
     List<Widget> listWidget = new List<Widget>();
-    formItems = data[0]['definition'];
-    for (var count = 0; count < formItems.length; count++) {
-      Map item = formItems[count];
-      if (item['type'] == "text" || item['type'] == "Password") {
-        listWidget.add(CustomText(
-            item: item,
-            count: count,
-            onChanged: (dynamic response) {
+      formItems = data[0]['definition'];
+        for (var count = 0; count < formItems.length; count++) {
+          Map item = formItems[count];
+          if ((item['type'] == "text" || item['type'] == "Password") && (item['subType'] != 'date')) {
+            listWidget.add(
+                CustomText(
+                  item: item, count: count, onChanged: (dynamic response) {
+                  responseDetails=response;
+                }, formItems: formItems));
+          }
+
+          else if(item['type'] == "hidden") {
+            // listWidget.add(CustomText(
+            //   item: item, count: count, formItems: formItems, onChanged: (dynamic response) {
+            //    responseDetails=response;
+            //   }
+            // ));
+            listWidget.add(
+                CustomHidden(
+                  item: item, count: count, onChanged: (dynamic response) {
+                  responseDetails=response;
+                }, formItems: formItems, defaultValue: item['defaultValue'],));
+          }
+          else if (item['type'] == "radio") {
+                listWidget.add(CustomRadio(
+                  item: item, count: count, onChanged: (dynamic response) {
+                  responseDetails = response;
+                }, formItems: formItems,));
+          }
+          else if (item['type'] == "Switch")
+            listWidget.add(CustomSwitch(
+              item: item, count: count, onChanged: (dynamic response) {
               responseDetails = response;
-            },
-            formItems: formItems));
-      } else if (item['type'] == "hidden") {
-        // listWidget.add(CustomText(
-        //   item: item, count: count, formItems: formItems, onChanged: (dynamic response) {
-        //    responseDetails=response;
-        //   }
-        // ));
-        listWidget.add(CustomHidden(
-          item: item,
-          count: count,
-          onChanged: (dynamic response) {},
-          formItems: formItems,
-          defaultValue: item['defaultValue'],
-        ));
-      } else if (item['type'] == "radio") {
-        // var db = new DatabaseHelper();
-        // db.fetchData(item['lov']).then((data) {
-        //   print(data);
-        listWidget.add(CustomRadio(
-          item: item,
-          count: count,
-          onChanged: (dynamic response) {},
-          formItems: formItems,
-        ));
-        // });
-      } else if (item['type'] == "Switch")
-        listWidget.add(CustomSwitch(
-          item: item,
-          count: count,
-          onChanged: (dynamic response) {},
-          formItems: formItems,
-        ));
-      else if (item['type'] == "checkbox")
-        listWidget.add(CustomCheckBox(
-          item: item,
-          count: count,
-          onChanged: (dynamic response) {},
-          formItems: formItems,
-        ));
-      else if (item['type'] == "select")
-        listWidget.add(DropdownButtonHint(
-          item: item,
-          count: count,
-          onChanged: (dynamic response) {},
-          formItems: formItems,
-        ));
-      else if (item['type'] == "date") {
-        print(cont);
-        cont++;
-        listWidget.add(CustomDatePicker(
-          item: item,
-          count: count,
-          onChanged: (dynamic response) {},
-          formItems: formItems,
-        ));
-      } else if (item['type'] == "navigationContainer") {
-        listWidget.add(CustomButton(
-          buttons: buttons,
-          item: item,
-          wsId: wsId,
-        ));
+            }, formItems: formItems,));
+          else if (item['type'] == "checkbox")
+            listWidget.add(CustomCheckBox(
+              item: item, count: count, onChanged: (dynamic response) {
+              responseDetails = response;
+            }, formItems: formItems));
+          else if (item['type'] == "select")
+            listWidget.add(DropdownButtonHint(
+              item: item, count: count, onChanged: (dynamic response) {
+              responseDetails = response;
+            }, formItems: formItems,)
+            );
+          else if (item['subType'] == "date") {
+            print(cont);
+            cont++;
+            listWidget.add(CustomDatePicker(
+              item: item, count: count, onChanged: (dynamic response) {
+              responseDetails = response;
+            }, formItems: formItems,));
+          }else if(item['type']=="navigationContainer") {
+            listWidget.add(CustomButton(
+              buttons: buttons,
+              item: item,
+              wsId: wsId,
+            ));
+          }
       }
-    }
     return listWidget;
   }
 
