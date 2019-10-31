@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
-import 'package:jupiter/Constant/string_constant.dart';
+import 'package:jupiter/Constant/stringConstant.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/Models/models.dart';
 import 'package:jupiter/Screens/Views/home.dart';
-import 'package:jupiter/Screens/Views/sign_in.dart';
+import 'package:jupiter/Screens/Views/signIn.dart';
 import 'package:jupiter/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'jupiter_utlis.dart';
+import 'jupiterUtlis.dart';
 
 String notifResponse = "";
 String contentDb;

@@ -43,16 +43,16 @@ var labelList=[];
   @override
   Widget build(BuildContext context) {
     labelList = listingDataDecoded['data']['DEFINITION'][0]['definition'];
-var searchEnable =listingDataDecoded['data']['DEFINITION'][0]['searchEnable'];
+var isSearchEnable =listingDataDecoded['data']['DEFINITION'][0]['searchEnable'];
     return Scaffold(
       appBar: AppBar(
         title: Text('List'),
       ),
       body: new Container(
-        margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+       margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
         child: new Column(
           children: <Widget>[
-            searchEnable==true?_createSearchView():Container(),
+            isSearchEnable==true?_createSearchView():Container(),
             new Expanded(
               child: _createListView(),
             ),
@@ -64,8 +64,9 @@ var searchEnable =listingDataDecoded['data']['DEFINITION'][0]['searchEnable'];
 
   Widget _createSearchView() {
     return new Container(
+        height:40,
       decoration: BoxDecoration(border: Border.all(width: 1.0)),
-      child: new TextField(
+      child: new Center(child:TextField(
         controller: searchController,
         decoration: InputDecoration(
           icon: Icon(Icons.search),
@@ -74,6 +75,7 @@ var searchEnable =listingDataDecoded['data']['DEFINITION'][0]['searchEnable'];
         ),
         //textAlign: TextAlign.center,
       ),
+      )
     );
   }
 

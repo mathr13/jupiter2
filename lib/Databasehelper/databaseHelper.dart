@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:jupiter/Constant/string_constant.dart';
+import 'package:jupiter/Constant/stringConstant.dart';
 import 'package:jupiter/Services/firebaseFunctions.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -324,5 +324,10 @@ class DatabaseHelper {
               " SELECT * FROM $table WHERE $sqlQuery");
           return res.toList();
         }
+  }
+  Future<String> getListingLabel(String tableName,String columnName , dynamic value ,String displayColumn) async {
+    var dbClient = await dbContent;
+    var res = await dbClient.rawQuery("SELECT $displayColumn FROM $tableName WHERE $columnName = '$value' ");
+     return res[0]['name'];
   }
 }

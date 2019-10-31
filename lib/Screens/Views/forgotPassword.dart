@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jupiter/Components/textinput.dart';
+import 'package:jupiter/Components/textInput.dart';
 
 
 TextEditingController emailController = new TextEditingController();

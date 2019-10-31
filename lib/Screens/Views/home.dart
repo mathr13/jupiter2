@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/Models/models.dart';
 import 'package:jupiter/List/listingView.dart';
-import 'package:jupiter/Screens/CustomViews/progress_indicator.dart';
-import 'package:jupiter/Screens/Views/forgot_password.dart';
+import 'package:jupiter/Screens/CustomViews/progressIndicator.dart';
+import 'package:jupiter/Screens/Views/forgotPassword.dart';
 import 'package:jupiter/Screens/Views/profile.dart';
-import 'package:jupiter/forms/main.dart';
+import 'package:jupiter/forms/formRendering.dart';
 import 'package:jupiter/forms/list.dart';
-import 'dev_tools.dart';
+import 'devTools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -125,7 +125,7 @@ Widget menuItem(int position, context, snapshot, int menuItems) {
       child: ListTile(
         title: Container(child: Text(" LOGOUT")),
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => DevTools()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ListingView()));
           _currentSelected = position;
           dynamicMenus = false;
         }

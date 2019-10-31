@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jupiter/Screens/Views/splash_screen.dart';
-import 'package:jupiter/Screens/Views/sign_in.dart';
-import 'package:jupiter/Screens/Views/forgot_password.dart';
+import 'package:jupiter/Screens/Views/splashScreen.dart';
+import 'package:jupiter/Screens/Views/signIn.dart';
+import 'package:jupiter/Screens/Views/forgotPassword.dart';
 
 
 final routes = {
