@@ -123,7 +123,6 @@ class _CoreFormState extends State<CoreForm> {
             break;
             case "navigationContainer": {
               listWidget.add(CustomButton(
-                buttons: buttons,
                 item: item,
                 wsId: wsId,
               ));

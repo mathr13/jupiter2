@@ -13,9 +13,9 @@ Map<String, dynamic> transQData = {'transQueueId': '', 'requestId': '', 'request
 class CustomButton extends StatefulWidget {
   final String wsId;
   final Map item;
-  final List<dynamic> buttons;
+  // final List<dynamic> buttons;
 
-  CustomButton({@required this.buttons,this.wsId,this.item});
+  CustomButton({@required this.wsId,this.item});
 
   @override _CustomButtonState createState() => _CustomButtonState();
 }
@@ -36,8 +36,7 @@ class _CustomButtonState extends State<CustomButton> {
 
 dynamic getButtonData(String wsId, String containerId) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  buttons = await db.fetchButtonData(wsId,containerId, sharedPreferences.get("TemplateId"));
-  return buttons;
+  return await db.fetchButtonData(wsId,containerId, sharedPreferences.get("TemplateId"));
 }
 
 
@@ -162,34 +161,3 @@ List<Widget> buttonsList(dynamic list, context) {
   }
   return buttonList;
 }
-
-/*
-FutureBuilder<String>(
-            future: db.getTextFieldLabel(widget.item['label']),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              if (!snapshot.hasData) return new Text(addAsterisk(widget.item['label']), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-              return new Text(addAsterisk(snapshot.data.toString()), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-            }),
-*/
-
-
-/*
-ListView.builder(
-        itemCount: widget.buttons.length,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context,index) {
-          return RaisedButton(
-            onPressed: () {
-              var operationOnButtonClick = buttons[index]['operation'];
-              switch (operationOnButtonClick) {
-                case "SAVE": {_saveDataHierarchy();}
-                break;
-                case "CLOSE": {Navigator.push(context,MaterialPageRoute(builder: (context) =>Menus(),fullscreenDialog: true));}
-                break;
-              }
-            },
-            child: Text(widget.buttons[index]['label']),
-          );
-        },
-      )
-*/

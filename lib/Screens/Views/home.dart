@@ -12,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 var navigationData;
-List<dynamic> buttons = [];
 String wsId;
 int _currentSelected = 0;
 String userName = "user";
