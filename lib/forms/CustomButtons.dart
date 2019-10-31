@@ -22,34 +22,22 @@ class CustomButton extends StatefulWidget {
 
 class _CustomButtonState extends State<CustomButton> {
   @override Widget build(BuildContext context) {
-    getButtonData(widget.wsId, widget.item['id']);
-    return Container(
-      height: 50*(widget.buttons.length).toDouble(),
-      child: ListView.builder(
-        itemCount: widget.buttons.length,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context,index) {
-          return RaisedButton(
-            onPressed: () {
-              var operationOnButtonClick = buttons[index]['operation'];
-              switch (operationOnButtonClick) {
-                case "SAVE": {_saveDataHierarchy();}
-                break;
-                case "CLOSE": {Navigator.push(context,MaterialPageRoute(builder: (context) =>Menus(),fullscreenDialog: true));}
-                break;
-              }
-            },
-            child: Text(widget.buttons[index]['label']),
+    return FutureBuilder(
+        future: getButtonData(widget.wsId, widget.item['id']),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (!snapshot.hasData) 
+          return CircularProgressIndicator();
+          return Column(
+            children: buttonsList(snapshot.data.toList(), context),
           );
-        },
-      )
-    );
+        });
   }
 }
 
-void getButtonData(String wsId, String containerId) async {
+dynamic getButtonData(String wsId, String containerId) async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   buttons = await db.fetchButtonData(wsId,containerId, sharedPreferences.get("TemplateId"));
+  return buttons;
 }
 
 
@@ -152,3 +140,56 @@ _saveDataHierarchy() async {
     db.populateTableWithMapping("TRANS_QUEUE", transQData, true);
   });
 }
+
+
+List<Widget> buttonsList(dynamic list, context) {
+  List<Widget> buttonList = [];
+  for(int i=0;i<list.length;i++) {
+    buttonList.add(
+      RaisedButton(
+        onPressed: () {
+          var operationOnButtonClick = list[i]['operation'];
+          switch (operationOnButtonClick) {
+            case "SAVE": {_saveDataHierarchy();}
+            break;
+            case "CLOSE": {Navigator.push(context,MaterialPageRoute(builder: (context) =>Menus(),fullscreenDialog: true));}
+            break;
+          }
+        },
+        child: Text(list[i]['operation']),
+      )
+    );
+  }
+  return buttonList;
+}
+
+/*
+FutureBuilder<String>(
+            future: db.getTextFieldLabel(widget.item['label']),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (!snapshot.hasData) return new Text(addAsterisk(widget.item['label']), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+              return new Text(addAsterisk(snapshot.data.toString()), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+            }),
+*/
+
+
+/*
+ListView.builder(
+        itemCount: widget.buttons.length,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (context,index) {
+          return RaisedButton(
+            onPressed: () {
+              var operationOnButtonClick = buttons[index]['operation'];
+              switch (operationOnButtonClick) {
+                case "SAVE": {_saveDataHierarchy();}
+                break;
+                case "CLOSE": {Navigator.push(context,MaterialPageRoute(builder: (context) =>Menus(),fullscreenDialog: true));}
+                break;
+              }
+            },
+            child: Text(widget.buttons[index]['label']),
+          );
+        },
+      )
+*/
