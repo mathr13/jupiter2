@@ -1,9 +1,9 @@
 import 'package:http/http.dart' as http;
-import 'package:jupiter/Constant/string_constant.dart';
+import 'package:jupiter/Constant/stringConstant.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:jupiter/Models/user.dart';
-import 'package:jupiter/Screens/Views/sign_in.dart';
+import 'package:jupiter/Screens/Views/signIn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:device_info/device_info.dart';
 

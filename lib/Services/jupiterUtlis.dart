@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'package:jupiter/Constant/string_constant.dart';
+import 'package:jupiter/Constant/stringConstant.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/Models/user.dart';
 import 'package:jupiter/Models/models.dart';
-import 'package:jupiter/Screens/Views/sign_in.dart';
-import 'package:jupiter/Services/jupiter_services.dart';
+import 'package:jupiter/Screens/Views/signIn.dart';
+import 'package:jupiter/Services/jupiterServices.dart';
 import 'package:jupiter/Screens/CustomViews/alert.dart';
 import 'package:flutter/material.dart';
-import 'package:jupiter/Screens/CustomViews/progress_indicator.dart';
+import 'package:jupiter/Screens/CustomViews/progressIndicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async' show Future, Timer;
 import 'package:shared_preferences/shared_preferences.dart';

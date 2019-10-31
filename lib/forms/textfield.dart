@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jupiter/forms/json_to_form.dart';
-import 'package:jupiter/forms/main.dart';
+import 'package:jupiter/forms/formRenderedElements.dart';
+import 'package:jupiter/forms/formRendering.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 class CustomText extends StatefulWidget {

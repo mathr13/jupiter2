@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jupiter/Components/securetext.dart';
-import 'package:jupiter/Components/textinput.dart';
-import 'package:jupiter/Services/jupiter_utlis.dart';
-import 'package:jupiter/Components/flat_button.dart';
+import 'package:jupiter/Components/secureText.dart';
+import 'package:jupiter/Components/textInput.dart';
+import 'package:jupiter/Services/jupiterUtlis.dart';
+import 'package:jupiter/Components/flatButton.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 
