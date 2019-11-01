@@ -3,6 +3,7 @@ import 'package:jupiter/Constant/stringConstant.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/Models/user.dart';
 import 'package:jupiter/Models/models.dart';
+import 'package:jupiter/Screens/Views/home.dart';
 import 'package:jupiter/Screens/Views/signIn.dart';
 import 'package:jupiter/Services/jupiterServices.dart';
 import 'package:jupiter/Screens/CustomViews/alert.dart';
@@ -39,6 +40,7 @@ void authenticate(context) async {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Progress()));
       AuthenticationObject authObject = new AuthenticationObject.fromJson(jsonUserResponse);
       sharedPreferences.setInt('userId', authObject.data.userId);
+      userName = authObject.data.firstName + " " + authObject.data.lastName;
       sharedPreferences.setString("userName", authObject.data.firstName);
       db.populateTableWithMapping(userTable, authObject.data.toMap(),true);
     } else {dialog(wrongAuth, context);}

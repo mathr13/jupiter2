@@ -27,7 +27,8 @@ class _CustomButtonState extends State<CustomButton> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (!snapshot.hasData) 
           return CircularProgressIndicator();
-          return Column(
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: buttonsList(snapshot.data.toList(), context),
           );
         });
