@@ -75,7 +75,7 @@ class _CustomState extends State<CustomCheckBox> {
           onChanged: (bool value) {
             this.setState(() {
               booleans[i] = value;
-              _handleChanged();
+              // _handleChanged();
             });
           }
         )

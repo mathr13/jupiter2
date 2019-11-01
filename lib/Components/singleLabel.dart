@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 class CustomLabel extends StatefulWidget {
 
