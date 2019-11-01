@@ -57,7 +57,7 @@ class ListingViewElementsState extends State<ListingViewElements> {
     for (int j = 0; j < widget.labelList.length; j++) {
       listHeader.add(new Column(children: <Widget>[
         new Container(
-            child:isHeader==true?(new Text(widget.labelList[j]['label'].toString(), style: new TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0,letterSpacing:3)
+            child:isHeader==true?(new Text(widget.labelList[j]['label'].toString(), style: new TextStyle(fontWeight: FontWeight.w500, fontSize: 16.0)
             )):
     (widget.labelList[j]['dataSource'][0]['secondaryEntityName']!=null?
     (new FutureBuilder(
@@ -65,10 +65,10 @@ class ListingViewElementsState extends State<ListingViewElements> {
                 builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                   if (!snapshot.hasData) return  CircularProgressIndicator();
 //                  Text(list[i-1][widget.labelList[j]['id'].toString()].toString(), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-                  return new Text(snapshot.data.toString(), style: new TextStyle(fontWeight: FontWeight.w500, fontSize: 16.0));
+                  return new Text(snapshot.data.toString(), style: new TextStyle(fontWeight: FontWeight.w500, fontSize: 15.0));
                 }
             )):
-           new Text(list[i-1][widget.labelList[j]['id'].toString()].toString(), style: new TextStyle(fontWeight: FontWeight.w500, fontSize: 16.0)
+           new Text(list[i-1][widget.labelList[j]['id'].toString()].toString(), style: new TextStyle(fontWeight: FontWeight.w500, fontSize: 15.0)
           )
         )
         )
