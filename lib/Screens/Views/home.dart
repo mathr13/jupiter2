@@ -46,7 +46,7 @@ _workSpaceData(String wsId) async {
   var db = new DatabaseHelper();
   var res = await db.fetchWorkSpaceData(wsId);
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  sharedPreferences.setString("TemplateId", res[0]['defaultTemplateId']);
+  sharedPreferences.setString("TemplateId", res[0]['defaultFormId']);
 }
 
 
@@ -152,7 +152,7 @@ Widget menuItem(int position, context, snapshot, int menuItems) {
           wsId = snapshot.data[position-2]['wsId'].toString();
           SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
           sharedPreferences.setString("wsId", wsId);
-          Navigator.push(context,MaterialPageRoute(builder: (context) =>Gridxo()
+          Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()
           //    WorkSpaceContainer(titleString: snapshot.data[position-2]["value"].toString(),)
           ));
           formTitle = snapshot.data[position-2]["value"].toString();

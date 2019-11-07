@@ -52,7 +52,6 @@ class _CustomState extends State<CustomCheckBox> {
             builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (!snapshot.hasData) return CircularProgressIndicator();
               return Container(
-                key: five,
                 child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

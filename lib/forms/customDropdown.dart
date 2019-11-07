@@ -30,7 +30,7 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
     return Container(
       padding: const EdgeInsets.all(8.0),
       color: widget.color,
-      width:(queryData.size.width)/2,
+//      width:(queryData.size.width)/2,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
