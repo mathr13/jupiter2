@@ -22,11 +22,11 @@ void main() async {
     isFirstLogin = false;
   }
  await db.dbSystem;
-  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
+//  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(new FlutterApp());
-  // });
-  fetchedSystemTableData = await db.fetchTablesData(true);
+//  });
   baseUrl = await remoteConfig();
+  fetchedSystemTableData = await db.fetchTablesData(true);
 }
 
 class FlutterApp extends StatelessWidget {

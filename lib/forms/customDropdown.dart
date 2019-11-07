@@ -5,13 +5,14 @@ import 'package:jupiter/forms/formRendering.dart';
 
 class DropdownButtonHint extends StatefulWidget {
   const DropdownButtonHint(
-      {this.onChanged, this.item, this.count, this.formItems, this.lovItems});
+      {this.onChanged, this.item, this.count, this.formItems, this.lovItems,this.color});
 
   final int count;
   final Map item;
   final ValueChanged<dynamic> onChanged;
   final dynamic formItems;
   final lovItems;
+  final Color color;
 
   @override
   _DropdownButtonState createState() => _DropdownButtonState();
@@ -24,14 +25,18 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     return Container(
+      padding: const EdgeInsets.all(8.0),
+      color: widget.color,
+      width:(queryData.size.width)/2,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           new Container(
-            margin: new EdgeInsets.only(top: 5.0, bottom: 5.0),
             child: new FutureBuilder(
               future: db.getTextFieldLabel(widget.item['label']),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
