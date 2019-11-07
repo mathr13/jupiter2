@@ -120,5 +120,6 @@ _getTemplateId() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String id= sharedPreferences.get('TemplateId');
   res=  await db.fetchTemplateID(id);
+  //TODO: REVERT RETURN
   return res[0]['template'].toString();
 }

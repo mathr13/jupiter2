@@ -3,6 +3,7 @@ import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/List/listingView.dart';
 import 'package:jupiter/Screens/Views/forgotPassword.dart';
 import 'package:jupiter/Screens/Views/profile.dart';
+import 'package:jupiter/Screens/Views/troy.dart';
 import 'package:jupiter/forms/formRendering.dart';
 import 'devTools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +16,7 @@ String userName = "user";
 ScrollController _scrollController = new ScrollController();
 final db = new DatabaseHelper();
 bool dynamicMenus = false;
+double abcd = 100;
 
 class Menus extends StatefulWidget {
   static const rootName = '/menus';
@@ -47,9 +49,8 @@ _workSpaceData(String wsId) async {
 
 Widget menuDrawer(context) {
   String nameInititals = userName[0];
-  for(int i=1;i<userName.length;i++) {
+  for(int i=1;i<userName.length;i++)
     if(i!=userName.length-1 && userName[i]==" ") nameInititals += userName[i+1];
-  }
   return Drawer(
     child: Column(
       children: <Widget>[
@@ -60,7 +61,7 @@ Widget menuDrawer(context) {
             accountName: new Text(userName),
             currentAccountPicture: new CircleAvatar(
               backgroundColor: Colors.lightGreen,
-              child: new Text(nameInititals),
+              child: new Text(nameInititals.toUpperCase()),
             ),
             onDetailsPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context) => new Profile()));},
           )
@@ -99,7 +100,12 @@ Widget menuItem(int position, context, snapshot, int menuItems) {
       child: ListTile(
         title: Container(child: Text("Summary")),
         onTap: () async {
-          Navigator.push(context,MaterialPageRoute(builder: (context) => new Menus()));
+          // Navigator.push(context,MaterialPageRoute(builder: (context) => new Menus()));
+          // while(checkerForGridHeight==0) {
+          //   print(keys);
+          //   checkerForGridHeight = getSizes(keys[counterCounter]);
+          // }
+          Navigator.push(context,MaterialPageRoute(builder: (context) => new Gridxo()));
           _currentSelected = position;
           dynamicMenus = false;
           SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

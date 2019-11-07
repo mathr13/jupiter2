@@ -24,9 +24,6 @@ class _SignInState extends State<SignIn> {
     });
     firebaseMessaging.getToken().then((String token) {
       assert(token != null);
-      setState(() {
-        // print(token);
-      });
     });
   }
 

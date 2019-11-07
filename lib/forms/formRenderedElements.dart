@@ -9,7 +9,6 @@ import 'switch.dart';
 import 'radio.dart';
 import 'textfield.dart';
 import 'checkBox.dart';
-import 'jsondata.dart';
 import 'package:jupiter/forms/customDropdown.dart';
 import 'package:jupiter/forms/customDatepicker.dart';
 

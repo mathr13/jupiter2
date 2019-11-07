@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jupiter/Screens/Views/signIn.dart';
+import 'package:jupiter/Screens/Views/troy.dart';
 import '../../main.dart';
 import 'home.dart';
 
@@ -19,6 +20,7 @@ class _State extends State<SplashScreen> {
       new Future.delayed(const Duration(seconds: 3), () => Navigator.push(context,MaterialPageRoute(builder: (context) => SignIn())));
     }else {
       new Future.delayed(const Duration(seconds: 3), () => Navigator.push(context,MaterialPageRoute(builder: (context) => Menus())));
+      // new Future.delayed(const Duration(seconds: 3), () => Navigator.push(context,MaterialPageRoute(builder: (context) => Gridxo())));
     }
   }
 

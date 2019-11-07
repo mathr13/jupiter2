@@ -39,7 +39,7 @@ class DatabaseHelper {
     String path=join(documentsDirectory, systemDb);
     print("1------------------------***DATABASE***------------------------");
     print(path);
-    var theDbSystem=await openDatabase(path, version: 1, onCreate: _onCreate);
+    var theDbSystem=await openDatabase(path, version: 1, onCreate: _onCreateSystem);
     return theDbSystem;
   }
   initDbContent(String contentDb) async {
@@ -48,25 +48,33 @@ class DatabaseHelper {
     String path=join(documentsDirectory, contentDb);
     print("2------------------------***DATABASE***------------------------");
     print(path);
-    var theDbContent=await openDatabase(path, version: 1);
+    var theDbContent=await openDatabase(path, version: 1, onCreate: _onCreateContent);
     return theDbContent;
   }
 
-  Future _onCreate(Database db, int version) async {
+  Future _onCreateSystem(Database db, int version) async {
     await db.execute("CREATE TABLE USER(userName TEXT, firstName TEXT, lastName TEXT, userId NUMBER, lang TEXT, PRIMARY KEY(userId))");
     await db.execute("CREATE TABLE NOTIFICATION_QUEUE(queueId TEXT ,projectId NUMBER,category TEXT ,message TEXT ,type TEXT ,seqNo NUMBER,groupSeqNo NUMBER, timestamp NUMBER,status TEXT, uri TEXT, params TEXT,PRIMARY KEY(queueId,projectId))");
     await db.execute("CREATE TABLE PROJECT(projectName TEXT, projectId NUMBER, init BOOL, defaultProject BOOL, db TEXT,PRIMARY KEY(projectId))");
-    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, iconUrl TEXT, perm TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
+    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, iconUrl TEXT, iconName TEXT, perm TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
     await db.execute("CREATE TABLE PERMISSION(permissionId TEXT, projectId NUMBER,PRIMARY KEY(projectId,permissionId))");
     await db.execute("CREATE TABLE GLOBALVARIABLE(projectId NUMBER, key TEXT, value TEXT)");
     await db.execute("CREATE TABLE LABEL(key TEXT, value TEXT, localization TEXT, projectId NUMBER, appType TEXT,PRIMARY KEY(projectId,key,localization))");
     await db.execute("CREATE TABLE system_tables_info(tableId NUMBER, tableName TEXT, status BOOLEAN,PRIMARY KEY(tableId))");
     await db.execute("INSERT INTO system_tables_info(tableId, tableName) VALUES(1,'USER'),(2,'NOTIFICATION_QUEUE'),(3,'PROJECT'),(4,'MENU'),(5,'PERMISSION'),(6,'GLOBALVARIABLE'),(7,'LABEL'),(8,'DEFINITION')");
     await db.execute("CREATE TABLE DEFINITION(formId TEXT PRIMARY KEY, projectId Number, name TEXT, template TEXT)");
-    await db.execute("CREATE TABLE WORKSPACE(wsId TEXT PRIMARY KEY, wsName Number,defaultTemplateId TEXT)");
-    await db.execute("CREATE TABLE NAVIGATION_MAPPING(templateId TEXT,buttonId TEXT,componentType TEXT,  componentSubType TEXT, redirectTemplateId TEXT,label TEXT,operation TEXT,containerId TEXT,wsId TEXT,PRIMARY KEY (templateId,buttonId))");
-    await db.execute("CREATE TABLE TRANS_QUEUE(transQueueId TEXT, requestId TEXT, requestData TEXT, lookUpData TEXT, projectId NUMBER, userId NUMBER, status TEXT, syncStatus TEXT, conflicts TEXT, responseData TEXT, wsId NUMBER, createdData TEXT, updateData TEXT)");
+    await db.execute("CREATE TABLE WORKSPACE(wsId TEXT PRIMARY KEY, wsName Number,defaultFormId TEXT)");
+    await db.execute("CREATE TABLE NAVIGATION_MAPPING(formId TEXT,buttonId TEXT,componentType TEXT,  componentSubType TEXT, redirectFormId TEXT,redirectSectionId TEXT,label TEXT,operation TEXT,containerId TEXT,wsId TEXT,redirectWsId TEXT,PRIMARY KEY (formId,buttonId))");
+    await db.execute("CREATE TABLE TRANS_QUEUE(transQueueId TEXT, requestId TEXT, requestData TEXT, lookUpData TEXT, projectId NUMBER, userId NUMBER, status TEXT, syncStatus TEXT, conflicts TEXT, responseData TEXT, wsId NUMBER, createdData TEXT, updateData TEXT, PRIMARY KEY(transQueueId,requestId))");
+    await db.execute("CREATE TABLE RELATIONS(userId NUMBER, projectId NUMBER, wsId TEXT, parentTableName TEXT, ChildEntityName TEXT, ReferenceColumnName TEXT, ChildReferenceColumnName TEXT, PRIMARY KEY(userId, projectId, wsId))");
+    await db.execute("CREATE TABLE RESOURCEICON(projectId TEXT,key TEXT, value TEXT)");
+    await db.execute("CREATE TABLE IMAGES(id NUMBER,label TEXT, imageData TEXT)");
     // await db.execute("CREATE TABLE TRANS_DOC_QUEUE(transDocId TEXT, requestId TEXT, transDocMetaData TEXT, status TEXT, syncStatus TEXT, noOfAttempts NUMBER, docLocalPath TEXT, docName TEXT, createdDate TEXT, updatedDat TEXT)");
+  }
+
+  Future _onCreateContent(Database db, int version) async {
+    await db.execute("CREATE TABLE FORMS(formId TEXT, formLabel TEXT, rows NUMBER, cols NUMBER, sections TEXT, PRIMARY KEY(formId))");
+    await db.execute("CREATE TABLE SECTIONS(sectionId TEXT, rowIndex NUMBER, colIndex NUMBER, rowSpan NUMBER, colSpan NUMBER, definition TEXT)");
   }
 
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value, bool isSystemDatabase) async {
@@ -84,6 +92,20 @@ class DatabaseHelper {
       dbClient = await dbContent;
     }
     value.putIfAbsent("$columnName", () => columnValue);
+    await dbClient.insert(tableName, value,conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+  Future<void> multiplePopulateTableWithCustomColumn(String tableName, Map<String, dynamic> value,List<String> columnName,List<dynamic> columnValue, bool isSystemDatabase) async {
+    var dbClient;
+    if(isSystemDatabase==true) {
+      dbClient = await dbSystem;
+    }else {
+      dbClient = await dbContent;
+    }
+    for(int i=0;i<columnName.length;i++) {
+      var bufCN = columnName[i];
+      var bufCV = columnValue[i];
+      value.putIfAbsent("$bufCN", () => bufCV);
+    }
     await dbClient.insert(tableName, value,conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -207,7 +229,7 @@ class DatabaseHelper {
   
   Future<List> fetchButtonData(String wsId, String containerId, String templateId) async {
     var dbClient = await dbSystem;
-    var res = await dbClient.rawQuery("SELECT * FROM NAVIGATION_MAPPING WHERE wsId IS '$wsId' AND containerId IS '$containerId' AND templateId IS '$templateId'");
+    var res = await dbClient.rawQuery("SELECT * FROM NAVIGATION_MAPPING WHERE wsId IS '$wsId' AND containerId IS '$containerId' AND formId IS '$templateId'");
     return res.toList();
   }
 

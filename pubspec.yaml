@@ -24,6 +24,7 @@ dependencies:
   firebase_messaging: ^5.1.6
   firebase_remote_config: ^0.2.0+7
   uuid: 2.0.1
+  image_picker:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -142,6 +143,7 @@ flutter:
     - assets/images/IOS Logo.png
     - assets/images/_640 x 960-7.png
     - assets/menu.json
+    - assets/jordan.jpg
   # - assets/database/local.db
   # To add assets to your application, add an assets section, like this:
   # assets:
