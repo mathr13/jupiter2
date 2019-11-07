@@ -31,8 +31,12 @@ class _CustomState extends State<CustomRadio> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData;
+    queryData = MediaQuery.of(context);
     return Container(
-      child: Column(
+//      width: queryData.size.width/3,
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -55,7 +59,7 @@ class _CustomState extends State<CustomRadio> {
                   return Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                      children: column(snapshot.data)
                   );
                 }

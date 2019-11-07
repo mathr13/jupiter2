@@ -27,6 +27,7 @@ class _CustomState extends State<CustomCheckBox> {
 
   @override Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(8.0),
       child:Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

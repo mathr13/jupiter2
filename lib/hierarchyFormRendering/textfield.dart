@@ -1,3 +1,39 @@
+//import 'package:flutter/material.dart';
+//import 'package:flutter/services.dart';
+//import 'package:jupiter/forms/formRenderedElements.dart';
+//import 'package:jupiter/forms/formRendering.dart';
+//import 'package:jupiter/Databasehelper/databaseHelper.dart';
+//
+//class CustomText extends StatefulWidget {
+//
+//  @override
+//  _CustomState createState() => _CustomState();
+//}
+//
+//class _CustomState extends State<CustomText> {
+//  String value;
+//  var obj;
+//
+//
+//  @override Widget build(BuildContext context) {
+//    MediaQueryData queryData;
+//    queryData = MediaQuery.of(context);
+//    var db = DatabaseHelper();
+//    return Container(
+////      width: queryData.size.width/widget.widthPart,
+//        child: Column(
+//            mainAxisSize: MainAxisSize.max,
+//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//            crossAxisAlignment: CrossAxisAlignment.stretch,
+//            children: <Widget>[
+//              Text(" textField here textField here textField here"),
+//              TextField()
+//            ]
+//        )
+//    );
+//  }
+//}
+//
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jupiter/forms/formRenderedElements.dart';
@@ -5,16 +41,14 @@ import 'package:jupiter/forms/formRendering.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 class CustomText extends StatefulWidget {
-   CustomText({
-    @required this.onChanged,
+  CustomText({
+     this.onChanged,
     this.item,
-    this.count,
     this.formItems,
-     this.widthPart
+    this.widthPart
 
   });
 
-  final int count;
   final Map item;
   final ValueChanged<dynamic> onChanged;
   final dynamic formItems;
@@ -33,7 +67,6 @@ class _CustomState extends State<CustomText> {
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
     var db =DatabaseHelper();
-    widget.formItems[widget.count]['response'] = null;
     return Container(
       padding: const EdgeInsets.all(8.0),
 //      width: queryData.size.width/widget.widthPart,
@@ -43,11 +76,11 @@ class _CustomState extends State<CustomText> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           FutureBuilder<String>(
-            future: db.getTextFieldLabel(widget.item['label']),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              if (!snapshot.hasData) return new Text(addAsterisk(widget.item['label']), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-              return new Text(addAsterisk(snapshot.data.toString()), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-            }),
+              future: db.getTextFieldLabel(widget.item['label']),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (!snapshot.hasData) return new Text(addAsterisk(widget.item['label']), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+                return new Text(addAsterisk(snapshot.data.toString()), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+              }),
           new TextField(
             controller: null,
             decoration: new InputDecoration(
