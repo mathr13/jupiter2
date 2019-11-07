@@ -7,6 +7,7 @@ import 'Services/firebaseFunctions.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 String baseUrl = "";
+String summaryData = "";
 bool isFirstLogin = true;
 List<Map> fetchedSystemTableData = [];
 List<String> fetchedContentTableData = [];
@@ -22,11 +23,13 @@ void main() async {
     isFirstLogin = false;
   }
  await db.dbSystem;
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
-    runApp(new FlutterApp());
-  });
+ runApp(new FlutterApp());
+  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
+    
+  // });
   fetchedSystemTableData = await db.fetchTablesData(true);
   baseUrl = await remoteConfig();
+  summaryData = await summaryRemoteConfig();
 }
 
 class FlutterApp extends StatelessWidget {

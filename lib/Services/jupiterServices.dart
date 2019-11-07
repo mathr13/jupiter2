@@ -6,6 +6,9 @@ import 'package:jupiter/Models/user.dart';
 import 'package:jupiter/Screens/Views/signIn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:device_info/device_info.dart';
+import 'package:jupiter/Screens/Views/home.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 String finalCookies ="";
 
@@ -16,6 +19,8 @@ Future<dynamic> fetchUserApi(User user) async {
   String deviceId;
   String deviceOsModel;
   String deviceModel;
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+
   if(Platform.isIOS) {
     IosDeviceInfo iosDeviceInfo = await deviceInfoPlugin.iosInfo;
     deviceId = iosDeviceInfo.identifierForVendor;
@@ -30,7 +35,7 @@ Future<dynamic> fetchUserApi(User user) async {
 
   if(deviceOsModel=="") {deviceOsModel="Device OS";}
 
-  String firebaseToken = await firebaseMessaging.getToken();
+   String firebaseToken = await firebaseMessaging.getToken();
   String theBody = '{"userName": "$userName","password": "$password","deviceId": "$deviceId","deviceModel": "$deviceModel","firebaseToken": "$firebaseToken","os": "$deviceOsModel"}';
   // String theBody = '{"userName": "shweta.singh@petroitg.com","password": "Shweta@123","deviceId": "123456","firebaseToken": "$firebaseToken","deviceModel": "SamsungS10","os": "Android 10"}';
   final response = await http.post('$userApiUrl',
@@ -45,7 +50,14 @@ Future<dynamic> fetchUserApi(User user) async {
     String cookies = response.headers["set-cookie"].split(";")[0].trim();
     finalCookies = cookies;
     setCookies(finalCookies);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('cookie', finalCookies);
+    // logoutUser(); 
   }
+
+
+  
+
   return response;
 }
 Future<String> setCookies(String value) async {
@@ -53,6 +65,7 @@ Future<String> setCookies(String value) async {
   prefs.setString(cookies, value);
   return prefs.toString();
 }
+
 
 Future<String> getCookies() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();

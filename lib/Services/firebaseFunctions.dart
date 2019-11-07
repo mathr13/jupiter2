@@ -11,6 +11,8 @@ import 'package:jupiter/Screens/Views/signIn.dart';
 import 'package:jupiter/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'jupiterUtlis.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 String notifResponse = "";
 String contentDb;
@@ -18,7 +20,7 @@ List<Map<String, dynamic>> result = [];
 List<Map<String, dynamic>> parameter = [];
 dynamic responseApi;
 var db = new DatabaseHelper();
-
+final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 Future<void> getDatafromFirebase(context) async {
   firebaseMessaging.configure(
     onMessage: (dynamic response) async {
@@ -42,6 +44,7 @@ void getProjectData() async {
   if(result.length == 0) {result = await db.fetchFirstProject();}
 
   for(int i=0;i<result.length;i++) {
+    print(result[i][parameters]);
     parameter.add(json.decode(result[i][parameters]));
     parameter[i].forEach((k,v) {
       String key = k;
@@ -182,3 +185,19 @@ Future<String> remoteConfig() async {
   await remoteConfig.activateFetched();
   return remoteConfig.getValue("baseURL").asString();
 }
+
+
+Future<String> summaryRemoteConfig() async {
+  final RemoteConfig remoteConfig = await RemoteConfig.instance;
+ remoteConfig.setConfigSettings(RemoteConfigSettings(debugMode: false));
+  remoteConfig.setDefaults(<String, dynamic>{
+    'SUMMARY_UI_DATA': 'nil',
+  });
+
+  await remoteConfig.fetch();
+  await remoteConfig.activateFetched();
+  return remoteConfig.getValue("SUMMARY_UI_DATA").asString();
+
+}
+
+

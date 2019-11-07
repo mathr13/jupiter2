@@ -56,7 +56,7 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE USER(userName TEXT, firstName TEXT, lastName TEXT, userId NUMBER, lang TEXT, PRIMARY KEY(userId))");
     await db.execute("CREATE TABLE NOTIFICATION_QUEUE(queueId TEXT ,projectId NUMBER,category TEXT ,message TEXT ,type TEXT ,seqNo NUMBER,groupSeqNo NUMBER, timestamp NUMBER,status TEXT, uri TEXT, params TEXT,PRIMARY KEY(queueId,projectId))");
     await db.execute("CREATE TABLE PROJECT(projectName TEXT, projectId NUMBER, init BOOL, defaultProject BOOL, db TEXT,PRIMARY KEY(projectId))");
-    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, iconUrl TEXT, perm TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
+    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, iconUrl TEXT, perm TEXT,iconName TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
     await db.execute("CREATE TABLE PERMISSION(permissionId TEXT, projectId NUMBER,PRIMARY KEY(projectId,permissionId))");
     await db.execute("CREATE TABLE GLOBALVARIABLE(projectId NUMBER, key TEXT, value TEXT)");
     await db.execute("CREATE TABLE LABEL(key TEXT, value TEXT, localization TEXT, projectId NUMBER, appType TEXT,PRIMARY KEY(projectId,key,localization))");
@@ -66,6 +66,8 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE WORKSPACE(wsId TEXT PRIMARY KEY, wsName Number,defaultTemplateId TEXT)");
     await db.execute("CREATE TABLE NAVIGATION_MAPPING(templateId TEXT,buttonId TEXT,componentType TEXT,  componentSubType TEXT, redirectTemplateId TEXT,label TEXT,operation TEXT,containerId TEXT,wsId TEXT,PRIMARY KEY (templateId,buttonId))");
     await db.execute("CREATE TABLE TRANS_QUEUE(transQueueId TEXT, requestId TEXT, requestData TEXT, lookUpData TEXT, projectId NUMBER, userId NUMBER, status TEXT, syncStatus TEXT, conflicts TEXT, responseData TEXT, wsId NUMBER, createdData TEXT, updateData TEXT)");
+    await db.execute("CREATE TABLE RESOURCEICON(projectId TEXT, key TEXT, value TEXT)");
+
     // await db.execute("CREATE TABLE TRANS_DOC_QUEUE(transDocId TEXT, requestId TEXT, transDocMetaData TEXT, status TEXT, syncStatus TEXT, noOfAttempts NUMBER, docLocalPath TEXT, docName TEXT, createdDate TEXT, updatedDat TEXT)");
   }
 
