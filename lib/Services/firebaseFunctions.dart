@@ -71,6 +71,8 @@ void getProjectData() async {
         columnNames.clear();
         columnDataTypes.clear();
         primaryKey.clear();
+        var buffer = await db.fetchTablesData(false);
+        // for(int i=0;i<buffer.length;i++) {fetchedContentTableData.add(buffer[i]['name']);}
         fetchedContentTableData.add(modelReponseModel.modelDataModel.models[j].modelName);
       }
     }else if(result[i]['message']=="MASTERDATA") {

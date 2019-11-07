@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:jupiter/Constant/stringConstant.dart';
 import 'package:jupiter/Services/firebaseFunctions.dart';
 import 'package:path/path.dart';
@@ -79,6 +80,12 @@ class DatabaseHelper {
 
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value, bool isSystemDatabase) async {
     var dbClient;
+    value.forEach((k,v) {
+      if(value[k].runtimeType == 'List<dynamic>') {
+        print(tableName);
+        value[k] = json.decode(value[k]);
+      }
+    });
     if(isSystemDatabase==true) {dbClient=await dbSystem;}else {dbClient=await dbContent;}
     await dbClient.insert(tableName, value,conflictAlgorithm: ConflictAlgorithm.replace);
   }
