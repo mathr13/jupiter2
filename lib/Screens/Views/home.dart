@@ -4,6 +4,7 @@ import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/List/listingView.dart';
 import 'package:jupiter/Screens/Views/forgotPassword.dart';
 import 'package:jupiter/Screens/Views/profile.dart';
+import 'package:jupiter/Screens/Views/troy.dart';
 import 'package:jupiter/forms/formRendering.dart';
 import 'package:jupiter/main.dart' as prefix0;
 import 'devTools.dart';
@@ -12,6 +13,9 @@ import 'package:jupiter/Screens/Containers/workSpaceContainer.dart';
 import 'dart:convert';
 import 'package:jupiter/Services/jupiterUtlis.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:jupiter/forms/formRendering.dart';
+import 'package:jupiter/Screens/Containers/formsContainer.dart';
+// import 'package:jupiter/hierarchyFormRendering/parentForm.dart';
 
 var navigationData;
 String wsId;
@@ -21,6 +25,7 @@ ScrollController _scrollController = new ScrollController();
 final db = new DatabaseHelper();
 bool dynamicMenus = false;
 final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+double abcd = 100;
 
 class Menus extends StatefulWidget {
   static const rootName = '/menus';
@@ -37,7 +42,7 @@ class _MenusState extends State<Menus> {
     var jsonData = [];
     jsonData = summaryDataDecode["summaryData"];
     List _summaryListViewData =
-        jsonData.where((lang) => lang["language"] == "hi_IN").toList();
+        jsonData.where((lang) => lang["language"] == "en_US").toList();
     return new WillPopScope(
         onWillPop: () async {
           return true;
@@ -51,11 +56,14 @@ class _MenusState extends State<Menus> {
                   : _summaryListViewData.length,
               itemBuilder: (BuildContext context, int index) {
                 return new GestureDetector(
+                  onTap: (){
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text(_summaryListViewData[index]["labelName"].toString()),
+                              ));
+                  },
                   //You need to make my child interactive
         
-                //       Scaffold.of(context).showSnackBar(SnackBar(
-                //   content: Text(_summaryListViewData[index]["labelName"].toString()),
-                // )),
+                
                   child: new Card(
                     //I am the clickable child
                     child: new Row(
@@ -63,7 +71,7 @@ class _MenusState extends State<Menus> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          height: 120,
+                          height: MediaQuery.of(context).size.height / 5,
                           child: Container(
                             color: Colors.grey,
                             width: 5,
@@ -72,7 +80,7 @@ class _MenusState extends State<Menus> {
                           margin: const EdgeInsets.only(right: 10),
                         ),
                         Container(
-                          height: 120,
+                          height: MediaQuery.of(context).size.height / 5,
                           child: Text(
                             (index * 2 + 1).toString() +
                                 " " +
@@ -194,39 +202,36 @@ Widget menuItem(int position, context, snapshot, int menuItems) {
         ));
   } else if (position == menuItems + 2) {
     return new Container(
-        color: _currentSelected == position ? Colors.green : Colors.transparent,
-        child: ListTile(
-            title: Container(child: Text(" LOGOUT")),
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ListingView()));
-              _currentSelected = position;
-              dynamicMenus = false;
-            }));
-  } else {
+      color: _currentSelected == position ? Colors.green : Colors.transparent,
+      child: ListTile(
+        title: Container(child: Text(" LOGOUT")),
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => FormContainer()));
+          _currentSelected = position;
+          dynamicMenus = false;
+        }
+      )
+    );
+  }else {
     return new Container(
       color: _currentSelected == position ? Colors.green : Colors.transparent,
       child: ListTile(
-          title: Container(
-              child: Text(snapshot.data[position - 2]["value"].toString())),
-          onTap: () async {
-            await _workSpaceData(
-                snapshot.data[position - 2]['wsId'].toString());
-            wsId = snapshot.data[position - 2]['wsId'].toString();
-            SharedPreferences sharedPreferences =
-                await SharedPreferences.getInstance();
-            sharedPreferences.setString("wsId", wsId);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => WorkSpaceContainer(
-                          titleString:
-                              snapshot.data[position - 2]["value"].toString(),
-                        )));
-            formTitle = snapshot.data[position - 2]["value"].toString();
-            _currentSelected = position;
-            dynamicMenus = true;
-          }),
+        title: Container(
+          child: Text(snapshot.data[position-2]["value"].toString())
+        ),
+        onTap: () async {
+          await _workSpaceData(snapshot.data[position-2]['wsId'].toString());
+          wsId = snapshot.data[position-2]['wsId'].toString();
+          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          sharedPreferences.setString("wsId", wsId);
+          Navigator.push(context,MaterialPageRoute(builder: (context) =>Gridxo()
+          //    WorkSpaceContainer(titleString: snapshot.data[position-2]["value"].toString(),)
+          ));
+          formTitle = snapshot.data[position-2]["value"].toString();
+          _currentSelected = position;
+          dynamicMenus = true;
+        }
+      ),
     );
   }
 }

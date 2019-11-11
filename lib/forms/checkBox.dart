@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
+import 'package:jupiter/Screens/Views/troy.dart';
 
+// List<MaterialColor> abcd = [Colors.red,Colors.yellow,Colors.green,Colors.orange,Colors.pink,Colors.blue,Colors.brown,Colors.grey,Colors.green,Colors.black];
 
 class CustomCheckBox extends StatefulWidget {
   const CustomCheckBox({
@@ -27,6 +29,7 @@ class _CustomState extends State<CustomCheckBox> {
 
   @override Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(8.0),
       child:Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -48,11 +51,14 @@ class _CustomState extends State<CustomCheckBox> {
             future: db.fetchDataSourceData(widget.formItems[widget.count]['dataSource']),
             builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (!snapshot.hasData) return CircularProgressIndicator();
-              return Column(
+              return Container(
+                key: five,
+                child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: column(snapshot.data)
+              ),
               );
             }
           ),
@@ -65,8 +71,9 @@ class _CustomState extends State<CustomCheckBox> {
     List<Widget> checkboxList = new List<Widget>();
     for(int i=0;i<list.length-1;i++) {booleans.add(false);}
     for(int i=0;i<list.length;i++) {
-      map.putIfAbsent(list[i][widget.formItems[widget.count]['dataSource'][0]['displayMember']],()=> false);
-      checkboxList.add(new Row(children: <Widget>[
+      // map.putIfAbsent(list[i][widget.formItems[widget.count]['dataSource'][0]['displayMember']],()=> false);
+      checkboxList.add(new Row(
+        children: <Widget>[
         new Expanded(
           child: new Text(list[i][widget.formItems[widget.count]['dataSource'][0]['displayMember']])
         ),
@@ -87,7 +94,3 @@ class _CustomState extends State<CustomCheckBox> {
     widget.onChanged(widget.formItems);
   }
 }
-
-
-
-

@@ -264,24 +264,26 @@ class WorkSpaceModel{
   String wsId;
   String wsName;
   List<NavigationMapping> navigationMapping;
+  List<Relations> relations;
 
-
-  WorkSpaceModel({this.defaultTemplateId,this.wsId,this.wsName,this.navigationMapping});
+  WorkSpaceModel({this.defaultTemplateId,this.wsId,this.wsName,this.navigationMapping,this.relations});
 
   factory WorkSpaceModel.fromJson(Map<String,dynamic> parsedJson){
     var navigationMappingList = parsedJson["navigationMapping"] as List;
     List<NavigationMapping> listOfNavigationMapping = navigationMappingList.map((i) => NavigationMapping.fromJson(i)).toList();
-
+    var relationsList = parsedJson["Relations"] as List;
+    List<Relations> listOfrelations = relationsList.map((i) => Relations.fromJson(i)).toList();
     return WorkSpaceModel(
-        defaultTemplateId: parsedJson['defaultTemplateId'],
+        defaultTemplateId: parsedJson['defaultFormId'],
         wsId: parsedJson['wsId'],
         wsName: parsedJson['wsName'],
-      navigationMapping: listOfNavigationMapping
+      navigationMapping: listOfNavigationMapping,
+      relations: listOfrelations,
     );
   }
   Map<dynamic, dynamic> toMap() {
     var map=new Map<String, dynamic>();
-    map["defaultTemplateId"]=defaultTemplateId;
+    map["defaultFormId"]=defaultTemplateId;
     map["wsId"]=wsId;
     map["wsName"]=wsName;
     return map;
@@ -289,41 +291,97 @@ class WorkSpaceModel{
 }
 
 class NavigationMapping {
-  String templateId;
+  String formId;
   String buttonId;
   String componentType;
   String componentSubType;
-  String redirectTemplateId;
+  String redirectFormId;
+  String redirectSectionId;
   String label;
   String operation;
   String containerId;
+  String redirectWsId;
 
-  NavigationMapping({this.templateId, this.buttonId, this.componentSubType, this.componentType, this.containerId, this.label, this.operation, this.redirectTemplateId});
+  NavigationMapping({this.formId, this.buttonId, this.componentSubType, this.componentType, this.containerId, this.label, this.operation, this.redirectFormId,this.redirectSectionId,this.redirectWsId});
 
   factory NavigationMapping.fromJson(Map<String, dynamic> parsedJson){
     return NavigationMapping(
-      templateId: parsedJson['templateId'],
+      formId: parsedJson['formId'],
       buttonId: parsedJson['buttonId'],
       componentType: parsedJson['componentType'],
       componentSubType: parsedJson['componentSubType'],
-      redirectTemplateId: parsedJson['redirectTemplateId'],
+      redirectFormId: parsedJson['redirectFormId'],
       label: parsedJson['label'],
       operation: parsedJson['operation'],
       containerId: parsedJson['containerId'],
-
+      redirectSectionId: parsedJson['redirectSectionId'],
+      redirectWsId: parsedJson['redirectWsId']
     );
   }
   Map<dynamic, dynamic> toMap() {
     var map=new Map<String, dynamic>();
-    map["templateId"]=templateId;
+    map["formId"]=formId;
     map["buttonId"]=buttonId;
     map["componentType"]=componentType;
     map["componentSubType"]=componentSubType;
-    map["redirectTemplateId"]=redirectTemplateId;
+    map["redirectFormId"]=redirectFormId;
     map["label"]=label;
     map["operation"]=operation;
     map["containerId"]=containerId;
+    map["redirectSectionId"]=redirectSectionId;
+    map["redirectWsId"]=redirectWsId;
+    return map;
+  }
+}
 
+class Relations {
+  String parentTableName;
+  String childEntityName;
+  String referenceColumnName;
+  String childReferenceColumnName;
+
+  Relations({this.parentTableName,this.childEntityName,this.referenceColumnName,this.childReferenceColumnName});
+
+  factory Relations.fromJson(dynamic parsedJson) {
+    var relationList = parsedJson["Relation"] as List;
+    List<Relation> listOfrelation = relationList.map((i) => Relation.fromJson(i)).toList();
+    print(listOfrelation);
+    return Relations(
+      parentTableName: parsedJson['ParentTableName'],
+      childEntityName: listOfrelation[0].childEntityName,
+      childReferenceColumnName: listOfrelation[0].childReferenceColumnName,
+      referenceColumnName: listOfrelation[0].referenceColumnName,
+    );
+  }
+  Map<dynamic, dynamic> toMap() {
+    var map=new Map<String, dynamic>();
+    map["ParentTableName"]=parentTableName;
+    map["ChildEntityName"]=childEntityName;
+    map["ReferenceColumnName"]=referenceColumnName;
+    map["ChildReferenceColumnName"]=childReferenceColumnName;
+    return map;
+  }
+}
+
+class Relation {
+  String childEntityName;
+  String referenceColumnName;
+  String childReferenceColumnName;
+
+  Relation({this.childEntityName,this.childReferenceColumnName,this.referenceColumnName});
+
+  factory Relation.fromJson(dynamic parsedJson) {
+    return Relation(
+      childEntityName: parsedJson['ChildEntityName'],
+      childReferenceColumnName: parsedJson['ChildReferenceColumnName'],
+      referenceColumnName: parsedJson['ReferenceColumnName'],
+    );
+  }
+  Map<dynamic, dynamic> toMap() {
+    var map=new Map<String, dynamic>();
+    map["ChildEntityName"]=childEntityName;
+    map["ReferenceColumnName"]=referenceColumnName;
+    map["ChildReferenceColumnName"]=childReferenceColumnName;
     return map;
   }
 }
@@ -362,5 +420,32 @@ class MasterDataModel {
     return MasterDataModel(
       masterData: parsedJson
     );
+  }
+}
+
+
+class FormModel {
+  int rows;
+  int cols;
+  String formId;
+  String formLabel;
+
+  FormModel({this.cols,this.formId,this.formLabel,this.rows});
+
+  factory FormModel.fromJson(dynamic parsedJson) {
+    return FormModel(
+      rows: parsedJson['row'],
+      cols: parsedJson['cols'],
+      formId: parsedJson['fomrId'],
+      formLabel: parsedJson['formLabel']
+    );
+  }
+  Map<dynamic, dynamic> toMap() {
+    var map=new Map<String, dynamic>();
+    map["rows"]=rows;
+    map["cols"]=cols;
+    map["formId"]=formId;
+    map["formLabel"]=formLabel;
+    return map;
   }
 }

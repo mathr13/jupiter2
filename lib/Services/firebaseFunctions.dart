@@ -76,14 +76,6 @@ void getProjectData() async {
         primaryKey.clear();
         fetchedContentTableData.add(modelReponseModel.modelDataModel.models[j].modelName);
       }
-      // db.createTable(tableName, columnName, columnDataType);
-      // for(int j=0;j<modelReponseModel.modelDataModel.models.length;j++) {
-      //   db.createTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[0].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[0].dataType);
-      //   for(int k=1;k<modelReponseModel.modelDataModel.models[j].tableColumns.length;k++) {
-      //     if(k==1) {await Future.delayed(Duration(seconds: 1));}
-      //     db.addColumnToTable(modelReponseModel.modelDataModel.models[j].modelName, modelReponseModel.modelDataModel.models[j].tableColumns[k].columnName, modelReponseModel.modelDataModel.models[j].tableColumns[k].dataType);
-      //   }
-      // }
     }else if(result[i]['message']=="MASTERDATA") {
       // responseApi = await callApi(result[i][modelUri], parameter[i].toString());
       // final responseOfApi = json.decode(responseApi.body);
@@ -103,30 +95,33 @@ void getProjectData() async {
         }
       }
       else if(result[i]['message']=="WORKSPACE") {
-        responseApi = await callApi(result[i][modelUri], parameter[i].toString());
-        final responseOfApi = json.decode(responseApi.body);
+        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        // responseApi = await callApi(result[i][modelUri], parameter[i].toString());
+        responseApi = '{"data":{"WORKSPACE":[{"defaultFormId":"98240c0d-8c4d-4305-a396-bba71bbacb2b","wsId":"save_Item","wsName":"SAVE ITEM","navigationMapping":[{"formId":"98240c0d-8c4d-4305-a396-bba71bbacb2b","buttonId":"button_save","componentType":"button","componentSubType":"button","redirectFormId":"","redirectSectionId":"","label":"Save","operation":"SAVE","containerId":"container1","redirectWsId":"save_Item"},{"formId":"98240c0d-8c4d-4305-a396-bba71bbacb2b","buttonId":"button_close","componentType":"button","componentSubType":"button","redirectFormId":"","redirectSectionId":"","label":"Close","operation":"CLOSE","containerId":"container1","redirectWsId":"save_Item"}],"Relations":[{"ParentTableName":"ITEM","Relation":[{"ChildEntityName":"DOCS","ReferenceColumnName":"id","ChildReferenceColumnName":"itemId"}]}],"rootEntityName":"ITEM","rootEntityColName":"id","copy":[{"entityCol":"","entityVal":""}],"preReq":[{"col":"","val":""}]}],"projectId":11103},"status":{"messageList":[],"messageCode":1200}}';
+        final responseOfApi = json.decode(responseApi);
         WorkSpaceResponseModel workSpaceResponseModel = new WorkSpaceResponseModel.fromJson(responseOfApi);
         for (int i = 0; i < workSpaceResponseModel.data.workSpace.length; i++) {
           db.populateTableWithMapping("WORKSPACE", workSpaceResponseModel.data.workSpace[i].toMap(),true);
           for (int j=0;j<workSpaceResponseModel.data.workSpace[i].navigationMapping.length;j++)
             db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceResponseModel.data.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceResponseModel.data.workSpace[i].wsId,true);
+          for(int j=0;j<workSpaceResponseModel.data.workSpace[i].relations.length;j++)
+            db.multiplePopulateTableWithCustomColumn("RELATIONS", workSpaceResponseModel.data.workSpace[i].relations[j].toMap(), ["userId","projectId","wsId"], [sharedPreferences.get("userId"),workSpaceResponseModel.data.projectId,workSpaceResponseModel.data.workSpace[i].wsId], true);
         }
       }
       else {
         GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
-            for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
-              db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId,true);
-            }
+        for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
+          db.populateTableWithCustomColumn(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,"projectId",genericResponseModel.genericDataModel.projectId,true);
+        }
       }
 
     }else {
     responseApi = await callApi(result[i][modelUri], parameter[i].toString());
     final responseOfApi = json.decode(responseApi.body);
-
     GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
-          for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
-            db.populateTableWithMapping(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,false);
-          }
+      for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
+        db.populateTableWithMapping(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,false);
+      }
     }
   }
 }

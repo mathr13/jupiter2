@@ -219,7 +219,7 @@ class Styles {
       fontFamily: "Lato-Regular",
       letterSpacing: 1,
       fontStyle: FontStyle.normal,
-      fontSize: 15);
+      fontSize: 18);
 }
 
 class RequestType {

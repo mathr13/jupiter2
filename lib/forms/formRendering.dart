@@ -6,10 +6,11 @@ import 'dart:convert';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:core';
+import 'jsondata.dart';
 
 
 Object obj;
-String formTitle="Form";
+String formTitle=" ";
 var res;
 List<Map> listOfHierarchy = [{}];
 Map mapOfPrimaryKeys ={};
@@ -34,7 +35,6 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-
   void initState(){
     super.initState();
   }
@@ -59,7 +59,8 @@ class _AppState extends State<App> {
                   if (!snapshot.hasData) return CircularProgressIndicator();
                   return CoreForm(
                     form:formValue.toString(),
-                    jsonForm: res[0]['template'],
+                    jsonForm: listingData.toString(),
+                    //res[0]['template'],
                   );
                 }
               )
@@ -120,5 +121,6 @@ _getTemplateId() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String id= sharedPreferences.get('TemplateId');
   res=  await db.fetchTemplateID(id);
+  //TODO: REVERT RETURN
   return res[0]['template'].toString();
 }
