@@ -91,18 +91,19 @@ void getProjectData() async {
           db.populateTableWithCustomColumn(result[i]["message"], definitionResponseModel.definitionDataModel.definition[j].toMap(), "projectId", definitionResponseModel.definitionDataModel.projectId,true);
         }
       }
+
       else if(result[i]['message']=="WORKSPACE") {
         SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-        // responseApi = await callApi(result[i][modelUri], parameter[i].toString());
-        responseApi = '{"data":{"WORKSPACE":[{"defaultFormId":"98240c0d-8c4d-4305-a396-bba71bbacb2b","wsId":"save_Item","wsName":"SAVE ITEM","navigationMapping":[{"formId":"98240c0d-8c4d-4305-a396-bba71bbacb2b","buttonId":"button_save","componentType":"button","componentSubType":"button","redirectFormId":"","redirectSectionId":"","label":"Save","operation":"SAVE","containerId":"container1","redirectWsId":"save_Item"},{"formId":"98240c0d-8c4d-4305-a396-bba71bbacb2b","buttonId":"button_close","componentType":"button","componentSubType":"button","redirectFormId":"","redirectSectionId":"","label":"Close","operation":"CLOSE","containerId":"container1","redirectWsId":"save_Item"}],"Relations":[{"ParentTableName":"ITEM","Relation":[{"ChildEntityName":"DOCS","ReferenceColumnName":"id","ChildReferenceColumnName":"itemId"}]}],"rootEntityName":"ITEM","rootEntityColName":"id","copy":[{"entityCol":"","entityVal":""}],"preReq":[{"col":"","val":""}]}],"projectId":11103},"status":{"messageList":[],"messageCode":1200}}';
-        final responseOfApi = json.decode(responseApi);
+//         responseApi = await callApi(result[i][modelUri], parameter[i].toString());
+//        responseApi = '{"data":{"projectId":11103,"WORKSPACE":[{"defaultFormId":"categoryListingForm","wsId":"save_Item","wsName":"SAVE ITEM","navigationMapping":[{"formId":"categoryListingForm","buttonId":"button_next","componentType":"button","componentSubType":"button","redirectFormId":"itemTypeListingForm","redirectSectionId":null,"redirectWsId":"save_Item","label":"NEXT","operation":"SAVE_GLOBAL","containerId":"categoryContainer"},{"formId":"category","buttonId":"button_next","componentType":"button","componentSubType":"button","redirectFormId":"inputItemForm","redirectSectionId":null,"redirectWsId":"save_Item","label":"SELECTION ITEM","operation":"LIST_SELECTION","containerId":"item_type_section_item_selection"},{"formId":"inputItemForm","buttonId":"button_save","componentType":"button","componentSubType":"button","redirectFormId":"itemTypeListingForm","redirectSectionId":null,"redirectWsId":"save_Item","label":"Save","operation":"SAVE","containerId":"Container1"}],"relations":[{"parentTableName":"ITEM","relation":[{"childEntityName":"DOCS","referenceColumnName":"id","childReferenceColumnName":"id"}]}],"rootEntityName":"id","rootEntityColName":"ITEM","copy":null,"preReq":null}]},"status":{"messageList":[],"messageCode":1200}}';
+        final responseOfApi = json.decode(responseApi.body);
         WorkSpaceResponseModel workSpaceResponseModel = new WorkSpaceResponseModel.fromJson(responseOfApi);
         for (int i = 0; i < workSpaceResponseModel.data.workSpace.length; i++) {
           db.populateTableWithMapping("WORKSPACE", workSpaceResponseModel.data.workSpace[i].toMap(),true);
           for (int j=0;j<workSpaceResponseModel.data.workSpace[i].navigationMapping.length;j++)
             db.populateTableWithCustomColumn("NAVIGATION_MAPPING",workSpaceResponseModel.data.workSpace[i].navigationMapping[j].toMap() , "wsId", workSpaceResponseModel.data.workSpace[i].wsId,true);
-          for(int j=0;j<workSpaceResponseModel.data.workSpace[i].relations.length;j++)
-            db.multiplePopulateTableWithCustomColumn("RELATIONS", workSpaceResponseModel.data.workSpace[i].relations[j].toMap(), ["userId","projectId","wsId"], [sharedPreferences.get("userId"),workSpaceResponseModel.data.projectId,workSpaceResponseModel.data.workSpace[i].wsId], true);
+//          for(int j=0;j<workSpaceResponseModel.data.workSpace[i].relations.length;j++)
+//            db.multiplePopulateTableWithCustomColumn("RELATIONS", workSpaceResponseModel.data.workSpace[i].relations[j].toMap(), ["userId","projectId","wsId"], [sharedPreferences.get("userId"),workSpaceResponseModel.data.projectId,workSpaceResponseModel.data.workSpace[i].wsId], true);
         }
       }
       else {
@@ -112,12 +113,23 @@ void getProjectData() async {
         }
       }
 
-    }else {
-    responseApi = await callApi(result[i][modelUri], parameter[i].toString());
+    }else {responseApi = await callApi(result[i][modelUri], parameter[i].toString());
     final responseOfApi = json.decode(responseApi.body);
-    GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
+      if(result[i]["message"]=="FORM") {
+        FormResponseModel formResponseModel = new FormResponseModel.fromJson(
+            responseOfApi, result[i]["message"]);
+        for (int j = 0; j <
+            formResponseModel.formDataModel.formModel.length; j++) {
+          db.populateTableWithMapping(result[i]["message"],
+              formResponseModel.formDataModel.formModel[j].toMap(), false);
+        }
+      }
+
+   else{
+      GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
       for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
-        db.populateTableWithMapping(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,false);
+      db.populateTableWithMapping(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,false);
+      }
       }
     }
   }

@@ -21,13 +21,16 @@ class _ChildrenSectionsState extends State<ChildrenSections> {
     var parentSectionData = json.decode(listingData);
     parentSectionColumnDivision = parentSectionData['data']['FORM'][0]['sections'][0]['cols'];
     parentSectionRowDivision = parentSectionData['data']['FORM'][0]['sections'][0]['rows'];
+    print("child $parentSectionColumnDivision");
+    print("child $parentSectionRowDivision");
+
   }
 
   @override
   Widget build(BuildContext context) {
     mediaQueryData = MediaQuery.of(context);
     return Container(
-
+color: Colors.green[10],
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
 

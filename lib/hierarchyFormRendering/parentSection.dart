@@ -24,6 +24,11 @@ class _ParentSectionState extends State<ParentSection> {
     var parentSectionData = json.decode(listingData);
     parentSectionColumnDivision = parentSectionData['data']['FORM'][0]['cols'];
     parentSectionRowDivision = parentSectionData['data']['FORM'][0]['rows'];
+    print("parent $parentSectionColumnDivision");
+    print("parent $parentSectionRowDivision");
+
+
+
   }
 
   @override
@@ -66,11 +71,10 @@ int i;
 
   List<Widget> childRow(BuildContext context) {
     List<Widget> listWidget = new List<Widget>();
-    print(parentSectionRowDivision);
-    print(parentSectionColumnDivision);
     var parentSectionWidth=mediaQueryData.size.width / parentSectionColumnDivision;
     for (int j = 0; j < (parentSectionColumnDivision); j++) {
       listWidget.add( Container(
+      //  color: Colors.green[100*j],
         width:mediaQueryData.size.width / parentSectionColumnDivision,
         child:ChildrenSections(parentCellWidth: parentSectionWidth,)
         //Text("This is Column $i $j "),

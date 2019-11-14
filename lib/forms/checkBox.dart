@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
+import 'package:jupiter/forms/validations.dart';
 import 'package:jupiter/Screens/Views/troy.dart';
 
 // List<MaterialColor> abcd = [Colors.red,Colors.yellow,Colors.green,Colors.orange,Colors.pink,Colors.blue,Colors.brown,Colors.grey,Colors.green,Colors.black];
@@ -40,10 +41,9 @@ class _CustomState extends State<CustomCheckBox> {
             child: new FutureBuilder(
               future: db.getTextFieldLabel(widget.item['label']),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                if (!snapshot.hasData) 
-                  return new Text(widget.item['label'], style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-                return new Text(snapshot.data.toString(), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-                }
+                if (!snapshot.hasData) return addAsterisk(widget.item['label'],widget.item,context);
+                return addAsterisk(snapshot.data.toString(),widget.item,context);
+              }
             )
           ),
           FutureBuilder<List<dynamic>>(

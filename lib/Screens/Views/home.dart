@@ -4,7 +4,10 @@ import 'package:jupiter/List/listingView.dart';
 import 'package:jupiter/Screens/Views/forgotPassword.dart';
 import 'package:jupiter/Screens/Views/profile.dart';
 import 'package:jupiter/Screens/Views/troy.dart';
-import 'package:jupiter/forms/formRendering.dart';
+import 'package:jupiter/forms/formRendering.dart' ;
+//import 'package:jupiter/hierarchyFormRendering/parentForm.dart';
+//import 'package:jupiter/forms/formRendering.dart';
+//import 'package:jupiter/hierarchyFormRendering/parentForm.dart';
 //import 'package:jupiter/forms/formRendering.dart';
 import 'devTools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -148,16 +151,37 @@ Widget menuItem(int position, context, snapshot, int menuItems) {
           child: Text(snapshot.data[position-2]["value"].toString())
         ),
         onTap: () async {
-          await _workSpaceData(snapshot.data[position-2]['wsId'].toString());
-          wsId = snapshot.data[position-2]['wsId'].toString();
-          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          await _workSpaceData(snapshot.data[position - 2]['wsId'].toString());
+          wsId = snapshot.data[position - 2]['wsId'].toString();
+          SharedPreferences sharedPreferences = await SharedPreferences
+              .getInstance();
           sharedPreferences.setString("wsId", wsId);
-          Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()
-          //    WorkSpaceContainer(titleString: snapshot.data[position-2]["value"].toString(),)
-          ));
-          formTitle = snapshot.data[position-2]["value"].toString();
-          _currentSelected = position;
-          dynamicMenus = true;
+          if (snapshot.data[position - 2]["value"] == 'Inventory') {
+            var res;
+            _getTemplateId() async {
+              var db = new DatabaseHelper();
+              SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+              String id= sharedPreferences.get('TemplateId');
+              res=  await db.fetchTemplateID(id);
+              //TODO: REVERT RETURN
+              return res[0]['section'].toString();
+            }
+            await _getTemplateId().then((list){
+              Navigator.push(context,MaterialPageRoute(builder: (context) =>ListingView(listData: list,label:res[0]['formLabel'].toString(),)));
+
+            });
+
+          }
+          else {
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                App(isEditTrue: false,
+                  isDrawerTrue: true,
+                  formTitle: snapshot.data[position - 2]["value"].toString(),)
+              //    WorkSpaceContainer(titleString: snapshot.data[position-2]["value"].toString(),)
+            ));
+            _currentSelected = position;
+            dynamicMenus = true;
+          }
         }
       ),
     );

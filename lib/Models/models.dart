@@ -86,9 +86,11 @@ class GenericDataModel {
   factory GenericDataModel.fromJson(Map<String, dynamic> parsedJson, String itemName) {
     var genericModelList = parsedJson[itemName] as List;
     List<GenericModel> listOfGenericModel = genericModelList.map((i) => GenericModel.fromJson(i)).toList();
+    var formList = parsedJson[itemName] as List;
+    List<FormModel> listOfForm = formList.map((i) => FormModel.fromJson(i)).toList();
     return GenericDataModel(
       genericModel: listOfGenericModel,
-      projectId: parsedJson["projectId"]
+      projectId: parsedJson["projectId"],
     );
   }
 }
@@ -264,21 +266,21 @@ class WorkSpaceModel{
   String wsId;
   String wsName;
   List<NavigationMapping> navigationMapping;
-  List<Relations> relations;
+//  List<Relations> relations;
 
-  WorkSpaceModel({this.defaultTemplateId,this.wsId,this.wsName,this.navigationMapping,this.relations});
+  WorkSpaceModel({this.defaultTemplateId,this.wsId,this.wsName,this.navigationMapping,});
 
   factory WorkSpaceModel.fromJson(Map<String,dynamic> parsedJson){
     var navigationMappingList = parsedJson["navigationMapping"] as List;
     List<NavigationMapping> listOfNavigationMapping = navigationMappingList.map((i) => NavigationMapping.fromJson(i)).toList();
-    var relationsList = parsedJson["Relations"] as List;
-    List<Relations> listOfrelations = relationsList.map((i) => Relations.fromJson(i)).toList();
+//    var relationsList = parsedJson["Relations"] as List;
+//    List<Relations> listOfrelations = relationsList.map((i) => Relations.fromJson(i)).toList();
     return WorkSpaceModel(
         defaultTemplateId: parsedJson['defaultFormId'],
         wsId: parsedJson['wsId'],
         wsName: parsedJson['wsName'],
       navigationMapping: listOfNavigationMapping,
-      relations: listOfrelations,
+//      relations: listOfrelations,
     );
   }
   Map<dynamic, dynamic> toMap() {
@@ -343,11 +345,11 @@ class Relations {
   Relations({this.parentTableName,this.childEntityName,this.referenceColumnName,this.childReferenceColumnName});
 
   factory Relations.fromJson(dynamic parsedJson) {
-    var relationList = parsedJson["Relation"] as List;
+    var relationList = parsedJson["relation"] as List;
     List<Relation> listOfrelation = relationList.map((i) => Relation.fromJson(i)).toList();
     print(listOfrelation);
     return Relations(
-      parentTableName: parsedJson['ParentTableName'],
+      parentTableName: parsedJson['parentTableName'],
       childEntityName: listOfrelation[0].childEntityName,
       childReferenceColumnName: listOfrelation[0].childReferenceColumnName,
       referenceColumnName: listOfrelation[0].referenceColumnName,
@@ -355,10 +357,10 @@ class Relations {
   }
   Map<dynamic, dynamic> toMap() {
     var map=new Map<String, dynamic>();
-    map["ParentTableName"]=parentTableName;
-    map["ChildEntityName"]=childEntityName;
-    map["ReferenceColumnName"]=referenceColumnName;
-    map["ChildReferenceColumnName"]=childReferenceColumnName;
+    map["parentTableName"]=parentTableName;
+    map["childEntityName"]=childEntityName;
+    map["referenceColumnName"]=referenceColumnName;
+    map["childReferenceColumnName"]=childReferenceColumnName;
     return map;
   }
 }
@@ -422,22 +424,54 @@ class MasterDataModel {
     );
   }
 }
+class FormResponseModel {
+  FormDataModel formDataModel;
+  Status status;
+
+  FormResponseModel({this.formDataModel,this.status});
+
+  factory FormResponseModel.fromJson(Map<String, dynamic> parsedJson, String itemName) {
+    return FormResponseModel(
+        formDataModel: FormDataModel.fromJson(parsedJson["data"], itemName),
+        status: Status.fromJson(parsedJson["status"])
+    );
+  }
+}
+
+class FormDataModel {
+  List<FormModel> formModel;
+  int projectId;
+
+  FormDataModel({this.projectId,this.formModel});
+
+  factory FormDataModel.fromJson(Map<String, dynamic> parsedJson, String itemName) {
+    var formList = parsedJson[itemName] as List;
+    List<FormModel> listOfForm = formList.map((i) => FormModel.fromJson(i)).toList();
+    return FormDataModel(
+        projectId: parsedJson["projectId"],
+        formModel: listOfForm
+    );
+  }
+}
 
 
 class FormModel {
-  int rows;
-  int cols;
+  double rows;
+  double cols;
   String formId;
   String formLabel;
+  String section;
 
-  FormModel({this.cols,this.formId,this.formLabel,this.rows});
+
+  FormModel({this.cols,this.formId,this.formLabel,this.rows,this.section});
 
   factory FormModel.fromJson(dynamic parsedJson) {
     return FormModel(
-      rows: parsedJson['row'],
+      rows: parsedJson['rows'],
       cols: parsedJson['cols'],
-      formId: parsedJson['fomrId'],
-      formLabel: parsedJson['formLabel']
+      formId: parsedJson['formId'],
+      formLabel: parsedJson['formLabel'],
+        section:json.encode(parsedJson['section'])
     );
   }
   Map<dynamic, dynamic> toMap() {
@@ -446,6 +480,7 @@ class FormModel {
     map["cols"]=cols;
     map["formId"]=formId;
     map["formLabel"]=formLabel;
+    map["section"]=section;
     return map;
   }
 }

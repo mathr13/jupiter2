@@ -48,7 +48,7 @@ class DatabaseHelper {
     String path=join(documentsDirectory, contentDb);
     print("2------------------------***DATABASE***------------------------");
     print(path);
-    var theDbContent=await openDatabase(path, version: 1, onCreate: _onCreateContent);
+    var theDbContent=await openDatabase(path, version: 1);
     return theDbContent;
   }
 
@@ -72,10 +72,10 @@ class DatabaseHelper {
     // await db.execute("CREATE TABLE TRANS_DOC_QUEUE(transDocId TEXT, requestId TEXT, transDocMetaData TEXT, status TEXT, syncStatus TEXT, noOfAttempts NUMBER, docLocalPath TEXT, docName TEXT, createdDate TEXT, updatedDat TEXT)");
   }
 
-  Future _onCreateContent(Database db, int version) async {
-    await db.execute("CREATE TABLE FORMS(formId TEXT, formLabel TEXT, rows NUMBER, cols NUMBER, sections TEXT, PRIMARY KEY(formId))");
-    await db.execute("CREATE TABLE SECTIONS(sectionId TEXT, rowIndex NUMBER, colIndex NUMBER, rowSpan NUMBER, colSpan NUMBER, definition TEXT)");
-  }
+//  Future _onCreateContent(Database db, int version) async {
+//    await db.execute("CREATE TABLE FORMS(formId TEXT, formLabel TEXT, rows NUMBER, cols NUMBER, sections TEXT, PRIMARY KEY(formId))");
+//    await db.execute("CREATE TABLE SECTIONS(sectionId TEXT, rowIndex NUMBER, colIndex NUMBER, rowSpan NUMBER, colSpan NUMBER, definition TEXT)");
+//  }
 
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value, bool isSystemDatabase) async {
     var dbClient;
@@ -195,8 +195,8 @@ class DatabaseHelper {
     return value;
   }
   Future<List> fetchTemplateID(String id) async {
-    var dbClient = await dbSystem;
-    String query = "SELECT * FROM DEFINITION WHERE template LIKE '%$id%' ";
+    var dbClient = await dbContent;
+    String query = "SELECT * FROM FORM WHERE formId LIKE '%$id%' ";
     var res = await dbClient.rawQuery(query);
     return  res;
   }
@@ -288,14 +288,25 @@ class DatabaseHelper {
       return key;
     }
   }
+  Future<List> fetchDataSourceDataForDependents(String key) async {
+    var dbClient = await dbSystem;
+    var res = await dbClient.rawQuery("SELECT * FROM GLOBALVARIABLE WHERE key is '$key'");
+    return res.toList();
+  }
   Future<List> fetchDataSourceData(dynamic dataSource) async {
     var dbClient = await dbContent;
     var res;
     if(dataSource[0]['filters'].length!=0) {
       String query = " WHERE ";
       for(int i=0;i<dataSource[0]['filters'].length;i++) {
-        query += "${dataSource[0]['filters'][i]['key']} = '${dataSource[0]['filters'][i]['value']}'";
-        if(i != dataSource[0]['filters'].length-1 || i!=0) query += " AND ";
+        if(dataSource[0]['filters'][i]['value'][0]=='#') {
+          await fetchDataSourceDataForDependents(dataSource[0]['filters'][i]['value'].split("##")[1]).then((abc) {
+            query += "${dataSource[0]['filters'][i]['key']} = '${abc[0]['value']}'";
+          });
+        }else {
+          query += "${dataSource[0]['filters'][i]['key']} = '${dataSource[0]['filters'][i]['value']}'";
+        }
+        if(i != dataSource[0]['filters'].length-1) query += " AND ";
       }
       if(dataSource[0]['sorting'].length!=0) {
         var order;
@@ -303,8 +314,9 @@ class DatabaseHelper {
         else order = ' ASC';
         query += " ORDER BY ${dataSource[0]['displayMember']}"+order;
       }
+      print("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}"+query);
       await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}"+query).then((result) {
-      res =result.toList();
+        res =result.toList();
       });
     }else {
       await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}").then((result) {
@@ -313,6 +325,31 @@ class DatabaseHelper {
     }
     return res;
   }
+//  Future<List> fetchDataSourceData(dynamic dataSource) async {
+//    var dbClient = await dbContent;
+//    var res;
+//    if(dataSource[0]['filters'].length!=0) {
+//      String query = " WHERE ";
+//      for(int i=0;i<dataSource[0]['filters'].length;i++) {
+//        query += "${dataSource[0]['filters'][i]['key']} = '${dataSource[0]['filters'][i]['value']}'";
+//        if(i != dataSource[0]['filters'].length-1 || i!=0) query += " AND ";
+//      }
+//      if(dataSource[0]['sorting'].length!=0) {
+//        var order;
+//        if(dataSource[0]['sorting'][0]['reverse']==true) order = ' DESC';
+//        else order = ' ASC';
+//        query += " ORDER BY ${dataSource[0]['displayMember']}"+order;
+//      }
+//      await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}"+query).then((result) {
+//      res =result.toList();
+//      });
+//    }else {
+//      await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}").then((result) {
+//        res =result.toList();
+//      });
+//    }
+//    return res;
+//  }
 
   Future<List> checkIfPkExist(String tableName) async {
     var dbClient = await dbContent;
@@ -352,4 +389,54 @@ class DatabaseHelper {
     var res = await dbClient.rawQuery("SELECT $displayColumn FROM $tableName WHERE $columnName = '$value' ");
      return res[0]['name'];
   }
+  Future<void> updateTableWithMapping(String tableName, Map<String, dynamic> value, bool isSystemDatabase,String whereColName,dynamic whereColValue) async {
+    var dbClient;
+    if(isSystemDatabase==true) {dbClient=await dbSystem;}else {dbClient=await dbContent;}
+    await dbClient.update(tableName, value,conflictAlgorithm: ConflictAlgorithm.replace,where:'$whereColName = ?',whereArgs:[whereColValue]);
+  }
+
+
+  Future<void> updateTableWithCustomColumn(String tableName, Map<String, dynamic> value,String columnName,dynamic columnValue, bool isSystemDatabase,String whereColName,dynamic whereColValue) async {
+    var dbClient;
+    if(isSystemDatabase==true) {
+      dbClient = await dbSystem;
+    }else {
+      dbClient = await dbContent;
+    }
+    value.putIfAbsent("$columnName", () => columnValue);
+    await dbClient.update(tableName, value,conflictAlgorithm: ConflictAlgorithm.replace,where:'$whereColName = ?',whereArgs:[whereColValue]);
+  }
+  Future<List> getItemListingResults(String table,String query,dynamic searchAttributes,dynamic filters,dynamic value) async {
+    var dbClient = await dbContent;
+    String sqlQuery = " ";
+//    if(filters.length!=0)
+//      {
+//        for(int i=0;i<filters.length;i++)
+//          {
+//            sqlQuery += filters[i].key.toString() + '=' +  filters[i][filters[i].key.toString()];
+//            print(sqlQuery);
+//
+//          }
+//      }
+//    if (searchAttributes.length != 0) {
+//      for (int i = 0; i < searchAttributes.length; i++) {
+//        sqlQuery += searchAttributes[i] + ' LIKE ' + '"\%$query%\"';
+//        if (i != searchAttributes.length - 1)
+//          sqlQuery += ' OR ';
+//      }
+//    }
+    if (query == ""||query==null) {
+      var res = await dbClient.rawQuery(" SELECT * FROM $table WHERE categoryId = '$value'");
+      return res.toList();
+    }
+
+    else {
+      var res = await dbClient.rawQuery(
+          " SELECT * FROM $table WHERE categoryId = '$value' AND $sqlQuery");
+      return res.toList();
+    }
+  }
+
+
+
 }

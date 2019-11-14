@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/forms/formRenderedElements.dart';
 import 'package:jupiter/forms/formRendering.dart';
+import 'package:jupiter/forms/validations.dart';
+import 'package:jupiter/Databasehelper/databaseHelper.dart';
+import 'customButtons.dart';
 
 class DropdownButtonHint extends StatefulWidget {
   const DropdownButtonHint(
-      {this.onChanged, this.item, this.count, this.formItems, this.lovItems,this.color});
+      {this.onChanged, this.item, this.count, this.formItems, this.lovItems,this.color,this.isEditTrue,this.defaultValue});
 
   final int count;
   final Map item;
@@ -13,6 +16,8 @@ class DropdownButtonHint extends StatefulWidget {
   final dynamic formItems;
   final lovItems;
   final Color color;
+  final bool isEditTrue;
+  final defaultValue;
 
   @override
   _DropdownButtonState createState() => _DropdownButtonState();
@@ -21,10 +26,15 @@ class DropdownButtonHint extends StatefulWidget {
 class _DropdownButtonState extends State<DropdownButtonHint> {
   String dropdownValue;
 
-  final db = new DatabaseHelper();
+  void initState()
+  {
+    super.initState();
+    dropdownValue=widget.isEditTrue==true?widget.defaultValue:dropdownValue;
 
+  }
   @override
   Widget build(BuildContext context) {
+    var db = new DatabaseHelper();
     MediaQueryData queryData;
     queryData = MediaQuery.of(context);
     return Container(
@@ -40,9 +50,8 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
             child: new FutureBuilder(
               future: db.getTextFieldLabel(widget.item['label']),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                if (!snapshot.hasData) 
-                  return new Text(widget.item['label'], style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-                return new Text(snapshot.data.toString(), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+                if (!snapshot.hasData) return addAsterisk(widget.item['label'],widget.item,context);
+                return addAsterisk(snapshot.data.toString(),widget.item,context);
                 }
               )
             ),
@@ -74,6 +83,7 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                           listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({
                             '${widget.item['entityColName']}':newValue
                           });
+                          print(listOfHierarchy);
 
                           _handleChanged();
                       }
@@ -81,7 +91,7 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                       _handleChanged();
                     });
                   },
-                  isExpanded: false,
+                  isExpanded: true,
                   hint: Text('Select'),
                 );
               }),

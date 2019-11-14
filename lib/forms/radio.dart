@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:jupiter/forms/formRenderedElements.dart';
 import 'package:jupiter/forms/formRendering.dart';
+import 'package:jupiter/forms/validations.dart';
 class CustomRadio extends StatefulWidget {
   const CustomRadio({
     @required this.onChanged,
@@ -46,8 +47,8 @@ class _CustomState extends State<CustomRadio> {
                 child: new FutureBuilder(
                     future: db.getTextFieldLabel(widget.item['label']),
                     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (!snapshot.hasData) return new Text(widget.item['label'], style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
-                      return new Text(snapshot.data.toString(), style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0));
+                      if (!snapshot.hasData) return addAsterisk(widget.item['label'],widget.item,context);
+                      return addAsterisk(snapshot.data.toString(),widget.item,context);
                     }
                 )
             ),

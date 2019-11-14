@@ -138,26 +138,20 @@ import 'package:jupiter/Screens/Views/troy.dart';
 
 
 Object obj;
-String formTitle=" ";
 var res;
 List<Map> listOfHierarchy = [{}];
 Map mapOfPrimaryKeys ={};
 dynamic formValue;
-
-class MyApp extends StatelessWidget {
-  @override Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return true;
-      },
-      child: App(),
-    );
-  }
-}
+bool isUpdateTrue=false;
+String primaryKey="";
 
 class App extends StatefulWidget {
-  App({this.formItems});
+  App({this.formItems,this.isEditTrue,this.defaultData,this.isDrawerTrue,this.formTitle});
   final dynamic formItems;
+  final bool isEditTrue;
+  final dynamic defaultData;
+  String formTitle;
+  bool isDrawerTrue;
 
   @override _AppState createState() => _AppState();
 }
@@ -174,15 +168,20 @@ class _AppState extends State<App> {
             primarySwatch: Colors.green
         ),
         home:Scaffold(
-          drawer: menuDrawer(context),
+
+          drawer:widget.isDrawerTrue==true?
+          menuDrawer(context):null,
           appBar: new AppBar(
-            title: new Text(formTitle),
+            leading: widget.isDrawerTrue==true?null:IconButton(icon: Icon(Icons.arrow_back_ios,),onPressed: (){
+              Navigator.pop(context);
+            },),
+            title: new Text(widget.formTitle),
           ),
           body: FutureBuilder<dynamic>(
               future: _getTemplateId(),
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
-                return Gridxo();
+                return Gridxo(defiData: snapshot.data.toString(),);
               }
           )
         )
@@ -240,5 +239,5 @@ _getTemplateId() async {
   String id= sharedPreferences.get('TemplateId');
   res=  await db.fetchTemplateID(id);
   //TODO: REVERT RETURN
-  return res[0]['template'].toString();
+  return res[0]['section'].toString();
 }
