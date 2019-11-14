@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
-import 'package:jupiter/Screens/Views/troy.dart';
-
-// List<MaterialColor> abcd = [Colors.red,Colors.yellow,Colors.green,Colors.orange,Colors.pink,Colors.blue,Colors.brown,Colors.grey,Colors.green,Colors.black];
 
 class CustomCheckBox extends StatefulWidget {
   const CustomCheckBox({
@@ -29,14 +26,14 @@ class _CustomState extends State<CustomCheckBox> {
 
   @override Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8.0),
+      // padding: const EdgeInsets.all(8.0),
       child:Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           new Container(
-            margin: new EdgeInsets.only(top: 5.0, bottom: 5.0),
+            // margin: new EdgeInsets.only(top: 5.0, bottom: 5.0),
             child: new FutureBuilder(
               future: db.getTextFieldLabel(widget.item['label']),
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -52,7 +49,6 @@ class _CustomState extends State<CustomCheckBox> {
             builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (!snapshot.hasData) return CircularProgressIndicator();
               return Container(
-                key: five,
                 child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

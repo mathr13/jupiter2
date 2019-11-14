@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
-import 'package:jupiter/List/listingView.dart';
 import 'package:jupiter/Screens/Views/forgotPassword.dart';
 import 'package:jupiter/Screens/Views/profile.dart';
 import 'package:jupiter/Screens/Views/troy.dart';
 import 'package:jupiter/forms/formRendering.dart';
-//import 'package:jupiter/forms/formRendering.dart';
 import 'devTools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jupiter/Screens/Containers/workSpaceContainer.dart';
 import 'package:jupiter/Screens/Containers/formsContainer.dart';
-// import 'package:jupiter/hierarchyFormRendering/parentForm.dart';
 
 var navigationData;
 String wsId;
@@ -19,7 +15,6 @@ String userName = "user";
 ScrollController _scrollController = new ScrollController();
 final db = new DatabaseHelper();
 bool dynamicMenus = false;
-double abcd = 100;
 
 class Menus extends StatefulWidget {
   static const rootName = '/menus';
@@ -46,7 +41,7 @@ _workSpaceData(String wsId) async {
   var db = new DatabaseHelper();
   var res = await db.fetchWorkSpaceData(wsId);
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  sharedPreferences.setString("TemplateId", res[0]['defaultTemplateId']);
+  sharedPreferences.setString("TemplateId", res[0]['defaultFormId']);
 }
 
 
@@ -103,11 +98,6 @@ Widget menuItem(int position, context, snapshot, int menuItems) {
       child: ListTile(
         title: Container(child: Text("Summary")),
         onTap: () async {
-          // Navigator.push(context,MaterialPageRoute(builder: (context) => new Menus()));
-          // while(checkerForGridHeight==0) {
-          //   print(keys);
-          //   checkerForGridHeight = getSizes(keys[counterCounter]);
-          // }
           Navigator.push(context,MaterialPageRoute(builder: (context) => new Gridxo()));
           _currentSelected = position;
           dynamicMenus = false;
@@ -152,7 +142,7 @@ Widget menuItem(int position, context, snapshot, int menuItems) {
           wsId = snapshot.data[position-2]['wsId'].toString();
           SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
           sharedPreferences.setString("wsId", wsId);
-          Navigator.push(context,MaterialPageRoute(builder: (context) =>Gridxo()
+          Navigator.push(context,MaterialPageRoute(builder: (context) =>MyApp()
           //    WorkSpaceContainer(titleString: snapshot.data[position-2]["value"].toString(),)
           ));
           formTitle = snapshot.data[position-2]["value"].toString();

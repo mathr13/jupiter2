@@ -30,7 +30,7 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
     return Container(
       padding: const EdgeInsets.all(8.0),
       color: widget.color,
-      width:(queryData.size.width)/2,
+     width:(queryData.size.width),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -47,19 +47,20 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
               )
             ),
             FutureBuilder<List<dynamic>>(
-                future: db.fetchDataSourceData(widget.formItems[widget.count]['dataSource']),
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<dynamic>> snapshot) {
-                  if (!snapshot.hasData) return CircularProgressIndicator();
-                  return DropdownButton<dynamic>(
-                    value:dropdownValue,
-                  items: snapshot.data.toList()
-                      .map(( dynamic value) => DropdownMenuItem<dynamic>(
-                child: Text(value[widget.formItems[widget.count]['dataSource'][0]['displayMember']].toString()),
-                value: value[widget.formItems[widget.count]['dataSource'][0]['valueMember']],
-           ))
-                        .toList(),
+              future: db.fetchDataSourceData(widget.formItems[widget.count]['dataSource']),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<dynamic>> snapshot) {
+                if (!snapshot.hasData) return CircularProgressIndicator();
+                return DropdownButton<dynamic>(
+                  value:dropdownValue,
+                  isExpanded: true,
+                items: snapshot.data.toList().map(( dynamic value) => DropdownMenuItem<dynamic>(
+                  child: Text(value[widget.formItems[widget.count]['dataSource'][0]['displayMember']].toString()),
+                  value: value[widget.formItems[widget.count]['dataSource'][0]['valueMember']],
+                )).toList(),
                     onChanged: ( newValue) {
+                      for(int w=0;w<snapshot.data.length;w++) {
+                      }
                       setState(() {
                         {
                           if (listOfHierarchy.length==1) {
@@ -74,14 +75,12 @@ class _DropdownButtonState extends State<DropdownButtonHint> {
                           listOfHierarchy[0]['${widget.item['nodeHierarchy']}'].first.addAll({
                             '${widget.item['entityColName']}':newValue
                           });
-
                           _handleChanged();
                       }
                       dropdownValue = newValue;
                       _handleChanged();
                     });
                   },
-                  isExpanded: false,
                   hint: Text('Select'),
                 );
               }),

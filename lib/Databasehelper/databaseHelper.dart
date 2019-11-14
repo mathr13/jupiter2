@@ -7,7 +7,6 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:core';
 
 
-
 class DatabaseHelper {
   static final DatabaseHelper _instance=new DatabaseHelper.internal();
 
@@ -38,8 +37,8 @@ class DatabaseHelper {
     // io.Directory documentsDirectory=await getApplicationDocumentsDirectory();
     String documentsDirectory=await getDatabasesPath();
     String path=join(documentsDirectory, systemDb);
-    print("1------------------------***DATABASE***------------------------");
-    print(path);
+    // print("1------------------------***DATABASE***------------------------");
+    // print(path);
     var theDbSystem=await openDatabase(path, version: 1, onCreate: _onCreateSystem);
     return theDbSystem;
   }
@@ -47,8 +46,8 @@ class DatabaseHelper {
     // io.Directory documentsDirectory=await getApplicationDocumentsDirectory();
     String documentsDirectory=await getDatabasesPath();
     String path=join(documentsDirectory, contentDb);
-    print("2------------------------***DATABASE***------------------------");
-    print(path);
+    // print("2------------------------***DATABASE***------------------------");
+    // print(path);
     var theDbContent=await openDatabase(path, version: 1, onCreate: _onCreateContent);
     return theDbContent;
   }
@@ -82,7 +81,6 @@ class DatabaseHelper {
     var dbClient;
     value.forEach((k,v) {
       if(value[k].runtimeType == 'List<dynamic>') {
-        print(tableName);
         value[k] = json.decode(value[k]);
       }
     });
@@ -244,9 +242,12 @@ class DatabaseHelper {
     String query = "CREATE TABLE IF NOT EXISTS $tableName(";
     var dbClient = await dbContent;
     String pkColumnName;
+    if(!columnNames.contains("syncStatus")) columnNames.add("syncStatus");
     for(int i=0;i<columnNames.length;i++) {
       var columnNamebuf = columnNames[i];
-      var dataTypeBuf = columnDataTypes[i];
+      var dataTypeBuf;
+      if(columnNamebuf=='syncStatus') dataTypeBuf = 'bool';
+      else dataTypeBuf = columnDataTypes[i];
       if(columnNamebuf == "group") {columnNamebuf = "groups";}
       if(i==columnNames.length-1) {
         query += "$columnNamebuf $dataTypeBuf";
@@ -295,6 +296,45 @@ class DatabaseHelper {
       return key;
     }
   }
+
+  Future<List> fetchDataSourceDataForDependents(String key) async {
+    var dbClient = await dbSystem;
+    var res = await dbClient.rawQuery("SELECT * FROM GLOBALVARIABLE WHERE key is '$key'");
+    return res.toList();
+  }
+  
+  Future<List> fetchDataSourceData(dynamic dataSource) async {
+    var dbClient = await dbContent;
+    var res;
+    if(dataSource[0]['filters'].length!=0) {
+      String query = " WHERE ";
+      for(int i=0;i<dataSource[0]['filters'].length;i++) {
+        if(dataSource[0]['filters'][i]['value'][0]=='#') {
+          await fetchDataSourceDataForDependents(dataSource[0]['filters'][i]['value'].split("##")[1]).then((abc) {
+            query += "${dataSource[0]['filters'][i]['key']} = '${abc[0]['value']}'";
+          });
+        }else {
+          query += "${dataSource[0]['filters'][i]['key']} = '${dataSource[0]['filters'][i]['value']}'";
+        }
+        if(i != dataSource[0]['filters'].length-1 || i!=0) query += " AND ";
+      }
+      if(dataSource[0]['sorting'].length!=0) {
+        var order;
+        if(dataSource[0]['sorting'][0]['reverse']==true) order = ' DESC';
+        else order = ' ASC';
+        query += " ORDER BY ${dataSource[0]['displayMember']}"+order;
+      }
+      await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}"+query).then((result) {
+      res =result.toList();
+      });
+    }else {
+      await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}").then((result) {
+        res =result.toList();
+      });
+    }
+    return res;
+  }
+  /*
   Future<List> fetchDataSourceData(dynamic dataSource) async {
     var dbClient = await dbContent;
     var res;
@@ -320,6 +360,8 @@ class DatabaseHelper {
     }
     return res;
   }
+  */
+  //INSERT INTO LOCATION VALUES('5dfd34c1-0e6a-4052-a7b0-366121401ab3','','','MNOP','','','','','','',1,'',1,'','')
 
   Future<List> checkIfPkExist(String tableName) async {
     var dbClient = await dbContent;

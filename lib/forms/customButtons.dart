@@ -5,6 +5,7 @@ import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'formRendering.dart';
 import 'package:uuid/uuid.dart';
+import 'package:jupiter/List/listingView.dart';
 
 var db = DatabaseHelper();
 dynamic interimId;
@@ -41,7 +42,7 @@ dynamic getButtonData(String wsId, String containerId) async {
 }
 
 
-_saveDataHierarchy() async {
+_saveDataHierarchy(context) async {
   var db = new DatabaseHelper();
   var listHierarchy=json.decode(json.encode(listOfHierarchy[0]));
   listHierarchy.forEach((key,value) async {
@@ -93,6 +94,9 @@ _saveDataHierarchy() async {
         });
       }
     }
+    Future.delayed(Duration(seconds: 1));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ListingView()));
+
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     DateTime timeStamp = DateTime.now();
     String currentTime = timeStamp.toIso8601String();
@@ -150,7 +154,7 @@ List<Widget> buttonsList(dynamic list, context) {
         onPressed: () {
           var operationOnButtonClick = list[i]['operation'];
           switch (operationOnButtonClick) {
-            case "SAVE": {_saveDataHierarchy();}
+            case "SAVE": {_saveDataHierarchy(context);}
             break;
             case "CLOSE": {Navigator.push(context,MaterialPageRoute(builder: (context) =>Menus(),fullscreenDialog: true));}
             break;
