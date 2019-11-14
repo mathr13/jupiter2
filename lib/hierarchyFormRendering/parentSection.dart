@@ -1,11 +1,6 @@
 import 'dart:convert';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:jupiter/forms/jsondata.dart';
-import 'package:jupiter/hierarchyFormRendering/switch.dart';
-import 'package:jupiter/hierarchyFormRendering/headers.dart';
-import 'package:jupiter/hierarchyFormRendering/textfield.dart';
 import 'package:jupiter/hierarchyFormRendering/childSection.dart';
 var parentSectionColumnDivision;
 var parentSectionRowDivision;

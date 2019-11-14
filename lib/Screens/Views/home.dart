@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Constant/stringConstant.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
-import 'package:jupiter/List/listingView.dart';
 import 'package:jupiter/Screens/Views/forgotPassword.dart';
 import 'package:jupiter/Screens/Views/profile.dart';
 import 'package:jupiter/Screens/Views/troy.dart';
@@ -14,8 +13,9 @@ import 'dart:convert';
 import 'package:jupiter/Services/jupiterUtlis.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 //import 'package:jupiter/forms/formRendering.dart';
+import 'devTools.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jupiter/Screens/Containers/formsContainer.dart';
-// import 'package:jupiter/hierarchyFormRendering/parentForm.dart';
 
 var navigationData;
 String wsId;
@@ -176,19 +176,19 @@ Widget menuDrawer(context) {
 Widget menuItem(int position, context, snapshot, int menuItems) {
   if (position == 0) {
     return new Container(
-        color: _currentSelected == position ? Colors.green : Colors.transparent,
-        child: ListTile(
-            title: Container(child: Text("Summary")),
-            onTap: () async {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new Menus()));
-              _currentSelected = position;
-              dynamicMenus = false;
-              SharedPreferences sharedPreferences =
-                  await SharedPreferences.getInstance();
-              userName = sharedPreferences.get("userName");
-            }));
-  } else if (position == 1) {
+      color: _currentSelected == position ? Colors.green : Colors.transparent,
+      child: ListTile(
+        title: Container(child: Text("Summary")),
+        onTap: () async {
+          Navigator.push(context,MaterialPageRoute(builder: (context) => new Gridxo()));
+          _currentSelected = position;
+          dynamicMenus = false;
+          SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          userName = sharedPreferences.get("userName");
+        }
+      )
+    );
+  }else if(position==1) {
     return new Container(
         color: _currentSelected == position ? Colors.green : Colors.transparent,
         child: ListTile(
