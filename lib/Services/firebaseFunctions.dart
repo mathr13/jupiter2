@@ -41,7 +41,6 @@ void getProjectData() async {
   if(result.length == 0) {result = await db.fetchFirstProject();}
 
   for(int i=0;i<result.length;i++) {
-    print(result[i][parameters]);
     parameter.add(json.decode(result[i][parameters]));
     parameter[i].forEach((k,v) {
       String key = k;

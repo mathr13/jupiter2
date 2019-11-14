@@ -271,7 +271,7 @@ class WorkSpaceModel{
   factory WorkSpaceModel.fromJson(Map<String,dynamic> parsedJson){
     var navigationMappingList = parsedJson["navigationMapping"] as List;
     List<NavigationMapping> listOfNavigationMapping = navigationMappingList.map((i) => NavigationMapping.fromJson(i)).toList();
-    var relationsList = parsedJson["Relations"] as List;
+    var relationsList = parsedJson["relations"] as List;
     List<Relations> listOfrelations = relationsList.map((i) => Relations.fromJson(i)).toList();
     return WorkSpaceModel(
         defaultTemplateId: parsedJson['defaultFormId'],
@@ -343,11 +343,11 @@ class Relations {
   Relations({this.parentTableName,this.childEntityName,this.referenceColumnName,this.childReferenceColumnName});
 
   factory Relations.fromJson(dynamic parsedJson) {
-    var relationList = parsedJson["Relation"] as List;
+    var relationList = parsedJson["relation"] as List;
     List<Relation> listOfrelation = relationList.map((i) => Relation.fromJson(i)).toList();
     print(listOfrelation);
     return Relations(
-      parentTableName: parsedJson['ParentTableName'],
+      parentTableName: parsedJson['parentTableName'],
       childEntityName: listOfrelation[0].childEntityName,
       childReferenceColumnName: listOfrelation[0].childReferenceColumnName,
       referenceColumnName: listOfrelation[0].referenceColumnName,
@@ -355,10 +355,10 @@ class Relations {
   }
   Map<dynamic, dynamic> toMap() {
     var map=new Map<String, dynamic>();
-    map["ParentTableName"]=parentTableName;
-    map["ChildEntityName"]=childEntityName;
-    map["ReferenceColumnName"]=referenceColumnName;
-    map["ChildReferenceColumnName"]=childReferenceColumnName;
+    map["parentTableName"]=parentTableName;
+    map["childEntityName"]=childEntityName;
+    map["referenceColumnName"]=referenceColumnName;
+    map["childReferenceColumnName"]=childReferenceColumnName;
     return map;
   }
 }

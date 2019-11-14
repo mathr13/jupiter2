@@ -48,7 +48,7 @@ class DatabaseHelper {
     String path=join(documentsDirectory, contentDb);
     // print("2------------------------***DATABASE***------------------------");
     // print(path);
-    var theDbContent=await openDatabase(path, version: 1, onCreate: _onCreateContent);
+    var theDbContent=await openDatabase(path, version: 1);
     return theDbContent;
   }
 
@@ -70,11 +70,6 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE RESOURCEICON(projectId TEXT,key TEXT, value TEXT)");
     await db.execute("CREATE TABLE IMAGES(id NUMBER,label TEXT, imageData TEXT)");
     // await db.execute("CREATE TABLE TRANS_DOC_QUEUE(transDocId TEXT, requestId TEXT, transDocMetaData TEXT, status TEXT, syncStatus TEXT, noOfAttempts NUMBER, docLocalPath TEXT, docName TEXT, createdDate TEXT, updatedDat TEXT)");
-  }
-
-  Future _onCreateContent(Database db, int version) async {
-    await db.execute("CREATE TABLE FORMS(formId TEXT, formLabel TEXT, rows NUMBER, cols NUMBER, sections TEXT, PRIMARY KEY(formId))");
-    await db.execute("CREATE TABLE SECTIONS(sectionId TEXT, rowIndex NUMBER, colIndex NUMBER, rowSpan NUMBER, colSpan NUMBER, definition TEXT)");
   }
 
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value, bool isSystemDatabase) async {
