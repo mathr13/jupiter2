@@ -11,6 +11,8 @@ import 'package:jupiter/Screens/Views/signIn.dart';
 import 'package:jupiter/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'jupiterUtlis.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 String notifResponse = "";
 String contentDb;
@@ -18,16 +20,13 @@ List<Map<String, dynamic>> result = [];
 List<Map<String, dynamic>> parameter = [];
 dynamic responseApi;
 var db = new DatabaseHelper();
-
+final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 Future<void> getDatafromFirebase(context) async {
   firebaseMessaging.configure(
     onMessage: (dynamic response) async {
       var notifResponse;
-      if(Platform.isAndroid) {
-        notifResponse = json.decode(response[responseData]["data"].toString());
-      }else if(Platform.isIOS) {
-        notifResponse = json.decode(response[responseData].toString());
-      }
+      if(Platform.isAndroid) notifResponse = json.decode(response[responseData]["data"].toString());
+      else if(Platform.isIOS) notifResponse = json.decode(response[responseData].toString());
       for(int i=0;i<notifResponse.length;i++) {
         db.populateTableWithMapping(notificationTable, notifResponse[i],true);
       }
@@ -71,17 +70,10 @@ void getProjectData() async {
         columnNames.clear();
         columnDataTypes.clear();
         primaryKey.clear();
+        var buffer = await db.fetchTablesData(false);
+        // for(int i=0;i<buffer.length;i++) {fetchedContentTableData.add(buffer[i]['name']);}
         fetchedContentTableData.add(modelReponseModel.modelDataModel.models[j].modelName);
       }
-    }else if(result[i]['message']=="MASTERDATA") {
-      // responseApi = await callApi(result[i][modelUri], parameter[i].toString());
-      // final responseOfApi = json.decode(responseApi.body);
-      // MasterDataResponseModel masterDataResponseModel = new MasterDataResponseModel.fromJson(responseOfApi);
-      // masterDataResponseModel.masterDataDataModel.masterDataModel.masterData.forEach((key,value) {
-      //   for(int j=0;j<masterDataResponseModel.masterDataDataModel.masterDataModel.masterData[key].length;j++) {
-      //     db.populateTableWithMapping(key.toUpperCase(), masterDataResponseModel.masterDataDataModel.masterDataModel.masterData[key][j],false);
-      //   }
-      // });
     }else if(checkTableExistance != 0) {
       responseApi = await callApi(result[i][modelUri], parameter[i].toString());
       final responseOfApi = json.decode(responseApi.body);
@@ -97,6 +89,8 @@ void getProjectData() async {
 //         responseApi = await callApi(result[i][modelUri], parameter[i].toString());
 //        responseApi = '{"data":{"projectId":11103,"WORKSPACE":[{"defaultFormId":"categoryListingForm","wsId":"save_Item","wsName":"SAVE ITEM","navigationMapping":[{"formId":"categoryListingForm","buttonId":"button_next","componentType":"button","componentSubType":"button","redirectFormId":"itemTypeListingForm","redirectSectionId":null,"redirectWsId":"save_Item","label":"NEXT","operation":"SAVE_GLOBAL","containerId":"categoryContainer"},{"formId":"category","buttonId":"button_next","componentType":"button","componentSubType":"button","redirectFormId":"inputItemForm","redirectSectionId":null,"redirectWsId":"save_Item","label":"SELECTION ITEM","operation":"LIST_SELECTION","containerId":"item_type_section_item_selection"},{"formId":"inputItemForm","buttonId":"button_save","componentType":"button","componentSubType":"button","redirectFormId":"itemTypeListingForm","redirectSectionId":null,"redirectWsId":"save_Item","label":"Save","operation":"SAVE","containerId":"Container1"}],"relations":[{"parentTableName":"ITEM","relation":[{"childEntityName":"DOCS","referenceColumnName":"id","childReferenceColumnName":"id"}]}],"rootEntityName":"id","rootEntityColName":"ITEM","copy":null,"preReq":null}]},"status":{"messageList":[],"messageCode":1200}}';
         final responseOfApi = json.decode(responseApi.body);
+        responseApi = await callApi(result[i][modelUri], parameter[i].toString());
+        // responseApi = '{"data":{"WORKSPACE":[{"defaultFormId":"98240c0d-8c4d-4305-a396-bba71bbacb2b","wsId":"save_Item","wsName":"SAVE ITEM","navigationMapping":[{"formId":"98240c0d-8c4d-4305-a396-bba71bbacb2b","buttonId":"button_save","componentType":"button","componentSubType":"button","redirectFormId":"","redirectSectionId":"","label":"Save","operation":"SAVE","containerId":"container1","redirectWsId":"save_Item"},{"formId":"98240c0d-8c4d-4305-a396-bba71bbacb2b","buttonId":"button_close","componentType":"button","componentSubType":"button","redirectFormId":"","redirectSectionId":"","label":"Close","operation":"CLOSE","containerId":"container1","redirectWsId":"save_Item"}],"Relations":[{"ParentTableName":"ITEM","Relation":[{"ChildEntityName":"DOCS","ReferenceColumnName":"id","ChildReferenceColumnName":"itemId"}]}],"rootEntityName":"ITEM","rootEntityColName":"id","copy":[{"entityCol":"","entityVal":""}],"preReq":[{"col":"","val":""}]}],"projectId":11103},"status":{"messageList":[],"messageCode":1200}}';
         WorkSpaceResponseModel workSpaceResponseModel = new WorkSpaceResponseModel.fromJson(responseOfApi);
         for (int i = 0; i < workSpaceResponseModel.data.workSpace.length; i++) {
           db.populateTableWithMapping("WORKSPACE", workSpaceResponseModel.data.workSpace[i].toMap(),true);
@@ -129,6 +123,8 @@ void getProjectData() async {
       GenericResponseModel genericResponseModel = new GenericResponseModel.fromJson(responseOfApi, result[i]["message"]);
       for(int j=0;j<genericResponseModel.genericDataModel.genericModel.length;j++) {
       db.populateTableWithMapping(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,false);
+        genericResponseModel.genericDataModel.genericModel[j].generic.putIfAbsent('syncStatus', () => 'false');
+        db.populateTableWithMapping(result[i]["message"], genericResponseModel.genericDataModel.genericModel[j].generic,false);
       }
       }
     }
@@ -189,3 +185,19 @@ Future<String> remoteConfig() async {
   await remoteConfig.activateFetched();
   return remoteConfig.getValue("baseURL").asString();
 }
+
+
+Future<String> summaryRemoteConfig() async {
+  final RemoteConfig remoteConfig = await RemoteConfig.instance;
+ remoteConfig.setConfigSettings(RemoteConfigSettings(debugMode: false));
+  remoteConfig.setDefaults(<String, dynamic>{
+    'SUMMARY_UI_DATA': 'nil',
+  });
+
+  await remoteConfig.fetch();
+  await remoteConfig.activateFetched();
+  return remoteConfig.getValue("SUMMARY_UI_DATA").asString();
+
+}
+
+

@@ -27,8 +27,8 @@ void authenticate(context) async {
     // password: "India@123"
     // userName: "piku@gmail.com",
     // password: "piku@gmail.com"
-   userName: "superman@mailinator.com",
-   password: "India@123",
+    userName: "superman@mailinator.com",
+    password: "India@123",
     // userName: "sojha@petroitg.com",
     // password: "sumi"
   );
@@ -37,44 +37,49 @@ void authenticate(context) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final jsonUserResponse = json.decode(userDataResponse.body);
     if (jsonUserResponse[statusApi][messageCodeApi] == 1200) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Progress()));
-      AuthenticationObject authObject = new AuthenticationObject.fromJson(jsonUserResponse);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Progress()));
+      AuthenticationObject authObject =
+          new AuthenticationObject.fromJson(jsonUserResponse);
       sharedPreferences.setInt('userId', authObject.data.userId);
       userName = authObject.data.firstName + " " + authObject.data.lastName;
       sharedPreferences.setString("userName", authObject.data.firstName);
-      db.populateTableWithMapping(userTable, authObject.data.toMap(),true);
-    } else {dialog(wrongAuth, context);}
+      db.populateTableWithMapping(userTable, authObject.data.toMap(), true);
+    } else {
+      dialog(wrongAuth, context);
+    }
 
     // fetchedTableData = await db.fetchTablesData();
 
-    getDatafromFirebase(context);   //Get Notification Data From Firebase
+    getDatafromFirebase(context); //Get Notification Data From Firebase
     await Future.delayed(Duration(seconds: 1));
 
-    fetchedProjectFromNotificationData = await db.getProjectIdFromNotificationData();
-    if(fetchedProjectFromNotificationData.length == 0) {
+    fetchedProjectFromNotificationData =
+        await db.getProjectIdFromNotificationData();
+    if (fetchedProjectFromNotificationData.length == 0) {
       await Future.delayed(Duration(seconds: 5));
     }
-    saveMasterData(fetchedProjectFromNotificationData);    //Project Data
+    saveMasterData(fetchedProjectFromNotificationData); //Project Data
     await Future.delayed(Duration(seconds: 5));
-    getProjectData();   //Menu, Label, Permission, etc Data
+    getProjectData(); //Menu, Label, Permission, etc Data
     // db.updateColumn(notificationTable, "status", "SYNC");
     await Future.delayed(Duration(seconds: 5));
     checkIfDataIsStored(context);
 
     int count = 0;
     Timer.periodic(Duration(seconds: 3), (timer) async {
-      checkNotificationData = await db.checkIfNotificationReceived(notificationTable);
+      checkNotificationData =
+          await db.checkIfNotificationReceived(notificationTable);
       count++;
-      if(checkNotificationData.length>0) {
+      if (checkNotificationData.length > 0) {
         timer.cancel();
-      }else if(count == 3) {
+      } else if (count == 3) {
         timer.cancel();
         //TODO: ALERT BOX
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SignIn()));
       }
     });
-
-    
   }).catchError((error) {
     print('error3 : $error');
     dialog(wrongAuth, context);
@@ -84,7 +89,8 @@ void authenticate(context) async {
 Future<http.Response> callApi(String url, String header) async {
   finalUrl = baseUrl;
   finalUrl += url;
-  final response = await http.get('$finalUrl',
+  final response = await http.get(
+    '$finalUrl',
     headers: {
       'Content-Type': contentHeader,
       'App-Type': appType,
@@ -96,6 +102,40 @@ Future<http.Response> callApi(String url, String header) async {
   return response;
 }
 
+Future<http.Response> sendRequestWithParam(
+    String url, String param, String requestType) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  //Return String
+  String cookies = prefs.getString('cookie');
+
+  finalUrl = url;
+  if (requestType.toString() == RequestType.getRequest) {
+    final response = await http.get(
+      '$finalUrl',
+      headers: {
+        'Content-Type': contentHeader,
+        'App-Type': appType,
+        parameters: param,
+        'cookie': cookies
+      },
+    );
+    finalUrl = baseUrl;
+    return response;
+  }
+  if (requestType.toString() == "Post") {
+    final response = await http.post(
+      '$finalUrl',
+      headers: {
+        'Content-Type': contentHeader,
+        'App-Type': appType,
+        'cookie': cookies
+      },
+      body: param
+    );
+    finalUrl = baseUrl;
+    return response;
+  }
+}
 
 void checkNull(context) {
   // if (passwordController.text.length == 0 && emailController.text.length == 0) {
@@ -157,3 +197,32 @@ Future<void> fetchPost() async {
   }
 }
 */
+
+class Styles {
+  static const navigationTitle = const TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.w700,
+      fontFamily: "Verlag-Bold",
+      letterSpacing: 1,
+      fontStyle: FontStyle.normal,
+      fontSize: 15);
+  static const primaryText = const TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.w400,
+      fontFamily: "Lato-Regular",
+      letterSpacing: 1,
+      fontStyle: FontStyle.normal,
+      fontSize: 15);
+  static const summaryText = const TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.w600,
+      fontFamily: "Lato-Regular",
+      letterSpacing: 1,
+      fontStyle: FontStyle.normal,
+      fontSize: 18);
+}
+
+class RequestType {
+  static const getRequest = "Get";
+  static const postRequest = "Post";
+}

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jupiter/Screens/Views/signIn.dart';
-import 'package:jupiter/Screens/Views/troy.dart';
 import '../../main.dart';
 import 'home.dart';
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jupiter/Routes/routes.dart';
-import 'package:flutter/services.dart';
 import 'package:jupiter/Screens/Views/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Services/firebaseFunctions.dart';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 
 String baseUrl = "";
+String summaryData = "";
 bool isFirstLogin = true;
 List<Map> fetchedSystemTableData = [];
 List<String> fetchedContentTableData = [];
@@ -22,11 +22,10 @@ void main() async {
     isFirstLogin = false;
   }
  await db.dbSystem;
-//  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
-    runApp(new FlutterApp());
-//  });
-  baseUrl = await remoteConfig();
   fetchedSystemTableData = await db.fetchTablesData(true);
+  baseUrl = await remoteConfig();
+  summaryData = await summaryRemoteConfig();
+  runApp(new FlutterApp());
 }
 
 class FlutterApp extends StatelessWidget {

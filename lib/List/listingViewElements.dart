@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jupiter/Components/singleLabel.dart';
 import 'dart:core';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';

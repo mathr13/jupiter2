@@ -128,12 +128,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:jupiter/Screens/Views/home.dart';
-import 'package:jupiter/forms/formRenderedElements.dart';
 import 'dart:convert';
 import 'package:jupiter/Databasehelper/databaseHelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:core';
-import 'jsondata.dart';
 import 'package:jupiter/Screens/Views/troy.dart';
 
 

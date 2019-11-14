@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:jupiter/Constant/stringConstant.dart';
 import 'package:jupiter/Services/firebaseFunctions.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:core';
-
 
 
 class DatabaseHelper {
@@ -37,8 +37,8 @@ class DatabaseHelper {
     // io.Directory documentsDirectory=await getApplicationDocumentsDirectory();
     String documentsDirectory=await getDatabasesPath();
     String path=join(documentsDirectory, systemDb);
-    print("1------------------------***DATABASE***------------------------");
-    print(path);
+    // print("1------------------------***DATABASE***------------------------");
+    // print(path);
     var theDbSystem=await openDatabase(path, version: 1, onCreate: _onCreateSystem);
     return theDbSystem;
   }
@@ -46,8 +46,8 @@ class DatabaseHelper {
     // io.Directory documentsDirectory=await getApplicationDocumentsDirectory();
     String documentsDirectory=await getDatabasesPath();
     String path=join(documentsDirectory, contentDb);
-    print("2------------------------***DATABASE***------------------------");
-    print(path);
+    // print("2------------------------***DATABASE***------------------------");
+    // print(path);
     var theDbContent=await openDatabase(path, version: 1);
     return theDbContent;
   }
@@ -56,7 +56,7 @@ class DatabaseHelper {
     await db.execute("CREATE TABLE USER(userName TEXT, firstName TEXT, lastName TEXT, userId NUMBER, lang TEXT, PRIMARY KEY(userId))");
     await db.execute("CREATE TABLE NOTIFICATION_QUEUE(queueId TEXT ,projectId NUMBER,category TEXT ,message TEXT ,type TEXT ,seqNo NUMBER,groupSeqNo NUMBER, timestamp NUMBER,status TEXT, uri TEXT, params TEXT,PRIMARY KEY(queueId,projectId))");
     await db.execute("CREATE TABLE PROJECT(projectName TEXT, projectId NUMBER, init BOOL, defaultProject BOOL, db TEXT,PRIMARY KEY(projectId))");
-    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, iconUrl TEXT, iconName TEXT, perm TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
+    await db.execute("CREATE TABLE MENU(menuIndex NUMBER,projectId NUMBER, menuId TEXT, menuURL TEXT, iconUrl TEXT, perm TEXT,iconName TEXT, menus TEXT,wsId TEXT,PRIMARY KEY(menuId,projectId))");
     await db.execute("CREATE TABLE PERMISSION(permissionId TEXT, projectId NUMBER,PRIMARY KEY(projectId,permissionId))");
     await db.execute("CREATE TABLE GLOBALVARIABLE(projectId NUMBER, key TEXT, value TEXT)");
     await db.execute("CREATE TABLE LABEL(key TEXT, value TEXT, localization TEXT, projectId NUMBER, appType TEXT,PRIMARY KEY(projectId,key,localization))");
@@ -72,13 +72,13 @@ class DatabaseHelper {
     // await db.execute("CREATE TABLE TRANS_DOC_QUEUE(transDocId TEXT, requestId TEXT, transDocMetaData TEXT, status TEXT, syncStatus TEXT, noOfAttempts NUMBER, docLocalPath TEXT, docName TEXT, createdDate TEXT, updatedDat TEXT)");
   }
 
-//  Future _onCreateContent(Database db, int version) async {
-//    await db.execute("CREATE TABLE FORMS(formId TEXT, formLabel TEXT, rows NUMBER, cols NUMBER, sections TEXT, PRIMARY KEY(formId))");
-//    await db.execute("CREATE TABLE SECTIONS(sectionId TEXT, rowIndex NUMBER, colIndex NUMBER, rowSpan NUMBER, colSpan NUMBER, definition TEXT)");
-//  }
-
   Future<void> populateTableWithMapping(String tableName, Map<String, dynamic> value, bool isSystemDatabase) async {
     var dbClient;
+    value.forEach((k,v) {
+      if(value[k].runtimeType == 'List<dynamic>') {
+        value[k] = json.decode(value[k]);
+      }
+    });
     if(isSystemDatabase==true) {dbClient=await dbSystem;}else {dbClient=await dbContent;}
     await dbClient.insert(tableName, value,conflictAlgorithm: ConflictAlgorithm.replace);
   }
@@ -237,9 +237,12 @@ class DatabaseHelper {
     String query = "CREATE TABLE IF NOT EXISTS $tableName(";
     var dbClient = await dbContent;
     String pkColumnName;
+    if(!columnNames.contains("syncStatus")) columnNames.add("syncStatus");
     for(int i=0;i<columnNames.length;i++) {
       var columnNamebuf = columnNames[i];
-      var dataTypeBuf = columnDataTypes[i];
+      var dataTypeBuf;
+      if(columnNamebuf=='syncStatus') dataTypeBuf = 'bool';
+      else dataTypeBuf = columnDataTypes[i];
       if(columnNamebuf == "group") {columnNamebuf = "groups";}
       if(i==columnNames.length-1) {
         query += "$columnNamebuf $dataTypeBuf";
@@ -325,31 +328,7 @@ class DatabaseHelper {
     }
     return res;
   }
-//  Future<List> fetchDataSourceData(dynamic dataSource) async {
-//    var dbClient = await dbContent;
-//    var res;
-//    if(dataSource[0]['filters'].length!=0) {
-//      String query = " WHERE ";
-//      for(int i=0;i<dataSource[0]['filters'].length;i++) {
-//        query += "${dataSource[0]['filters'][i]['key']} = '${dataSource[0]['filters'][i]['value']}'";
-//        if(i != dataSource[0]['filters'].length-1 || i!=0) query += " AND ";
-//      }
-//      if(dataSource[0]['sorting'].length!=0) {
-//        var order;
-//        if(dataSource[0]['sorting'][0]['reverse']==true) order = ' DESC';
-//        else order = ' ASC';
-//        query += " ORDER BY ${dataSource[0]['displayMember']}"+order;
-//      }
-//      await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}"+query).then((result) {
-//      res =result.toList();
-//      });
-//    }else {
-//      await dbClient.rawQuery("SELECT * FROM ${dataSource[0]['entityName'].toUpperCase()}").then((result) {
-//        res =result.toList();
-//      });
-//    }
-//    return res;
-//  }
+
 
   Future<List> checkIfPkExist(String tableName) async {
     var dbClient = await dbContent;
