@@ -64,6 +64,6 @@ class _FormState extends State<FormRender> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String id = sharedPreferences.get('TemplateId');
     res = await db.fetchTemplateID(id);
-    return res[0]['template'].toString();
+    return res[0]['formId'].toString();
   }
 }

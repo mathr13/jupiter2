@@ -11,6 +11,8 @@ import 'package:jupiter/forms/radio.dart';
 import 'package:jupiter/forms/switch.dart';
 import 'package:jupiter/forms/textfield.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jupiter/forms/customButtons.dart';
+import 'package:jupiter/Screens/Views/home.dart';
 
 
 Map<String, dynamic> responseDetails = {};
@@ -24,75 +26,32 @@ GlobalKey five = GlobalKey();
 List<GlobalKey> keys = [one,two,three,four];
 var db = DatabaseHelper();
 
-
-
-Image imageFromBase64String(String base64String) {
-  return Image.memory(base64Decode(base64String));
-}
-Uint8List dataFromBase64String(String base64String) {
-  return base64Decode(base64String);
-}
-String base64String(Uint8List data) {
-  return base64Encode(data);
-}
-
-pickImageFromGallery() async {
-    var a = Image.network('https://github.com/flutter/plugins/raw/master/packages/video_player/doc/demo_ipod.gif?raw=true');
-    // Uint8List abc = base64.decode('/images/Cancel');
-    // print(abc);
-    var aaa =File('assets/images/jordan.jpg');
-    // String aaa = base64.encode(abc);
-    print(aaa.readAsBytesSync());
-    // var b = File.fromRawPath(abc);
-    // print(b.readAsBytesSync());
-  }
-
 class Gridxo extends StatefulWidget {
   @override _MenusState createState() => _MenusState();
 }
 
 class _MenusState extends State<Gridxo> {
-  Future<File> imageFile;
-    Image image;
-
-  @override void initState() {
-    super.initState();
-  }
-
-
   @override Widget build(BuildContext context) {
-    pickImageFromGallery();
+    keys = [one,two,three,four];
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    List<Widget> lol = [Text("a"),Text("b"),Text("c")];
-    String defiData = '{"data":{"projectId":11103,"FORM":[{"rows":1,"cols":1,"formId":"fdf07735-6c31-4f49-a31f-ff86bb5e0259","formLabel":"ITEM_LISTING1","sections":{"rowIndex":1,"colIndex":1,"sections":[{"rowIndex":1,"colIndex":1,"sectionId":"cUtwCr6669NEWR2m","definition":[{"id":"t9","label":"ce9322e5-7e16-4e6e-89b9-8e3447b062e0","type":"checkbox","subType":"checkbox","regex":"","constraint":"OPTIONAL","key":"","lov":"8f035973-4cbd-4ceb-9630-6c3ef0ae172b","delim":"","mapAttr":"","dataSource":[{"entityName":"lov","valueMember":"id","displayMember":"value","sorting":[{"name":"asc","reverse":true}],"filters":[{"key":"domainGroup","value":"8f035973-4cbd-4ceb-9630-6c3ef0ae172b"}]}],"currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"qty":false,"copy":false,"dependentOn":"","triggerCheck":"","lovType":"S","sort":0,"entityName":"Item","entityColName":"t9","nodeHierarchy":"Item.attr","defaultValue":""}],"rowSpan":1,"colSpan":2},{"rowIndex":1,"colIndex":2,"sectionId":"02eGI8eFVOoZyiWc","definition":[{"id":"t2","label":"a3e80999-e85a-4eab-9076-facbff5a227d","type":"text","subType":"text","regex":"","constraint":"MANDATORY","key":"S","lov":"","delim":"","mapAttr":"","dataSource":[],"currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"qty":false,"copy":false,"dependentOn":"","triggerCheck":"","lovType":"S","sort":0,"entityName":"Item","entityColName":"t2","nodeHierarchy":"Item.specAttr","defaultValue":""},{"id":"t8","label":"a02a73cc-41ce-4c84-9d2d-7c1ff7e9ce13","type":"radio","subType":"radio","regex":"","constraint":"OPTIONAL","key":"","lov":"34fdde06-32c3-4778-bb0f-9cf0eec10a37","delim":"","mapAttr":"","dataSource":[{"entityName":"lov","valueMember":"id","displayMember":"value","sorting":[{"name":"asc","reverse":true}],"filters":[{"key":"domainGroup","value":"34fdde06-32c3-4778-bb0f-9cf0eec10a37"}]}],"currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"qty":false,"copy":false,"dependentOn":"","triggerCheck":"","lovType":"S","sort":0,"entityName":"Item","entityColName":"t8","nodeHierarchy":"Item.attr","defaultValue":""}],"rowSpan":1,"colSpan":1},{"rowIndex":2,"colIndex":1,"sectionId":"NEMfilc5QNcp2S4J","definition":[{"id":"projectNumber","label":"PURCHASE_PROJECT_NUMBER","type":"text","subType":"text","constraint":"OPTIONAL","currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"sort":0,"entityName":"Item","entityColName":"projectNumber","nodeHierarchy":"Item","defaultValue":""},{"id":"costCode","label":"PURCHASE_COST_CENTER","type":"text","subType":"text","constraint":"OPTIONAL","currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"sort":0,"entityName":"Item","entityColName":"costCode","nodeHierarchy":"Item","defaultValue":""}],"rowSpan":1,"colSpan":1},{"rowIndex":2,"colIndex":2,"sectionId":"xsPc6mnYdVh0f2qx","definition":[{"id":"t5","label":"11a5851d-f2c1-4ba5-9239-0fe672ccbe69","type":"select","subType":"select","regex":"","constraint":"MANDATORY","key":"","lov":"97add0d9-1a69-4aca-87d0-3b5e43765c4f","delim":"","mapAttr":"","dataSource":[{"entityName":"lov","valueMember":"id","displayMember":"value","sorting":[{"name":"asc","reverse":true}],"filters":[{"key":"domainGroup","value":"97add0d9-1a69-4aca-87d0-3b5e43765c4f"}]}],"currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"qty":false,"copy":false,"dependentOn":"","triggerCheck":"","lovType":"S","sort":0,"entityName":"Item","entityColName":"t5","nodeHierarchy":"Item.attr","defaultValue":""}],"rowSpan":1,"colSpan":2}],"row":2,"cols":2}}]},"status":{"messageList":[],"messageCode":1200}}';
+    String defiData = '{"data":{"projectId":11103,"FORM":[{"rows":1,"cols":1,"formId":"fdf07735-6c31-4f49-a31f-ff86bb5e0259","formLabel":"ITEM_LISTING1","sections":{"rowIndex":1,"colIndex":1,"sections":[{"rowIndex":1,"colIndex":1,"sectionId":"cUtwCr6669NEWR2m","definition":[{"id":"locId","label":"LOCATION","type":"select","subType":"select","constraint":"MANDATORY","dataSource":[{"entityName":"location","valueMember":"locId","displayMember":"name","sorting":[{"name":"asc","reverse":true}],"filters":[]}],"currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"sort":0,"entityName":"Item","entityColName":"locId","nodeHierarchy":"Item","defaultValue":""}],"rowSpan":1,"colSpan":2},{"rowIndex":1,"colIndex":2,"sectionId":"02eGI8eFVOoZyiWc","definition":[{"id":"t2","label":"a3e80999-e85a-4eab-9076-facbff5a227d","type":"text","subType":"text","regex":"","constraint":"MANDATORY","key":"S","lov":"","delim":"","mapAttr":"","dataSource":[],"currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"qty":false,"copy":false,"dependentOn":"","triggerCheck":"","lovType":"S","sort":0,"entityName":"Item","entityColName":"t2","nodeHierarchy":"Item.specAttr","defaultValue":""},{"id":"t8","label":"a02a73cc-41ce-4c84-9d2d-7c1ff7e9ce13","type":"radio","subType":"radio","regex":"","constraint":"OPTIONAL","key":"","lov":"34fdde06-32c3-4778-bb0f-9cf0eec10a37","delim":"","mapAttr":"","dataSource":[{"entityName":"lov","valueMember":"id","displayMember":"value","sorting":[{"name":"asc","reverse":true}],"filters":[{"key":"domainGroup","value":"34fdde06-32c3-4778-bb0f-9cf0eec10a37"}]}],"currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"qty":false,"copy":false,"dependentOn":"","triggerCheck":"","lovType":"S","sort":0,"entityName":"Item","entityColName":"t8","nodeHierarchy":"Item.attr","defaultValue":""}],"rowSpan":1,"colSpan":1},{"rowIndex":2,"colIndex":1,"sectionId":"NEMfilc5QNcp2S4J","definition":[{"id":"projectNumber","label":"PURCHASE_PROJECT_NUMBER","type":"text","subType":"text","constraint":"OPTIONAL","currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"sort":0,"entityName":"Item","entityColName":"projectNumber","nodeHierarchy":"Item","defaultValue":""},{"id":"costCode","label":"PURCHASE_COST_CENTER","type":"text","subType":"text","constraint":"OPTIONAL","currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"sort":0,"entityName":"Item","entityColName":"costCode","nodeHierarchy":"Item","defaultValue":""}],"rowSpan":1,"colSpan":1},{"rowIndex":2,"colIndex":2,"sectionId":"xsPc6mnYdVh0f2qx","definition":[{"id":"container1","label":"navigationContainer1","type":"navigationContainer","subType":"navigationContainer","constraint":"MANDATORY","currentDate":false,"visibleInGrid":false,"visibleInFilter":false,"additionalSpecs":false,"sort":0,"entityName":"Item","entityColName":"container1","nodeHierarchy":"Item","defaultValue":""}],"rowSpan":1,"colSpan":2}],"row":2,"cols":2}}]},"status":{"messageList":[],"messageCode":1200}}';
     final defiDataResp = json.decode(defiData);
-    lol = childList(defiDataResp,context);
-    return Scaffold(
-      appBar: AppBar(title: Text("FORM")),
-      // body: FutureBuilder(
-      //   future: getComponentsData(defiDataResp, context),
-      //   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-      //     if(!snapshot.data) return ListView(children: lol);
-      //   }
-      // ),
-      body: FutureBuilder(
+    return FutureBuilder(
         future: getComponentsData(defiDataResp, context),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (!snapshot.hasData) {
-            // for(int i=0;i<keys.length;i++) {
-            //   getSizes(keys[i], i);
-            // }
-            return ListView(children: lol);
+            return ListView(children:childList(defiDataResp,context)
+            );
           }
           for(int i=0;i<keys.length;i++) {
             getSizes(keys[i], i);
-            // print(heightsList);
+             print(heightsList);
           }
           fillFormData(defiDataResp);
-          return ListView(children: lol);
+          return ListView(children: childList(defiDataResp,context));
         }
-      ),
+
     );
   }
 }
@@ -118,12 +77,12 @@ List<Widget> childList(dynamic data, context) {
         listOfChildren.add(
           Container(
             // key: keys[i],
-            color: Colors.red[(count+1)*100],
+           // color: Colors.red[(count+1)*100],
             // height: (height)/(data['data']['FORM'][0]['sections']['row']+1),
             height: heightsList[i].toDouble(),
             width: width,
             child: GridView.count(
-              // physics: NeverScrollableScrollPhysics(),
+               physics: NeverScrollableScrollPhysics(),
               crossAxisCount: 1,
               // childAspectRatio: width/275,
               children: <Widget>[
@@ -143,11 +102,11 @@ List<Widget> childList(dynamic data, context) {
         test.addAll(childWidget(data, count+1));
         listOfChildren.add(
           Container(
-            color: Colors.blue[(count+1)*100],
-            height: (height)/(data['data']['FORM'][0]['sections']['row']+1),
+           // color: Colors.blue[(count+1)*100],
+            height: ((height)/(data['data']['FORM'][0]['sections']['row']+1))+38.0,
             width: width,
             child: GridView.count(
-              // physics: NeverScrollableScrollPhysics(),
+              physics: NeverScrollableScrollPhysics(),
               crossAxisCount: 2,
               childAspectRatio: 0.45,
               children: <Widget>[
@@ -246,11 +205,15 @@ List<Widget> childWidget(dynamic data, int index) {
       break;
       case "select": {
         listWidget.add(Padding(
-          child: Container(key: keys[index], child: DropdownButtonHint(
-          item: item, count: i, onChanged: (dynamic response) {responseDetails = response;},
-          formItems: data['data']['FORM'][0]['sections']['sections'][index]['definition'],
-        )),
-        padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+            padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+            child:Align(
+                child: Container(key: keys[index], child: DropdownButtonHint(
+                  item: item, count: i, onChanged: (dynamic response) {responseDetails = response;},
+                  formItems: data['data']['FORM'][0]['sections']['sections'][index]['definition'],
+                )),
+              alignment: Alignment.topLeft,
+            )
+
         ));
       }
       break;
@@ -265,13 +228,16 @@ List<Widget> childWidget(dynamic data, int index) {
       }
       break;
       case "navigationContainer": {
-        // listWidget.add(Padding(
-        //   child: CustomButton(
-        //   item: item,
-        //   wsId: wsId,
-        // ),
-        // padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
-        // ));
+         listWidget.add(Padding(
+           child: Container(
+             key: keys[index],
+             child: CustomButton(
+               item: item,
+               wsId: wsId,
+             ),
+           ),
+         padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+         ));
       }
       break;
     }

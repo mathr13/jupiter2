@@ -17,7 +17,7 @@ var labelList=[];
   var searchController = new TextEditingController();
   String _query = "";
   TextEditingController emailController = new TextEditingController();
-  final listingDataDecoded = json.decode(listingData);
+  final listingDataDecoded = json.decode(listing);
 
 
 
