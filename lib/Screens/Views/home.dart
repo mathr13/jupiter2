@@ -123,7 +123,7 @@ _workSpaceData(String wsId) async {
   var db = new DatabaseHelper();
   var res = await db.fetchWorkSpaceData(wsId);
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  sharedPreferences.setString("TemplateId", res[0]['defaultTemplateId']);
+  sharedPreferences.setString("TemplateId", res[0]['defaultFormId']);
 }
 
 Widget menuDrawer(context) {
