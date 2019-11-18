@@ -38,7 +38,7 @@ class DatabaseHelper {
     String documentsDirectory=await getDatabasesPath();
     String path=join(documentsDirectory, systemDb);
     // print("1------------------------***DATABASE***------------------------");
-    // print(path);
+    print(path);
     var theDbSystem=await openDatabase(path, version: 1, onCreate: _onCreateSystem);
     return theDbSystem;
   }
@@ -47,7 +47,7 @@ class DatabaseHelper {
     String documentsDirectory=await getDatabasesPath();
     String path=join(documentsDirectory, contentDb);
     // print("2------------------------***DATABASE***------------------------");
-    // print(path);
+     print(path);
     var theDbContent=await openDatabase(path, version: 1);
     return theDbContent;
   }
